@@ -1,0 +1,65 @@
+@ LinkedList Example
+
+struct LinkedList :: {
+	local head = null;
+
+	@ Adds element to list
+	add(e) => v from {
+		head == null then {
+			head = new Link;
+			head.value = e;
+		} else {
+			local curr = head;
+			curr.next != null do { curr = curr.next };
+			curr.next = new Link;
+			curr.next.value = e;
+		};
+		v = e;
+	};
+
+	@ Retrieves mutable element from list
+	index(pos) => e from {
+		e = null;
+		local curr = head;
+		i in [2 : pos : 1] do {curr = curr.next};
+		e := curr.value;
+	};
+
+	@ Removes element from list
+	remove(pos) => {
+		local curr = head;
+		local prev = null;
+		i in [2 : pos : 1] do {
+			prev = curr;
+			curr = curr.next;
+		};
+		prev == null then head = curr.next;
+		prev.next = curr.next;
+	};
+
+	@ Retrieves length of the list
+	size() => s from {
+		s = 0;
+		local curr = head;
+		curr != null do {
+			curr = curr.next;
+			s = s + 1;
+		};
+	};
+
+	@ Returns string version of the list
+	string() => s from {
+		s = "[ ";
+		curr = head;
+		curr != null do {
+			s = s .. curr.value .. " ";
+			curr = curr.next;
+		};
+		s = s .. "]";
+	};
+
+	struct Link :: {
+		value = 0;
+		next = null;
+	};
+};

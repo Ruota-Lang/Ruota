@@ -1,0 +1,26 @@
+static System :: {
+	print(x) => { _OUTER_CALL_(1, x) };
+	printLine(x) => { print(x .. "\n") };
+	newLine() => { printLine("") };
+	system(x) => { _OUTER_CALL_(0, x)[1] };
+
+	static Input :: {
+		number() => { _OUTER_CALL_(2)[1] };
+		string() => { _OUTER_CALL_(3)[1] };
+		line() => { _OUTER_CALL_(4)[1] };
+	};
+
+	static Random :: {
+		double() => { _OUTER_CALL_(5)[1] };
+		int(min, max) => {
+			max == null then 
+				Math.floor(double() * (min - 1) + 1)
+			else
+				Math.floor(double() * (max - min) + min);
+		};
+	};
+
+	static Math :: {
+		floor(x) => { _OUTER_CALL_(6, x)[1] };
+	};
+};

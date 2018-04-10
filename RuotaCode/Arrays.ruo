@@ -1,0 +1,33 @@
+load "System.ruo";
+
+static Arrays :: {
+	atos(a) => s from {
+		&a == "array" then {
+			s = "[ ";
+			i in a do { 
+				s = s .. idem(i) .. " ";
+			};
+			s = s .. "]";
+		} else {
+			s = a;
+		};
+	};
+
+	sort(a, comp) => n_a from {
+		n_a = a;
+		#a < 2 then return;
+		comp == null then comp = (x, y) -> { x < y };
+		local lower = [];
+		local upper = [];
+		local pivot = System.Random.int(#a);
+		i in [1 : #a : 1] do {
+			i != pivot then {
+				local e = a[i];
+				comp(e, a[pivot]) 
+				then lower = lower ++ [ e ];
+				else upper = upper ++ [ e ];
+			};
+		};
+		n_a = idem(lower, comp) ++ [ a[pivot] ] ++ idem(upper, comp);
+	};
+}

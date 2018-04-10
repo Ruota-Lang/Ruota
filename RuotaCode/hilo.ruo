@@ -1,0 +1,17 @@
+@ Basic Game of HiLo
+
+load "System.ruo";
+
+hilo(min, max) => {
+	a = System.Random.int(min, max);
+	r = -1;
+	System.printLine("The number is between " .. min .. " and " .. max);
+	System.printLine("--------------------------------");
+	a != r do {
+		System.print("Enter a guess: ");
+		r = System.Input.number();
+		r < a then System.printLine("Too low!");
+		r > a then System.printLine("Too high!");
+	};
+	System.printLine("Correct! The answer was " .. a);
+};

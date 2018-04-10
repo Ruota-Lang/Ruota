@@ -1,6 +1,7 @@
 load "System.ruo";
 
 static Arrays :: {
+	@ Converts an array to a string representation
 	atos(a) => s from {
 		&a == "array" then {
 			s = "[ ";
@@ -13,6 +14,8 @@ static Arrays :: {
 		};
 	};
 
+	@ Sorts an array using quicksort algorithm
+	@ A comparator lambda may be specified as the second argument
 	sort(a, comp) => n_a from {
 		n_a = a;
 		#a < 2 then return;

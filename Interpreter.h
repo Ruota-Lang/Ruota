@@ -102,7 +102,7 @@ enum MemType {
 struct Memory : std::enable_shared_from_this<Memory> {
 private:
 	static long	reference_count;
-	double		data = 0;
+	long double		data = 0;
 	MemType		mt;
 	VEC_Memory	arr_data;
 	SP_Scope	obj_data = nullptr;
@@ -114,7 +114,7 @@ public:
 	Memory();
 	~Memory();
 	Memory(std::string);
-	Memory(double);
+	Memory(long double);
 	Memory(SP_Lambda);
 	Memory(VEC_Memory);
 	SP_Memory add(const SP_Memory);
@@ -127,7 +127,7 @@ public:
 	bool isStatic();
 	bool isStruct();
 	void set(const SP_Memory);
-	double getValue();
+	long double getValue();
 	SP_Memory index(size_t pos);
 	SP_Memory index(std::string);
 	void setStatic(bool);
@@ -154,7 +154,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	SP_Node clone(SP_Scope);
 
 	Node(SP_Scope);
-	Node(double);
+	Node(long double);
 	Node(std::string);
 	Node(NodeType, VEC_Node);
 

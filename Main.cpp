@@ -16,7 +16,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		return { std::make_shared<Memory>() };
 		break;
 	case 2: {
-		double d;
+		long double d;
 		std::cin >> d;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		return { std::make_shared<Memory>(d) };
@@ -36,7 +36,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		break;
 	}
 	case 5: {
-		return { std::make_shared<Memory>((double)rand() / RAND_MAX) };
+		return { std::make_shared<Memory>((long double)rand() / RAND_MAX) };
 		break;
 	}
 	case 6: {

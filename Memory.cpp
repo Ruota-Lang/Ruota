@@ -9,7 +9,7 @@ Memory::Memory() {
 	this->mt = NUL;
 }
 
-Memory::Memory(double data) {
+Memory::Memory(long double data) {
 #ifdef DEBUG
 	reference_count++;
 #endif // DEBUG
@@ -94,7 +94,7 @@ Memory::Memory(std::string s) {
 	this->mt = ARR;
 }
 
-double Memory::getValue() {
+long double Memory::getValue() {
 	if (mt == REF)
 		return reference->getValue();
 	return this->data;

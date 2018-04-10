@@ -1,6 +1,6 @@
 #include "Interpreter.h"
 
-Node::Node(double data) {
+Node::Node(long double data) {
 	this->mem_data = std::make_shared<Memory>(data);
 	this->nt = MEM;
 }
@@ -291,18 +291,18 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case RANGE: {
 		auto p1 = executed[0]->getValue();
 		auto p2 = executed[1]->getValue();
-		double step = 1;
+		long double step = 1;
 		if (executed.size() > 2)
 			step = executed[2]->getValue();
 
 		VEC_Memory range;
 		if (p1 <= p2 || executed.size() > 2) {
-			for (double i = p1; i <= p2; i += step) {
+			for (long double i = p1; i <= p2; i += step) {
 				range.push_back(std::make_shared<Memory>(i));
 			}
 		}
 		else {
-			for (double i = p1; i >= p2; i -= step) {
+			for (long double i = p1; i >= p2; i -= step) {
 				range.push_back(std::make_shared<Memory>(i));
 			}
 		}

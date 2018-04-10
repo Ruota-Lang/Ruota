@@ -1,7 +1,7 @@
-all: ruota.exe
+all: bin/ruota.exe
 
-ruota.exe: Compiled/Main.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
-	g++ Compiled/Main.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o -o ruota.exe -std=c++11
+bin/ruota.exe: Compiled/Main.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
+	g++ Compiled/Main.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o -o Compiled/ruota.exe -std=c++11
 
 Compiled/Main.o: Main.cpp
 	g++ Main.cpp -o Compiled/Main.o -c -std=c++11

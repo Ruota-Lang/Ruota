@@ -1,0 +1,10 @@
+Fibonacci(x) => a from {
+	a = [0, 1];
+	i in [3 : x] do {
+		a = a ++ [ a[i - 1] + a[i - 2] ];
+	};
+};
+
+@ Alternatively, the function can be done inline like so:
+@ [1 : 10] >> ( (x, a) -> { x > 2 then a[x-1] + a[x-2] else x } )
+@ This uses the >> operator, sending the array as the input arguments to a lambda one at a time.

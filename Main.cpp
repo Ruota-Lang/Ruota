@@ -2,6 +2,9 @@
 #include <cmath>
 #include "Interpreter.h"
 
+Interpreter * i;
+SP_Scope main_scope;
+
 std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 	switch ((int)args[0]->getValue())
 	{
@@ -46,22 +49,18 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 	}
 }
 
-int main(void) {
-	Interpreter * i = new Interpreter(&__send);
-
+int console(){
 	std::string line;
-
-	SP_Scope main = std::make_shared<Scope>(nullptr);
-	i->generate("load \"RuotaCode\\System.ruo\";" , main, "");
-	i->execute(main);
+	i->generate("load \"RuotaCode\\System.ruo\";" , main_scope, "");
+	i->execute(main_scope);
 
 	do {
 		std::cout << "> ";
 		std::getline(std::cin, line);
-		SP_Scope s = i->generate(line, main, "");
+		SP_Scope s = i->generate(line, main_scope, "");
 
 		try {
-			SP_Memory res = i->execute(main);
+			SP_Memory res = i->execute(main_scope);
 
 			if (res->getArray().size() > 1) {
 				int n = 1;
@@ -80,4 +79,17 @@ int main(void) {
 	} while (line != "");
 
 	return 0;
+}
+
+int main(int argc, char * argv[]) {
+	i = new Interpreter(&__send);
+	main_scope = std::make_shared<Scope>(nullptr);
+
+	if (argc == 2) {
+		i->generate("load \"" + std::string(argv[1]) + "\";" , main_scope, "");
+		i->execute(main_scope);
+	}else{
+		return console();
+	}
+	return EXIT_SUCCESS;
 }

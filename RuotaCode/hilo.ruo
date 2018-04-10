@@ -15,3 +15,5 @@ hilo(min, max) => {
 	};
 	System.printLine("Correct! The answer was " .. a);
 };
+
+hilo(0, 100);

@@ -53,3 +53,7 @@ SP_Memory Scope::getVariable(std::string key) {
 
 	return current->variables[key];
 }
+
+std::string Scope::toString(){
+	return "{ " + main->toString() + " }";
+}

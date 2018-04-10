@@ -368,3 +368,88 @@ SP_Node Node::clone(SP_Scope scope) {
 		new_node->scope_ref = this->scope_ref->clone(scope);
 	return new_node;
 }
+
+std::string Node::toString() {
+	switch(nt){
+		case VAR:
+			return key;
+		case MEM:
+			return mem_data->toString();
+		case ADD:
+			return "(" + params[0]->toString() + " + " + params[1]->toString() + ")";
+		case SUB:
+			return "(" + params[0]->toString() + " - " + params[1]->toString() + ")";
+		case MUL:
+			return "(" + params[0]->toString() + " * " + params[1]->toString() + ")";
+		case DIV:
+			return "(" + params[0]->toString() + " / " + params[1]->toString() + ")";
+		case POW:
+			return "(" + params[0]->toString() + " ** " + params[1]->toString() + ")";
+		case MOD:
+			return "(" + params[0]->toString() + " % " + params[1]->toString() + ")";
+		case SET:
+			return "(" + params[0]->toString() + " = " + params[1]->toString() + ")";
+		case EQUAL:
+			return "(" + params[0]->toString() + " == " + params[1]->toString() + ")";
+		case NEQUAL:
+			return "(" + params[0]->toString() + " != " + params[1]->toString() + ")";
+		case OBJ_SET:
+			return "(" + params[0]->toString() + " :: " + params[1]->toString() + ")";
+		case EXEC:
+			return "(" + params[0]->toString() + " !! " + params[1]->toString() + ")";
+		case DES:
+			return "(" + params[0]->toString() + " -> " + params[1]->toString() + ")";
+		case LDES:
+			return "(" + params[0]->toString() + " => " + params[1]->toString() + ")";
+		case ADD_ARR:
+			return "(" + params[0]->toString() + " ++ " + params[1]->toString() + ")";
+		case STR_CAT:
+			return "(" + params[0]->toString() + " .. " + params[1]->toString() + ")";
+		case INDEX_OBJ:
+			return "(" + params[0]->toString() + " . " + params[1]->toString() + ")";
+		case INDEX:
+			return "(" + params[0]->toString() + params[1]->toString() + ")";
+		case DOL:
+			return "(" + params[0]->toString() + " do " + params[1]->toString() + ")";
+		case FROM:
+			return "(" + params[0]->toString() + " from " + params[1]->toString() + ")";
+		case ITER:
+			return "(" + params[0]->toString() + " in " + params[1]->toString() + ")";
+		case RANGE:
+			return "(" + params[0]->toString() + " : " + params[1]->toString() + (params.size() > 2 ? " : " + params[2]->toString() : "") + ")";
+		case THEN:
+			return "(" + params[0]->toString() + " then " + params[1]->toString() + (params.size() > 2 ? " else " + params[2]->toString() : "") + ")";
+		case SCOPE:
+			return scope_ref->toString();
+		case TYPE:
+			return "(&" + params[0]->toString() + ")";
+		case SIZE_O:
+			return "(#" + params[0]->toString() + ")";
+		case LOCAL:
+			return "(local " + params[0]->toString() + ")";
+		case SET_STAT:
+			return "(static " + params[0]->toString() + ")";
+		case OUT_CALL:
+			return "(_OUTER_CALL_ !! (" + params[0]->toString() + "))";
+		case RETURN:
+			return "return";
+		case BREAK:
+			return "break";
+		case LIST:{
+			std::string s = "[ ";
+			for (auto &p : params){
+				s += p->toString() + " ";
+			}
+			return s + "]";
+		}
+		case SOFT_LIST:{
+			std::string s = "( ";
+			for (auto &p : params){
+				s += p->toString() + " ";
+			}
+			return s + ")";
+		}
+		default:
+			return "NULL";
+	}
+}

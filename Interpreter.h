@@ -157,6 +157,8 @@ struct Node : std::enable_shared_from_this<Node> {
 	Node(double);
 	Node(std::string);
 	Node(NodeType, VEC_Node);
+
+	std::string toString();
 };
 
 struct Lambda : std::enable_shared_from_this<Lambda> {
@@ -179,6 +181,8 @@ struct Scope : std::enable_shared_from_this<Scope> {
 	SP_Memory getVariable(std::string);
 
 	SP_Scope clone(SP_Scope);
+
+	std::string toString();
 };
 
 class Interpreter {	

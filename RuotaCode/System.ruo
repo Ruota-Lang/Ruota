@@ -24,3 +24,29 @@ static System :: {
 		floor(x) => { _OUTER_CALL_(6, x)[1] };
 	};
 };
+
+@ Converts an array to a string representation
+sarr(a) => s from {
+	&a == "array" then {
+		s = "[ ";
+		i in a do { 
+			s = s .. idem(i) .. " ";
+		};
+		s = s .. "]";
+	} else {
+		s = a;
+	};
+};
+
+@ Returns a paired object array built from the contents of two equally sized arrays
+pairs(a, b) => p from {
+	p = null;
+	#a != #b then return;
+	p = [];
+	i in [1 : #a] do {
+		local temp;
+		temp.first = a[i];
+		temp.second = b[i];
+		p = p ++ [ temp ];
+	};
+};

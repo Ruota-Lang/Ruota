@@ -247,7 +247,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		VEC_Memory new_arr;
 
 		for (auto &a : arg_arr) {
-			new_arr.push_back(lambda->execute({ a }));
+			new_arr.push_back(lambda->execute({ a, std::make_shared<Memory>(new_arr) }));
 		}
 
 		return std::make_shared<Memory>(new_arr);

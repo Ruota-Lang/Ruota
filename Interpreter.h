@@ -14,6 +14,7 @@
 #include<cmath>
 
 #undef	max
+#undef	min
 
 class Interpreter;
 struct Memory;

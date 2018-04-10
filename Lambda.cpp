@@ -7,7 +7,7 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 
 	scope->variables["idem"] = std::make_shared<Memory>(shared_from_this());
 
-	for (size_t i = 0; i < params.size(); i++) {
+	for (size_t i = 0; i < std::min(params.size(), param_keys.size()); i++) {
 		SP_Memory temp = params[i]->clone(scope);
 		scope->variables[param_keys[i]] = temp;
 	}

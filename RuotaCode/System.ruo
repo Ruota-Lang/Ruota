@@ -2,7 +2,7 @@ static System :: {
 	print(x) => { _OUTER_CALL_(1, x) };
 	printLine(x) => { print(x .. "\n") };
 	newLine() => { printLine("") };
-	system(x) => { _OUTER_CALL_(0, x)[1] };
+	os(x) => { _OUTER_CALL_(0, x)[1] };
 
 	static Input :: {
 		number() => { _OUTER_CALL_(2)[1] };

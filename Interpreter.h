@@ -156,14 +156,14 @@ struct Node : std::enable_shared_from_this<Node> {
 	NodeType 	nt;
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
-	String	key;
+	String		key;
 
 	Node(SP_Scope);
 	Node(long double);
 	Node(String);
 	Node(NodeType, VEC_Node);
 
-	String	toString();
+	String		toString();
 	SP_Memory	execute(SP_Scope);
 	SP_Node		clone(SP_Scope);
 };
@@ -189,7 +189,7 @@ struct Scope : std::enable_shared_from_this<Scope> {
 	SP_Memory	execute();
 	SP_Memory	getVariable(String);
 	SP_Scope	clone(SP_Scope);
-	String	toString();
+	String		toString();
 };
 
 class Interpreter {	

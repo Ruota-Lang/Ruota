@@ -20,4 +20,21 @@ static Arrays :: {
 		};
 		n_a = idem(lower, comp) ++ [ a[pivot] ] ++ idem(upper, comp);
 	};
+
+	@ Removes element from array 'a' at position 'pos'
+	remove(a, pos) => n_a from {
+		pos == 1 then {
+			n_a = a[2 : #a];
+		} else pos == #a then {
+			n_a = a[1 : (#a - 1)];
+		} else {
+			n_a = a[1 : (pos - 1), (pos + 1) : #a];
+		};
+	};
+
+	@ Pushes an element 'e' to the back of array 'a'
+	push(a, e) => { a ++ [e] };
+
+	@ Pop the last element of array 'a'
+	pop(a) => { a[1 : (#a - 1)] };
 }

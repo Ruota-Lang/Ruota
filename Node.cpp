@@ -22,7 +22,7 @@ Node::Node(SP_Scope scope_ref) {
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
@@ -86,13 +86,27 @@ SP_Memory Node::execute(SP_Scope scope) {
 		return obj;
 	}
 	case NEW: {
-		auto var = std::make_shared<Memory>();
-		if (executed[0]->isStatic())
-			throw std::runtime_error("Error: cannot instantiate a static object!");
-		auto obj = executed[0]->getScope()->clone(scope);
-		obj->variables["self"] = var;
-		var->setScope(obj);
-		return var;
+		if (params[0]->nt == EXEC){
+			auto var = std::make_shared<Memory>();
+			executed.push_back(params[0]->params[0]->execute(scope));
+			if (executed[0]->isStatic())
+				throw std::runtime_error("Error: cannot instantiate a static object!");
+			auto obj = executed[0]->getScope()->clone(scope);
+			obj->variables["self"] = std::make_shared<Memory>(obj);
+			auto args = params[0]->params[1]->execute(scope)->getArray();
+			var->setScope(obj);
+			obj->variables["init"]->getLambda()->execute(args);
+			return var;
+		}else{
+			executed.push_back(params[0]->execute(scope));
+			auto var = std::make_shared<Memory>();
+			if (executed[0]->isStatic())
+				throw std::runtime_error("Error: cannot instantiate a static object!");
+			auto obj = executed[0]->getScope()->clone(scope);
+			obj->variables["self"] = std::make_shared<Memory>(obj);
+			var->setScope(obj);
+			return var;
+		}
 	}
 	case SET_STAT: {
 		auto var = executed[0];

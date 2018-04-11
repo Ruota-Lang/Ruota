@@ -4,8 +4,8 @@ VEC_Memory(*Interpreter::__send)(VEC_Memory) = NULL;
 
 std::map<String, int> Interpreter::operators = {
 	{ "load", 999 },
-	{ ".index", 12 },
-	{ ".exec", 12 },
+	{ ".index", 13 },
+	{ ".exec", 13 },
 	{ "from", 12 },
 	{ ">>", 12 },
 	{ "::", 12 },
@@ -13,7 +13,7 @@ std::map<String, int> Interpreter::operators = {
 	{ "static", 14 },
 	{ "local", 14 },
 	{ "struct", 14 },
-	{ ".", 12 },
+	{ ".", 13 },
 	{ "->", 11 },
 	{ "=>", 11 },
 	{ "#", 10 },

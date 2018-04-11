@@ -17,6 +17,14 @@ Memory::Memory(long double data) {
 	this->mt = NUM;
 }
 
+Memory::Memory(SP_Scope scope) {
+#ifdef DEBUG
+	reference_count++;
+#endif // DEBUG
+	obj_data = scope;
+	mt = OBJ;
+}
+
 Memory::Memory(SP_Lambda lambda) {
 #ifdef DEBUG
 	reference_count++;

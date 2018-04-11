@@ -117,6 +117,7 @@ public:
 	~Memory();
 	Memory(String);
 	Memory(long double);
+	Memory(SP_Scope);
 	Memory(SP_Lambda);
 	Memory(VEC_Memory);
 

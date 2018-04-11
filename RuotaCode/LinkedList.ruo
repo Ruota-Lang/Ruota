@@ -4,17 +4,14 @@ struct LinkedList :: {
 	local head = null;
 
 	@ Adds element to list
-	add(e) => v from {
+	add(e) => {
 		head == null then {
-			head = new Link;
-			head.value := e;
+			head = new Link(e);
 		} else {
 			local curr = head;
 			curr.next != null do { curr = curr.next };
-			curr.next = new Link;
-			curr.next.value := e;
+			curr.next = new Link(e);
 		};
-		v = e;
 	};
 
 	@ Retrieves mutable element from list
@@ -59,7 +56,12 @@ struct LinkedList :: {
 	};
 
 	struct Link :: {
-		value = 0;
-		next = null;
+		local value;
+		local next;
+
+		init(v) => {
+			value = v;
+			next = null;
+		};
 	};
 };

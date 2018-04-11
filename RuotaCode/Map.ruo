@@ -34,6 +34,8 @@ struct Map :: {
 		b = false;
 	};
 
+	iterator() => { contents; };
+
 	size() => { #contents };
 
 	string() => s from {

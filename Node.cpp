@@ -271,14 +271,29 @@ SP_Memory Node::execute(SP_Scope scope) {
 			auto arr = params[0]->params[1]->execute(scope);
 			auto iter_key = params[0]->params[0]->key;
 			SP_Scope inner_scope = std::make_shared<Scope>(scope);
-			for (auto &m : arr->getArray()) {
-				inner_scope->main = params[1]->clone(inner_scope);
-				inner_scope->variables[iter_key] = m;
-				auto v = inner_scope->execute();
-				if (v->getType() == BREAK_M)
-					break;
-				if (v->getType() == RETURN_M)
-					return v;
+			if (arr->getType() == ARR){
+				for (auto &m : arr->getArray()) {
+					inner_scope->main = params[1]->clone(inner_scope);
+					inner_scope->variables[iter_key] = m;
+					auto v = inner_scope->execute();
+					if (v->getType() == BREAK_M)
+						break;
+					if (v->getType() == RETURN_M)
+						return v;
+				}
+			}else if (arr->getType() == OBJ) {
+				auto iter_arr = arr->getScope()->variables["iterator"]->getLambda()->execute({});
+				for (auto &m : iter_arr->getArray()) {
+					inner_scope->main = params[1]->clone(inner_scope);
+					inner_scope->variables[iter_key] = m;
+					auto v = inner_scope->execute();
+					if (v->getType() == BREAK_M)
+						break;
+					if (v->getType() == RETURN_M)
+						return v;
+				}
+			}else{
+				throw std::runtime_error("Error: Cannot iterate over non-iterable value!");
 			}
 			return std::make_shared<Memory>();
 		}

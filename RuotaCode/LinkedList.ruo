@@ -14,6 +14,17 @@ struct LinkedList :: {
 		};
 	};
 
+	iterator() => { toArray() };
+
+	toArray() => a from {
+		a = [];
+		local curr = head;
+		curr != null do {
+			a = a ++ [curr.value];
+			curr = curr.next;
+		};
+	};
+
 	@ Retrieves mutable element from list
 	index(pos) => e from {
 		e = null;

@@ -100,6 +100,8 @@ typedef	std::vector<SP_Memory>	VEC_Memory;
 typedef	std::vector<SP_Node>	VEC_Node;
 typedef	std::vector<String>		VEC_String;
 
+#define	new_memory	std::make_shared<Memory>
+
 
 struct Memory : std::enable_shared_from_this<Memory> {
 private:
@@ -130,21 +132,21 @@ public:
 	bool 		equals(const SP_Memory);
 	bool 		isStatic();
 	bool 		isStruct();
-	void		set(const SP_Memory);
+	SP_Memory	set(const SP_Memory);
 	long double	getValue();
-	SP_Memory	index(SP_Memory);
-	SP_Memory	index(String);
-	void		setStatic(bool);
-	void		setStruct(bool);
-	void		setValue(long double);
+	SP_Memory	index(const SP_Memory);
+	SP_Memory	index(const String);
+	SP_Memory	setStatic(const bool);
+	SP_Memory	setStruct(const bool);
+	SP_Memory	setValue(const long double);
 	String		toString();
-	SP_Memory	clone(SP_Scope);
+	SP_Memory	clone(const SP_Scope);
 	SP_Lambda	getLambda();
 	SP_Scope	getScope();
-	void		setScope(SP_Scope);
-	void		makeScope(SP_Scope);
-	void		setType(MemType);
-	void		refer(SP_Memory);
+	SP_Memory	setScope(const SP_Scope);
+	SP_Memory	makeScope(const SP_Scope);
+	SP_Memory	setType(const MemType);
+	SP_Memory	refer(const SP_Memory);
 	VEC_Memory	getArray();
 	MemType		getType();
 };

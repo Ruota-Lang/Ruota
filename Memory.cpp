@@ -4,7 +4,6 @@ Memory::Memory() {
 #ifdef DEBUG
 	reference_count++;
 #endif // DEBUG
-
 	this->data = 0;
 	this->mt = NUL;
 }
@@ -42,134 +41,114 @@ Memory::Memory(VEC_Memory arr_data) {
 }
 
 bool Memory::isStatic() {
-	if (mt == REF)
-		return reference->isStatic();
+	if (mt == REF) 	return reference->isStatic();
 	return this->static_object;
 }
 
 bool Memory::isStruct() {
-	if (mt == REF)
-		return reference->isStruct();
+	if (mt == REF) 	return reference->isStruct();
 	return this->struct_object;
 }
 
 SP_Scope Memory::getScope() {
-	if (mt == REF)
-		return reference->getScope();
+	if (mt == REF)	return reference->getScope();
 	return this->obj_data;
 }
 
-void Memory::setType(MemType mt) {
-	if (mt == REF) {
-		reference->setType(mt);
-		return;
-	}
-	this->mt = mt;
+SP_Memory Memory::setType(const MemType mt) {
+	if (mt == REF)	reference->setType(mt);
+	else			this->mt = mt;
+	return shared_from_this();
 }
 
-void Memory::setStatic(bool s) {
-	if (mt == REF) {
-		reference->setStatic(s);
-		return;
-	}
-	this->static_object = s;
+SP_Memory Memory::setStatic(const bool s) {
+	if (mt == REF)	reference->setStatic(s);
+	else			this->static_object = s;
+	return shared_from_this();
 }
 
-void Memory::setStruct(bool s) {
-	if (mt == REF) {
-		reference->setStruct(s);
-		return;
-	}
-	this->struct_object = s;
+SP_Memory Memory::setStruct(const bool s) {
+	if (mt == REF) 	reference->setStruct(s);
+	else			this->struct_object = s;
+	return shared_from_this();
 }
 
-void Memory::makeScope(SP_Scope parent) {
+SP_Memory Memory::makeScope(const SP_Scope parent) {
 	if (mt == REF) {
 		reference->makeScope(parent);
-		return;
+		return shared_from_this();
 	}
 	this->obj_data = std::make_shared<Scope>(parent);
 	this->mt = OBJ;
+	return shared_from_this();
 }
 
 Memory::Memory(String s) {
 #ifdef DEBUG
 	reference_count++;
 #endif // DEBUG
-	for (auto &c : s) {
+	for (auto &c : s)
 		this->arr_data.push_back(std::make_shared<Memory>(c));
-	}
 	this->mt = ARR;
 }
 
 long double Memory::getValue() {
-	if (mt == REF)
-		return reference->getValue();
+	if (mt == REF)	return reference->getValue();
 	return this->data;
 }
 
 SP_Lambda Memory::getLambda() {
-	if (mt == REF)
-		return reference->getLambda();
-	if (this->lambda == nullptr) {
+	if (mt == REF)	return reference->getLambda();
+	if (this->lambda == nullptr)
 		throw std::runtime_error("Error: Lambda does not exist!");
-	}
 	return this->lambda;
 }
 VEC_Memory Memory::getArray() {
-	if (mt == REF)
-		return reference->getArray();
+	if (mt == REF)	return reference->getArray();
 	return this->arr_data;
 }
 
-void Memory::refer(SP_Memory m) {
+SP_Memory Memory::refer(const SP_Memory m) {
 	if (m->mt == NUL && m->getValue() == 1) {
 		this->mt = NUL;
-		return;
+	}else{
+		this->reference = m;
+		this->mt = REF;
 	}
-	this->reference = m;
-	this->mt = REF;
+	return shared_from_this();
 }
 
-SP_Memory Memory::index(SP_Memory m) {
-	if (mt == REF)
-		return reference->index(m);
+SP_Memory Memory::index(const SP_Memory m) {
+	if (mt == REF)	return reference->index(m);
 
 	if (mt == ARR) {
 		size_t pos = m->getValue() - 1;
-		if (this->arr_data.size() <= pos || pos < 0) {
+		if (this->arr_data.size() <= pos || pos < 0)
 			throw std::runtime_error(("Error: Index out of range! (Pos=" + std::to_string(pos + 1) + ", Size=" + std::to_string(this->arr_data.size()) + ")").c_str());
-		}
 		return this->arr_data[pos];
-	}
-	else if (mt == OBJ) {
+	} else if (mt == OBJ) {
 		if (obj_data->variables.find("index") != obj_data->variables.end()) {
 			auto l = obj_data->variables["index"]->getLambda();
-			if (l != nullptr) {
+			if (l != nullptr)
 				return l->execute({m});
-			}
 		}
 	}
 	return std::make_shared<Memory>();
 }
 
-SP_Memory Memory::clone(SP_Scope parent) {
+SP_Memory Memory::clone(const SP_Scope parent) {
 	switch (mt)
 	{
-	case REF:
-		return reference->clone(parent);
-	case NUM:
-		return std::make_shared<Memory>(data);
+	case REF:	return reference->clone(parent);
+	case NUM:	return std::make_shared<Memory>(data);
+	case LAM:	return std::make_shared<Memory>(lambda->clone(parent));
+	case NUL:	return std::make_shared<Memory>();
 	case ARR: {
 		VEC_Memory new_arr;
 		for (auto &v : arr_data)
 			new_arr.push_back(v->clone(parent));
 		return std::make_shared<Memory>(new_arr);
 	}
-	case LAM:
-		return std::make_shared<Memory>(lambda->clone(parent));
-	case NUL:
-		return std::make_shared<Memory>();
 	case OBJ: {
 		auto temp = std::make_shared<Memory>();
 		temp->mt = OBJ;
@@ -183,50 +162,38 @@ SP_Memory Memory::clone(SP_Scope parent) {
 }
 
 bool Memory::equals(const SP_Memory a) {
-	if (mt == REF)
-		return reference->equals(a);
-	if (a->mt == REF)
-		return a->reference->equals(shared_from_this());
-
-	if (mt != a->mt)
-		return false;
+	if (mt == REF)		return reference->equals(a);
+	if (a->mt == REF)	return a->reference->equals(shared_from_this());
+	if (mt != a->mt)	return false;
 
 	switch (a->mt)
 	{
-	case NUM:
-		if (getValue() != a->getValue())
-			return false;
-		break;
+	case NUM:	if (getValue() != a->getValue())	return false;
 	case ARR: {
-		if (arr_data.size() != a->arr_data.size())
-			return false;
-		for (int i = 0; i < arr_data.size(); i++) {
+		if (arr_data.size() != a->arr_data.size())	return false;
+		for (int i = 0; i < arr_data.size(); i++)
 			if (!arr_data[i]->equals(a->arr_data[i]))
 				return false;
-		}
-		break;
-	}
-	case LAM:
-		if (lambda != a->lambda)
-			return false;
-		break;
-	case NUL:
 		return true;
-	default:
-		return false;
+	}
+	case LAM:	if (lambda != a->lambda)	return false;
+	case NUL:	return true;
+	default:	return false;
 	}
 
 	return true;
 }
 
-void Memory::setValue(long double data){
-	this->data = data;
+SP_Memory Memory::setValue(const long double data){
+	if (mt == REF)	this->reference->setValue(data);
+	else			this->data = data;
+	return shared_from_this();
 }
 
-void Memory::set(const SP_Memory m) {
+SP_Memory Memory::set(const SP_Memory m) {
 	if (mt == REF) {
 		reference->set(m);
-		return;
+		return shared_from_this();
 	}
 
 	this->mt = m->mt;
@@ -255,15 +222,17 @@ void Memory::set(const SP_Memory m) {
 		this->lambda = m->lambda;
 		break;
 	}
+	return shared_from_this();
 }
 
-void Memory::setScope(SP_Scope scope) {
+SP_Memory Memory::setScope(const SP_Scope scope) {
 	if (mt == REF) {
 		reference->setScope(scope);
-		return;
+		return shared_from_this();
 	}
 	obj_data = scope;
 	mt = OBJ;
+	return shared_from_this();
 }
 
 SP_Memory Memory::add(const SP_Memory a) {

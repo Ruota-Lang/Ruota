@@ -21,9 +21,8 @@ SP_Scope Scope::clone(SP_Scope parent) {
 	else
 		scope = std::make_shared<Scope>(parent);
 
-	for (auto &v : variables) {
+	for (auto &v : variables)
 		scope->variables[v.first] = v.second->clone(scope);
-	}
 	return scope;
 }
 

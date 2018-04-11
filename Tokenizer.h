@@ -7,13 +7,16 @@
 #include<algorithm>
 #include<iostream>
 
+typedef	std::string			String;
+typedef	std::vector<String>	VEC_String;
+
 class Tokenizer {
 public:
-	std::map<std::string, int> operators;
-	Tokenizer(std::map<std::string, int>);
-	std::vector<std::string> tokenize(const std::string);
-	std::vector<std::string> infixToPostfix(std::vector<std::string>);
-	int getPrecedence(std::string);
+	Tokenizer(std::map<String, int>);
+	std::map<String, int>	operators;
+	VEC_String	tokenize(const String);
+	VEC_String	infixToPostfix(VEC_String);
+	int			getPrecedence(String);
 };
 
 #endif

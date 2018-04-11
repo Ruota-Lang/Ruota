@@ -1,0 +1,24 @@
+struct Map :: {
+	local contents = [];
+
+	index(key) => v from {
+		i in contents do {
+			i.key == key then {
+				v := i.value;
+				return;
+			};
+		};
+		contents = contents ++ [null];
+		local e := contents[#contents];
+		e.key = key;
+		v := e.value;
+	};
+
+	string() => s from {
+		s = "[ ";
+		e in contents do {
+			s = s .. e.key .. "=" .. e.value .. " ";
+		};
+		s = s .. "]";
+	};
+};

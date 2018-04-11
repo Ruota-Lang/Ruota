@@ -7,12 +7,12 @@ struct LinkedList :: {
 	add(e) => v from {
 		head == null then {
 			head = new Link;
-			head.value = e;
+			head.value := e;
 		} else {
 			local curr = head;
 			curr.next != null do { curr = curr.next };
 			curr.next = new Link;
-			curr.next.value = e;
+			curr.next.value := e;
 		};
 		v = e;
 	};

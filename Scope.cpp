@@ -27,7 +27,7 @@ SP_Scope Scope::clone(SP_Scope parent) {
 	return scope;
 }
 
-SP_Memory Scope::getVariable(std::string key) {
+SP_Memory Scope::getVariable(String key) {
 #ifdef DEBUG
 	std::cout << " >> Retrieving Variable: " << key << std::endl;
 #endif // DEBUG
@@ -54,6 +54,6 @@ SP_Memory Scope::getVariable(std::string key) {
 	return current->variables[key];
 }
 
-std::string Scope::toString(){
+String Scope::toString(){
 	return "{ " + main->toString() + " }";
 }

@@ -84,7 +84,7 @@ void Memory::makeScope(SP_Scope parent) {
 	this->mt = OBJ;
 }
 
-Memory::Memory(std::string s) {
+Memory::Memory(String s) {
 #ifdef DEBUG
 	reference_count++;
 #endif // DEBUG
@@ -115,7 +115,7 @@ VEC_Memory Memory::getArray() {
 }
 
 void Memory::refer(SP_Memory m) {
-	if (m->mt == NUL) {
+	if (m->mt == NUL && m->getValue() == 1) {
 		this->mt = NUL;
 		return;
 	}
@@ -123,12 +123,12 @@ void Memory::refer(SP_Memory m) {
 	this->mt = REF;
 }
 
-SP_Memory Memory::index(size_t pos) {
+SP_Memory Memory::index(SP_Memory m) {
 	if (mt == REF)
-		return reference->index(pos);
+		return reference->index(m);
 
 	if (mt == ARR) {
-		pos--;
+		size_t pos = m->getValue() - 1;
 		if (this->arr_data.size() <= pos || pos < 0) {
 			throw std::runtime_error(("Error: Index out of range! (Pos=" + std::to_string(pos + 1) + ", Size=" + std::to_string(this->arr_data.size()) + ")").c_str());
 		}
@@ -138,7 +138,7 @@ SP_Memory Memory::index(size_t pos) {
 		if (obj_data->variables.find("index") != obj_data->variables.end()) {
 			auto l = obj_data->variables["index"]->getLambda();
 			if (l != nullptr) {
-				return l->execute({std::make_shared<Memory>(pos)});
+				return l->execute({m});
 			}
 		}
 	}
@@ -177,14 +177,14 @@ SP_Memory Memory::clone(SP_Scope parent) {
 bool Memory::equals(const SP_Memory a) {
 	if (mt == REF)
 		return reference->equals(a);
+	if (a->mt == REF)
+		return a->reference->equals(shared_from_this());
 
 	if (mt != a->mt)
 		return false;
 
-	switch (mt)
+	switch (a->mt)
 	{
-	case REF:
-		return reference->equals(a);
 	case NUM:
 		if (getValue() != a->getValue())
 			return false;
@@ -211,6 +211,10 @@ bool Memory::equals(const SP_Memory a) {
 	return true;
 }
 
+void Memory::setValue(long double data){
+	this->data = data;
+}
+
 void Memory::set(const SP_Memory m) {
 	if (mt == REF) {
 		reference->set(m);
@@ -220,6 +224,7 @@ void Memory::set(const SP_Memory m) {
 	this->mt = m->mt;
 	this->arr_data.clear();
 	this->lambda = nullptr;
+	this->data = 0;
 	switch (m->mt)
 	{
 	case REF:
@@ -434,13 +439,13 @@ SP_Memory Memory::pow(const SP_Memory a) {
 	return nullptr;
 }
 
-std::string Memory::toString() {
+String Memory::toString() {
 	switch (this->mt)
 	{
 	case REF:
 		return reference->toString();
 	case NUM: {
-		std::string s = std::to_string(data);
+		String s = std::to_string(data);
 		while (s.back() == '0')
 			s.pop_back();
 		if (s.back() == '.')
@@ -448,12 +453,12 @@ std::string Memory::toString() {
 		return s;
 	}
 	case ARR: {
-		std::string s = "";
+		String s = "";
 		for (auto &m : arr_data) {
 			s.push_back(m->getValue());
 		}
 		return s;
-		/*std::string s = "[ ";
+		/*String s = "[ ";
 		for (auto &m : arr_data) {
 			s += m->toString() + " ";
 		}

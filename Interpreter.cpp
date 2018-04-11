@@ -2,7 +2,7 @@
 
 VEC_Memory(*Interpreter::__send)(VEC_Memory) = NULL;
 
-std::map<std::string, int> Interpreter::operators = {
+std::map<String, int> Interpreter::operators = {
 	{ "load", 999 },
 	{ ".index", 12 },
 	{ ".exec", 12 },
@@ -53,7 +53,7 @@ Interpreter::Interpreter(VEC_Memory(*__send)(VEC_Memory)) {
 	this->__send = __send;
 }
 
-SP_Scope Interpreter::generate(std::string code, SP_Scope main, std::string local_file) {
+SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 	Tokenizer * t = new Tokenizer(operators);
 	auto tokenized = t->tokenize(code);
 	auto tokens = t->infixToPostfix(tokenized);
@@ -75,10 +75,10 @@ SP_Scope Interpreter::generate(std::string code, SP_Scope main, std::string loca
 	for (auto &token : tokens) {
 		if (token == "," || token == ";") continue;
 		if (token == "load") {
-			std::string filename = stack.back()->execute(current)->toString();
+			String filename = stack.back()->execute(current)->toString();
 			stack.pop_back();
 
-			std::string full_path_string = local_file;
+			String full_path_string = local_file;
 
 			if (local_file == "") {
 				TCHAR full_path[MAX_PATH];
@@ -86,7 +86,7 @@ SP_Scope Interpreter::generate(std::string code, SP_Scope main, std::string loca
 				full_path_string = full_path;
 				filename = "";
 				while (full_path_string.back() != '\\') {
-					filename = std::string(1, full_path_string.back()) + filename;
+					filename = String(1, full_path_string.back()) + filename;
 					full_path_string.pop_back();
 				}
 #ifdef DEBUG
@@ -96,8 +96,8 @@ SP_Scope Interpreter::generate(std::string code, SP_Scope main, std::string loca
 
 			if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
 				LOADED.push_back(filename);
-				std::string content;
-				std::string line;
+				String content;
+				String line;
 				std::ifstream myfile(full_path_string + filename);
 #ifdef DEBUG
 				std::cout << " >> Openning:\t" << full_path_string << filename << std::endl;
@@ -131,6 +131,7 @@ SP_Scope Interpreter::generate(std::string code, SP_Scope main, std::string loca
 			stack.push_back(std::make_shared<Node>(RETURN, nullvec));
 		else if (token == "null") {
 			SP_Memory nullmem = std::make_shared<Memory>();
+			nullmem->setValue(1);
 			SP_Node nullnode = std::make_shared<Node>(0);
 			nullnode->mem_data = nullmem;
 			stack.push_back(nullnode);

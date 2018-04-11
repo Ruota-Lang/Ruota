@@ -16,11 +16,11 @@
 #undef	max
 #undef	min
 
-class Interpreter;
-struct Memory;
-struct Scope;
-struct Node;
-struct Lambda;
+class	Interpreter;
+struct	Memory;
+struct	Scope;
+struct	Node;
+struct	Lambda;
 
 enum NodeType {
 	M_B,
@@ -90,14 +90,15 @@ enum MemType {
 	REF
 };
 
-#define	SP_Memory	std::shared_ptr<Memory>
-#define SP_Node		std::shared_ptr<Node>
-#define SP_Scope	std::shared_ptr<Scope>
-#define SP_Lambda	std::shared_ptr<Lambda>
+typedef	std::string				String;
+typedef	std::shared_ptr<Memory>	SP_Memory;
+typedef	std::shared_ptr<Node>	SP_Node;
+typedef	std::shared_ptr<Scope>	SP_Scope;
+typedef	std::shared_ptr<Lambda>	SP_Lambda;
 
-#define VEC_Memory	std::vector<SP_Memory>
-#define VEC_Node	std::vector<SP_Node>
-#define VEC_String	std::vector<std::string>
+typedef	std::vector<SP_Memory>	VEC_Memory;
+typedef	std::vector<SP_Node>	VEC_Node;
+typedef	std::vector<String>		VEC_String;
 
 
 struct Memory : std::enable_shared_from_this<Memory> {
@@ -114,7 +115,7 @@ private:
 public:
 	Memory();
 	~Memory();
-	Memory(std::string);
+	Memory(String);
 	Memory(long double);
 	Memory(SP_Lambda);
 	Memory(VEC_Memory);
@@ -130,11 +131,12 @@ public:
 	bool 		isStruct();
 	void		set(const SP_Memory);
 	long double	getValue();
-	SP_Memory	index(size_t pos);
-	SP_Memory	index(std::string);
+	SP_Memory	index(SP_Memory);
+	SP_Memory	index(String);
 	void		setStatic(bool);
 	void		setStruct(bool);
-	std::string	toString();
+	void		setValue(long double);
+	String		toString();
 	SP_Memory	clone(SP_Scope);
 	SP_Lambda	getLambda();
 	SP_Scope	getScope();
@@ -151,14 +153,14 @@ struct Node : std::enable_shared_from_this<Node> {
 	NodeType 	nt;
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
-	std::string	key;
+	String	key;
 
 	Node(SP_Scope);
 	Node(long double);
-	Node(std::string);
+	Node(String);
 	Node(NodeType, VEC_Node);
 
-	std::string	toString();
+	String	toString();
 	SP_Memory	execute(SP_Scope);
 	SP_Node		clone(SP_Scope);
 };
@@ -176,15 +178,15 @@ struct Lambda : std::enable_shared_from_this<Lambda> {
 struct Scope : std::enable_shared_from_this<Scope> {
 	SP_Scope	parent = nullptr;
 	SP_Node		main = nullptr;
-	std::map<std::string, SP_Memory> variables;
+	std::map<String, SP_Memory> variables;
 
 	Scope(SP_Scope);
 	Scope(SP_Scope, SP_Node);
 
 	SP_Memory	execute();
-	SP_Memory	getVariable(std::string);
+	SP_Memory	getVariable(String);
 	SP_Scope	clone(SP_Scope);
-	std::string	toString();
+	String	toString();
 };
 
 class Interpreter {	
@@ -194,11 +196,11 @@ class Interpreter {
 	friend Memory;
 private:
 	static VEC_Memory(*__send)(VEC_Memory);
-	static std::map<std::string, int> operators;
-	std::vector<std::string> LOADED;
+	static std::map<String, int> operators;
+	std::vector<String> LOADED;
 public:
 	Interpreter(VEC_Memory (*__send)(VEC_Memory));
-	SP_Scope generate(std::string, SP_Scope, std::string);
+	SP_Scope generate(String, SP_Scope, String);
 	SP_Memory execute(SP_Scope);
 };
 

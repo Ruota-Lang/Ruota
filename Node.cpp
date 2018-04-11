@@ -10,7 +10,7 @@ Node::Node(NodeType nt, VEC_Node params) {
 	this->nt = nt;
 }
 
-Node::Node(std::string key) {
+Node::Node(String key) {
 	this->key = key;
 	this->nt = VAR;
 }
@@ -125,7 +125,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		auto temp = scope_ref->execute();
 		if (temp->getArray().empty())
 			return temp;
-		return temp->index(1);
+		return temp->getArray()[0];
 	}
 	case ADD: {
 		auto p1 = executed[0];
@@ -213,14 +213,14 @@ SP_Memory Node::execute(SP_Scope scope) {
 		return std::make_shared<Memory>(p1->getValue() || p2->getValue());
 	}
 	case DES: {
-		std::vector<std::string> param_keys;
+		std::vector<String> param_keys;
 		for (auto &n : params[0]->params) {
 			param_keys.push_back(n->key);
 		}
 		return std::make_shared<Memory>(std::make_shared<Lambda>(scope, params[1], param_keys));
 	}
 	case LDES: {
-		std::vector<std::string> param_keys;
+		std::vector<String> param_keys;
 		for (auto &n : params[0]->params[1]->params) {
 			param_keys.push_back(n->key);
 		}
@@ -263,6 +263,8 @@ SP_Memory Node::execute(SP_Scope scope) {
 				auto v = inner_scope->execute();
 				if (v->getType() == BREAK_M)
 					break;
+				if (v->getType() == RETURN_M)
+					return v;
 			}
 			return std::make_shared<Memory>();
 		}
@@ -333,7 +335,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		auto p2 = executed[1];
 		VEC_Memory new_arr;
 		for (auto i : p2->getArray()) {
-			new_arr.push_back(p1->index(i->getValue()));
+			new_arr.push_back(p1->index(i));
 		}
 		if (new_arr.size() > 1)
 			return std::make_shared<Memory>(new_arr);
@@ -369,7 +371,7 @@ SP_Node Node::clone(SP_Scope scope) {
 	return new_node;
 }
 
-std::string Node::toString() {
+String Node::toString() {
 	switch(nt){
 		case VAR:
 			return key;
@@ -436,14 +438,14 @@ std::string Node::toString() {
 		case BREAK:
 			return "break";
 		case LIST:{
-			std::string s = "[ ";
+			String s = "[ ";
 			for (auto &p : params){
 				s += p->toString() + " ";
 			}
 			return s + "]";
 		}
 		case SOFT_LIST:{
-			std::string s = "( ";
+			String s = "( ";
 			for (auto &p : params){
 				s += p->toString() + " ";
 			}

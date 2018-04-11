@@ -23,14 +23,14 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		break;
 	}
 	case 3: {
-		std::string d;
+		String d;
 		std::cin >> d;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		return { std::make_shared<Memory>(d) };
 		break;
 	}
 	case 4: {
-		std::string d;
+		String d;
 		std::getline(std::cin, d);
 		return { std::make_shared<Memory>(d) };
 		break;
@@ -50,7 +50,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 }
 
 int console(){
-	std::string line;
+	String line;
 	i->generate("load \"RuotaCode\\System.ruo\";" , main_scope, "");
 	i->execute(main_scope);
 
@@ -86,7 +86,7 @@ int main(int argc, char * argv[]) {
 	main_scope = std::make_shared<Scope>(nullptr);
 
 	if (argc == 2) {
-		i->generate("load \"" + std::string(argv[1]) + "\";" , main_scope, "");
+		i->generate("load \"" + String(argv[1]) + "\";" , main_scope, "");
 		i->execute(main_scope);
 	}else{
 		return console();

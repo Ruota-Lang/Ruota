@@ -57,18 +57,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 	Tokenizer * t = new Tokenizer(operators);
 	auto tokenized = t->tokenize(code);
 	auto tokens = t->infixToPostfix(tokenized);
-
-#ifdef DEBUG
-
-	for (auto &t : tokens) {
-		std::cout << t << " ";
-	}
-	std::cout << std::endl;
-
-#endif
-
 	SP_Scope current = main;
-
 	VEC_Node stack;
 	VEC_Node nullvec;
 
@@ -89,9 +78,6 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					filename = String(1, full_path_string.back()) + filename;
 					full_path_string.pop_back();
 				}
-#ifdef DEBUG
-				std::cout << " >> PATH:\t" << full_path_string << std::endl;
-#endif // DEBUG
 			}
 
 			if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
@@ -99,15 +85,10 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				String content;
 				String line;
 				std::ifstream myfile(full_path_string + filename);
-#ifdef DEBUG
-				std::cout << " >> Openning:\t" << full_path_string << filename << std::endl;
-#endif
 				if (myfile.is_open())
 				{
 					while (getline(myfile, line))
-					{
 						content += line + "\n";
-					}
 					myfile.close();
 				}
 
@@ -115,9 +96,6 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(gen->main);
 			}
 			else {
-#ifdef DEBUG
-				std::cout << " >> Already Imported:\t" << full_path_string << filename << std::endl;
-#endif
 				stack.push_back(std::make_shared<Node>(0));
 			}
 		}
@@ -138,21 +116,21 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 		}
 		else if (isdigit(token[0]))
 			stack.push_back(std::make_shared<Node>(stod(token)));
-		else if (token[0] == '\'') {
+		else if (token[0] == '\'')
 			stack.push_back(std::make_shared<Node>(token[1]));
-		}
 		else if (token[0] == '\"') {
 			VEC_Node chars;
-			for (int i = 1; i < token.length(); i++) {
+			for (int i = 1; i < token.length(); i++)
 				chars.push_back(std::make_shared<Node>(token[i]));
-			}
 			stack.push_back(std::make_shared<Node>(LIST, chars));
 		}
 		else if (operators.find(token) != operators.end()) {
-			auto b = stack.back(); stack.pop_back();
+			auto b = stack.back(); 
+			stack.pop_back();
 			SP_Node a = nullptr;
-			if (!stack.empty()) {
-				a = stack.back(); stack.pop_back();
+			if (!stack.empty()){
+				a = stack.back(); 
+				stack.pop_back();
 			}
 			VEC_Node params = { a, b };
 			if (token == "=")

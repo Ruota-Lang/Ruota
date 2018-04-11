@@ -19,10 +19,13 @@ static System :: {
 				Math.floor(double() * (max - min) + min);
 		};
 	};
+};
 
-	static Math :: {
-		floor(x) => { _OUTER_CALL_(6, x)[1] };
-	};
+static Math :: {
+	floor(x) => { _OUTER_CALL_(6, x)[1] };
+	sqrt(x) => { x ** 0.5 };
+	max(a, b) => { a > b then a else b };
+	min(a, b) => { a < b then a else b };
 };
 
 @ Converts an array to a string representation

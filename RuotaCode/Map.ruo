@@ -14,6 +14,28 @@ struct Map :: {
 		v := e.value;
 	};
 
+	containsKey(key) => b from {
+		i in contents do {
+			i.key == key then {
+				b = true;
+				return;
+			};
+		};
+		b = false;
+	};
+
+	containsValue(value) => b from {
+		i in contents do {
+			i.value == value then {
+				b = true;
+				return;
+			};
+		};
+		b = false;
+	};
+
+	size() => { #contents };
+
 	string() => s from {
 		s = "[ ";
 		e in contents do {

@@ -1,0 +1,29 @@
+static Strings :: {
+	replace(s, a, b) => n_s from {
+		i in s do {
+			i == a then {
+				i = b;
+			};
+		};
+		n_s = s;
+	};
+
+	split(s, a) => arr from {
+		a == null then a = ' ';
+		arr = [""];
+		i in s do {
+			i == a then {
+				arr = arr ++ [""];
+			} else {
+				arr[#arr] = arr[#arr] ++ [i];
+			};
+		};
+	};
+
+	join(arr, a) => s from {
+		s = arr[1];
+		i in [2 : #arr : 1] do {
+			s = s ++ [ a ] ++ arr[i];
+		};
+	};
+};

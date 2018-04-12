@@ -240,7 +240,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		VEC_Memory new_arr;
 		for (auto &i : p2->getArray())
 			new_arr.push_back(p1->index(i));
-		if (new_arr.size() > 1)
+		if (new_arr.size() > 1 || new_arr.size() == 0)
 			return new_memory(new_arr);
 		else
 			return new_arr[0];

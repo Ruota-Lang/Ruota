@@ -199,6 +199,7 @@ SP_Memory Memory::set(const SP_Memory m) {
 	this->mt = m->mt;
 	this->arr_data.clear();
 	this->lambda = nullptr;
+	this->reference = nullptr;
 	this->data = 0;
 	switch (m->mt)
 	{

@@ -27,25 +27,25 @@ SP_Scope Scope::clone(SP_Scope parent) {
 }
 
 SP_Memory Scope::getVariable(String key) {
-#ifdef DEBUG
-	std::cout << " >> Retrieving Variable: " << key << std::endl;
-#endif // DEBUG
+	//std::cout << " >> Retrieving Variable: " << key << std::endl;
 
 	SP_Scope current = shared_from_this();
 
 	while (current != nullptr) {
 		auto vars = current->variables;
 
+		/*std::cout << " >> VAR SELECTION:\n";
+		for (auto &v : vars) {
+			std::cout << v.first << "\t" << v.second->toString() << std::endl;;
+		}*/
+
 		if (vars.find(key) != vars.end())
 			break;
-
 		current = current->parent;
 	}
 
 	if (current == nullptr) {
-#ifdef DEBUG
-		std::cout << " >> Creating Variable: " << key << std::endl;
-#endif // DEBUG
+		//std::cout << " >> Creating Variable: " << key << std::endl;
 		this->variables[key] = std::make_shared<Memory>();
 		return this->variables[key];
 	}

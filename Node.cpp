@@ -21,6 +21,7 @@ Node::Node(SP_Scope scope_ref) {
 }
 
 SP_Memory Node::execute(SP_Scope scope) {
+	//std::cout << " >> " << this->toString() << std::endl;
 	VEC_Memory executed;
 	if (nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
@@ -299,6 +300,7 @@ String Node::toString() {
 		case SIZE_O:	return "(#" + params[0]->toString() + ")";
 		case LOCAL:		return "(local " + params[0]->toString() + ")";
 		case SET_STAT:	return "(static " + params[0]->toString() + ")";
+		case NEW:		return "(new " + params[0]->toString() + ")";
 		case OUT_CALL:	return "(_OUTER_CALL_ !! (" + params[0]->toString() + "))";
 		case RETURN:	return "return";
 		case BREAK:		return "break";

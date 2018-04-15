@@ -105,7 +105,6 @@ typedef	std::vector<String>		VEC_String;
 
 struct Memory : std::enable_shared_from_this<Memory> {
 private:
-	static long	reference_count;
 	long double	data = 0;
 	MemType		mt;
 	VEC_Memory	arr_data;
@@ -114,7 +113,8 @@ private:
 	SP_Memory	reference = nullptr;
 	bool		static_object = false;
 	bool		struct_object = false;
-public:
+public:	
+	static long	reference_count;
 	Memory();
 	~Memory();
 	Memory(String);
@@ -152,6 +152,7 @@ public:
 };
 
 struct Node : std::enable_shared_from_this<Node> {
+	static long reference_count;
 	VEC_Node 	params;
 	NodeType 	nt;
 	SP_Scope 	scope_ref = nullptr;
@@ -162,6 +163,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	Node(long double);
 	Node(String);
 	Node(NodeType, VEC_Node);
+	~Node();
 
 	String		toString();
 	SP_Memory	execute(SP_Scope);
@@ -169,22 +171,26 @@ struct Node : std::enable_shared_from_this<Node> {
 };
 
 struct Lambda : std::enable_shared_from_this<Lambda> {
+	static long reference_count;
 	SP_Node		base = nullptr;
 	SP_Scope	parent = nullptr;
 	VEC_String	param_keys;
 
 	Lambda(SP_Scope, SP_Node, VEC_String);
+	~Lambda();
 	SP_Memory	execute(VEC_Memory);
 	SP_Lambda	clone(SP_Scope);
 };
 
 struct Scope : std::enable_shared_from_this<Scope> {
+	static long reference_count;
 	SP_Scope	parent = nullptr;
 	SP_Node		main = nullptr;
 	std::map<String, SP_Memory> variables;
 
 	Scope(SP_Scope);
 	Scope(SP_Scope, SP_Node);
+	~Scope();
 
 	SP_Memory	execute();
 	SP_Memory	getVariable(String);

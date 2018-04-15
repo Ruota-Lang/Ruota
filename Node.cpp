@@ -1,23 +1,33 @@
 #include "Interpreter.h"
 
+long Node::reference_count = 0;
+
 Node::Node(long double data) {
+	this->reference_count++;
 	this->mem_data = new_memory(data);
 	this->nt = MEM;
 }
 
 Node::Node(NodeType nt, VEC_Node params) {
+	this->reference_count++;
 	this->params = params;
 	this->nt = nt;
 }
 
 Node::Node(String key) {
+	this->reference_count++;
 	this->key = key;
 	this->nt = VAR;
 }
 
 Node::Node(SP_Scope scope_ref) {
+	this->reference_count++;
 	this->scope_ref = scope_ref;
 	this->nt = SCOPE;
+}
+
+Node::~Node(){
+	this->reference_count--;
 }
 
 SP_Memory Node::execute(SP_Scope scope) {

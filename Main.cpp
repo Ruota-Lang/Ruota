@@ -51,8 +51,8 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 
 int console(){
 	String line;
-	i->generate("load \"RuotaCode\\System.ruo\";" , main_scope, "");
-	i->execute(main_scope);
+	//i->generate("load \"RuotaCode\\System.ruo\";" , main_scope, "");
+	//i->execute(main_scope);
 
 	do {
 		std::cout << "> ";
@@ -72,6 +72,11 @@ int console(){
 			else if(!res->getArray().empty()) {
 				std::cout << res->getArray()[0]->toString() << std::endl;
 			}
+
+			std::cout << "MEM:\t" << Memory::reference_count << std::endl;
+			std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
+			std::cout << "NOD:\t" << Node::reference_count << std::endl;
+			std::cout << "SCO:\t" << Scope::reference_count << std::endl;
 		}
 		catch (std::runtime_error &e) {
 			std::cout << e.what() << std::endl;
@@ -91,5 +96,6 @@ int main(int argc, char * argv[]) {
 	}else{
 		return console();
 	}
+	delete i;
 	return EXIT_SUCCESS;
 }

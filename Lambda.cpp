@@ -1,5 +1,7 @@
 #include "Interpreter.h"
 
+long Lambda::reference_count = 0;
+
 SP_Memory Lambda::execute(VEC_Memory params) {
 	SP_Scope scope = std::make_shared<Scope>(parent);
 	auto new_base = base->clone(scope);
@@ -25,7 +27,12 @@ SP_Lambda Lambda::clone(SP_Scope parent) {
 };
 
 Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_keys) {
+	this->reference_count++;
 	this->param_keys = param_keys;
 	this->parent = parent;
 	this->base = base;
+}
+
+Lambda::~Lambda(){
+	this->reference_count--;
 }

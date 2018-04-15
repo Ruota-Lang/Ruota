@@ -1,13 +1,21 @@
 #include "Interpreter.h"
 #include <iostream>
 
+long Scope::reference_count = 0;
+
 Scope::Scope(SP_Scope parent) {
+	this->reference_count++;
 	this->parent = parent;
 }
 
 Scope::Scope(SP_Scope parent, SP_Node main) {
+	this->reference_count++;
 	this->parent = parent;
 	this->main = main;
+}
+
+Scope::~Scope(){
+	this->reference_count--;
 }
 
 SP_Memory Scope::execute() {

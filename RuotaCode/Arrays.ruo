@@ -32,6 +32,16 @@ static Arrays :: {
 		};
 	};
 
+	@ Removes elements of equivalent value to 'value'
+	removeValue(a, value) => n_a from {
+		n_a = [];
+		e in a do {
+			e != value then {
+				n_a = n_a ++ [e];
+			};
+		};
+	};
+
 	@ Pushes an element 'e' to the back of array 'a'
 	push(a, e) => { a ++ [e] };
 

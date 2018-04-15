@@ -1,41 +1,31 @@
 #include "Interpreter.h"
 
 Memory::Memory() {
-#ifdef DEBUG
 	reference_count++;
-#endif // DEBUG
 	this->data = 0;
 	this->mt = NUL;
 }
 
 Memory::Memory(long double data) {
-#ifdef DEBUG
 	reference_count++;
-#endif // DEBUG
 	this->data = data;
 	this->mt = NUM;
 }
 
 Memory::Memory(SP_Scope scope) {
-#ifdef DEBUG
 	reference_count++;
-#endif // DEBUG
 	obj_data = scope;
 	mt = OBJ;
 }
 
 Memory::Memory(SP_Lambda lambda) {
-#ifdef DEBUG
 	reference_count++;
-#endif // DEBUG
 	this->lambda = lambda;
 	this->mt = LAM;
 }
 
 Memory::Memory(VEC_Memory arr_data) {
-#ifdef DEBUG
 	reference_count++;
-#endif // DEBUG
 	this->arr_data = arr_data;
 	this->mt = ARR;
 }
@@ -84,9 +74,7 @@ SP_Memory Memory::makeScope(const SP_Scope parent) {
 }
 
 Memory::Memory(String s) {
-#ifdef DEBUG
 	reference_count++;
-#endif // DEBUG
 	for (auto &c : s)
 		this->arr_data.push_back(std::make_shared<Memory>(c));
 	this->mt = ARR;
@@ -470,8 +458,5 @@ MemType Memory::getType() {
 long Memory::reference_count = 0;
 
 Memory::~Memory() {
-#ifdef DEBUG
 	reference_count--;
-	std::cout << " >> Deleting Memory: " << toString() << " ("<< reference_count << ")" << std::endl;
-#endif // DEBUG
 }

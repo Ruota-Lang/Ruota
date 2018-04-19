@@ -1,0 +1,19 @@
+primes(min, max) => a from {
+	a = [];
+	max == null then { 
+		max = min; 
+		min = 2;
+	};
+	isPrime(x) => prime from {
+		prime = true;
+		i in [2 : (x ** 0.5) : 1] do {
+			x % i == 0 then {
+				prime = false;
+				break;
+			};
+		};
+	};
+	i in [min : max : 1] do {
+		isPrime(i) then a = a ++ [i];
+	};
+};

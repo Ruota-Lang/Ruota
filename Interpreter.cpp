@@ -302,8 +302,9 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			stack.push_back(std::make_shared<Node>(token));
 		}
 	}
-	
+
 	main->main = std::make_shared<Node>(LIST, stack);
+	main->main->weakListCheck();
 	return main;
 }
 

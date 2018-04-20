@@ -168,6 +168,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	String		toString();
 	SP_Memory	execute(SP_Scope);
 	SP_Node		clone(SP_Scope);
+	void		weakListCheck();
 };
 
 struct Lambda : std::enable_shared_from_this<Lambda> {

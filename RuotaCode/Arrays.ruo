@@ -10,7 +10,7 @@ static Arrays :: {
 		local lower = [];
 		local upper = [];
 		local pivot = System.Random.int(#a);
-		i in [1 : #a : 1] do {
+		i in [1 : #a] do {
 			i != pivot then {
 				local e = a[i];
 				comp(e, a[pivot]) 
@@ -49,8 +49,8 @@ static Arrays :: {
 	unshift(a, e) => { [e] ++ a };
 
 	@ Pop the last element of array 'a'
-	pop(a) => { a[1 : (#a - 1) : 1] };
+	pop(a) => { a[1 : #a - 1] };
 
 	@ Pop the first element of array 'a'
-	shift(a) => { a[2 : #a : 1] };
+	shift(a) => { a[2 : #a] };
 }

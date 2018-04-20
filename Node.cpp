@@ -218,12 +218,8 @@ SP_Memory Node::execute(SP_Scope scope) {
 			step = executed[2]->getValue();
 
 		VEC_Memory range;
-		if (p1 <= p2 || executed.size() > 2)
-			for (long double i = p1; i <= p2; i += step)
-				range.push_back(new_memory(i));
-		else
-			for (long double i = p1; i >= p2; i -= step)
-				range.push_back(new_memory(i));
+		for (long double i = p1; i <= p2; i += step)
+			range.push_back(new_memory(i));
 		return new_memory(range);
 	}
 	case LIST:
@@ -329,4 +325,17 @@ String Node::toString() {
 		default:
 			return "NULL";
 	}
+}
+
+void Node::weakListCheck() {
+	VEC_Node new_params;
+	for (auto &p : params){
+		SP_Node new_node = p;
+		while (new_node->nt == SOFT_LIST && new_node->params.size() == 1){
+			new_node = new_node->params[0];
+		}
+		new_node->weakListCheck();
+		new_params.push_back(new_node);
+	}
+	this->params = new_params;
 }

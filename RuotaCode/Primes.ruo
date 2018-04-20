@@ -6,14 +6,14 @@ primes(min, max) => a from {
 	};
 	isPrime(x) => prime from {
 		prime = true;
-		i in [2 : (x ** 0.5) : 1] do {
+		i in [2 : x ** 0.5] do {
 			x % i == 0 then {
 				prime = false;
 				break;
 			};
 		};
 	};
-	i in [min : max : 1] do {
+	i in [min : max] do {
 		isPrime(i) then a = a ++ [i];
 	};
 };

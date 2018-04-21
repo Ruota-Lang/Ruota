@@ -26,9 +26,9 @@ static Arrays :: {
 		pos == 1 then {
 			n_a = a[2 : #a];
 		} else pos == #a then {
-			n_a = a[1 : (#a - 1)];
+			n_a = a[1 :> #a];
 		} else {
-			n_a = a[1 : (pos - 1), (pos + 1) : #a];
+			n_a = a[1 :> pos, (pos + 1) : #a];
 		};
 	};
 
@@ -49,7 +49,7 @@ static Arrays :: {
 	unshift(a, e) => { [e] ++ a };
 
 	@ Pop the last element of array 'a'
-	pop(a) => { a[1 : #a - 1] };
+	pop(a) => { a[1 :> #a] };
 
 	@ Pop the first element of array 'a'
 	shift(a) => { a[2 : #a] };

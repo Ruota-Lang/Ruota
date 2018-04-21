@@ -285,6 +285,7 @@ SP_Node Node::clone(SP_Scope scope) {
 		new_params.push_back(n->clone(scope));
 	SP_Node new_node = std::make_shared<Node>(this->nt, new_params);
 	new_node->key = this->key;
+	new_node->flag = this->flag;
 	if (this->mem_data != nullptr)
 		new_node->mem_data = this->mem_data->clone(scope);
 	if (this->scope_ref != nullptr)

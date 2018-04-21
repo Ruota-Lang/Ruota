@@ -125,7 +125,7 @@ int main(int argc, char * argv[]) {
 		i->generate("load \"" + String(argv[1]) + "\";" , main_scope, "");
 		i->execute(main_scope);
 	}else{
-		return console();
+		console();
 	}
 	delete i;
 	return EXIT_SUCCESS;

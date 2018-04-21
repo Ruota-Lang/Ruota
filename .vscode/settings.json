@@ -46,7 +46,9 @@
 		"thread": "cpp",
 		"functional": "cpp",
 		"list": "cpp",
-		"xhash": "cpp"
+		"xhash": "cpp",
+		"unordered_map": "cpp",
+		"xfunctional": "cpp"
 	},
 	"discord.enabled": true
 }

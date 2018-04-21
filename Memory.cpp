@@ -179,6 +179,9 @@ SP_Memory Memory::setValue(const long double data){
 }
 
 SP_Memory Memory::set(const SP_Memory m) {
+	if (shared_from_this() == m)
+		return shared_from_this();
+
 	if (mt == REF) {
 		reference->set(m);
 		return shared_from_this();

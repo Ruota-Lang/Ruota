@@ -33,7 +33,7 @@ Node::~Node(){
 SP_Memory Node::execute(SP_Scope scope) {
 	//std::cout << " >> " << this->toString() << std::endl;
 	VEC_Memory executed;
-	if (nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
@@ -235,6 +235,18 @@ SP_Memory Node::execute(SP_Scope scope) {
 			}
 		}
 		return new_memory(0);
+	}
+	case THREAD:{
+		#ifdef THREADING
+		for (auto &n : params){
+			std::thread th(n->execute, scope);
+			th.join();
+		}
+		#else
+		for (auto &n : params){
+			n->execute(scope);
+		}
+		#endif
 	}
 	case SOFT_LIST:
 		if (executed.size() == 1)

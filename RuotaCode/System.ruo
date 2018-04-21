@@ -1,23 +1,62 @@
-static System :: {
+static Colors :: {
+	local BLACK = 0;
+	local BLUE = 1;
+	local GREEN = 2;
+	local CYAN = 3;
+	local RED = 4;
+	local MAGENTA = 5;
+	local YELLOW = 6;
+	local WHITE = 7;
+	local GREY = 8;
+	local GRAY = 8;
+	local BRIGHT_BLUE = 9;
+	local BRIGHT_GREEN = 10;
+	local BRIGHT_CYAN = 11;
+	local BRIGHT_RED = 12;
+	local BRIGHT_MAGENTA = 13;
+	local BRIGHT_YELLOW = 14;
+	local BRIGHT_WHITE = 15;
+};
+
+static Console :: {
 	print(x) => { _OUTER_CALL_(1, x) };
 	printLine(x) => { print(x .. "\n") };
 	newLine() => { printLine("") };
 	os(x) => { _OUTER_CALL_(0, x)[1] };
+	
+	color(k, k2) => { _OUTER_CALL_(7, k + 16 * k2) };
+
+	colorMap() => {
+		i in [0 : 15] do {
+			j in [0 : 15] do {
+				local k = i + 16 * j;
+				color(k);
+				print(" ");
+				k < 10 then {
+					print("  ");
+				} else k < 100 then {
+					print(" ");
+				};
+				print(k);
+			};
+			newLine();
+		};
+	};
 
 	static Input :: {
 		number() => { _OUTER_CALL_(2)[1] };
 		string() => { _OUTER_CALL_(3)[1] };
 		line() => { _OUTER_CALL_(4)[1] };
 	};
+};
 
-	static Random :: {
-		double() => { _OUTER_CALL_(5)[1] };
-		int(min, max) => {
-			max == null then 
-				Math.floor(double() * (min - 1) + 1)
-			else
-				Math.floor(double() * (max - min) + min);
-		};
+static Random :: {
+	double() => { _OUTER_CALL_(5)[1] };
+	int(min, max) => {
+		max == null then 
+			Math.floor(double() * (min - 1) + 1)
+		else
+			Math.floor(double() * (max - min) + min);
 	};
 };
 

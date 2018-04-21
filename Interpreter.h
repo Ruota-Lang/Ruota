@@ -12,6 +12,9 @@
 #include<windows.h>
 #include<chrono>
 #include<cmath>
+#ifdef THREADING
+	#include<thread>
+#endif
 
 #undef	max
 #undef	min
@@ -73,6 +76,7 @@ enum NodeType {
 	NEW,		// new
 	LOCAL,		// local
 	STRUCT,		// struct
+	THREAD,		// thread()
 
 	BREAK,		// break
 	RETURN		// return

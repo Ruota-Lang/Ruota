@@ -81,7 +81,6 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 
 			if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
-				LOADED.push_back(filename);
 				String content;
 				String line;
 				std::ifstream myfile(full_path_string + filename);
@@ -90,8 +89,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					while (getline(myfile, line))
 						content += line + "\n";
 					myfile.close();
+				}else
+				{
+					throw std::runtime_error("Cannot Load File: " + filename);
 				}
-
+				LOADED.push_back(filename);
 				auto gen = generate(content, current, full_path_string);
 				stack.push_back(gen->main);
 			}
@@ -228,6 +230,10 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			else if (token == ".exec") {
 				if (a->key == "_OUTER_CALL_") {
 					b->nt = OUT_CALL;
+					stack.push_back(b);
+				}
+				else if (a->key == "thread"){
+					b->nt = THREAD;
 					stack.push_back(b);
 				}
 				else {

@@ -3,17 +3,29 @@
 load "System.ruo";
 
 hilo(min, max) => {
-	a = System.Random.int(min, max);
-	r = -1;
-	System.printLine("The number is between " .. min .. " and " .. max);
-	System.printLine("--------------------------------");
-	a != r do {
-		System.print("Enter a guess: ");
-		r = System.Input.number();
-		r < a then System.printLine("Too low!");
-		r > a then System.printLine("Too high!");
+	min == null then {
+		max = 10;
+		min = 0;
+	} else max == null then {
+		max = min;
+		min = 0;
 	};
-	System.printLine("Correct! The answer was " .. a);
+	Console.color(Colors.MAGENTA + 8);
+	Console.printLine("~~Welcome to HiLo!~~");
+	a = Random.int(min, max);
+	r = -1;
+	Console.color(Colors.WHITE);
+	Console.printLine("The number is between " .. min .. " and " .. max);
+	Console.printLine("--------------------------------");
+	a != r do {
+		Console.color(Colors.WHITE);
+		Console.print("Enter a guess: ");
+		Console.color(Colors.YELLOW + 8);
+		r = Console.Input.number();
+		Console.color(Colors.CYAN);
+		r < a then Console.printLine("Too low!");
+		r > a then Console.printLine("Too high!");
+	};
+	Console.color(Colors.GREEN);
+	Console.printLine("Correct! The answer was " .. a);
 };
-
-hilo(0, 100);

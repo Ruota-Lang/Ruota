@@ -28,6 +28,9 @@ std::map<String, int> Interpreter::operators = {
 	{ "..", 7 },
 	{ "-", 7 },
 	{ ":", 6 },
+	{ "<:", 6 },
+	{ ":>", 6 },
+	{ "<:>", 6 },
 	{ "==", 5 },
 	{ "!=", 5 },
 	{ "<", 5 },
@@ -253,6 +256,10 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				}else
 					stack.push_back(std::make_shared<Node>(RANGE, params));
+			}
+			else if (token == ":>") {
+				stack.push_back(std::make_shared<Node>(RANGE, params));
+				stack.back()->flag = 1;
 			}
 			else if (token == "=>")
 				stack.push_back(std::make_shared<Node>(LDES, params));

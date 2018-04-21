@@ -218,8 +218,13 @@ SP_Memory Node::execute(SP_Scope scope) {
 			step = executed[2]->getValue();
 
 		VEC_Memory range;
-		for (long double i = p1; i <= p2; i += step)
-			range.push_back(new_memory(i));
+		if (flag == 0){
+			for (long double i = p1; i <= p2; i += step)
+				range.push_back(new_memory(i));
+		}else if (flag == 1){
+			for (long double i = p1; i < p2; i += step)
+				range.push_back(new_memory(i));
+		}
 		return new_memory(range);
 	}
 	case LIST:

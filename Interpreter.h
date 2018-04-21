@@ -162,6 +162,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
 	String		key;
+	int			flag = 0;
 
 	Node(SP_Scope);
 	Node(long double);

@@ -1,3 +1,5 @@
+load "System";
+
 Fibonacci(x) => a from {
 	a = [0, 1];
 	i in [3 : x] do {
@@ -5,6 +7,12 @@ Fibonacci(x) => a from {
 	};
 };
 
+#args == 0 then {
+	Console.printLine(sarr(Fibonacci(10)));
+} else {
+	Console.printLine(sarr(Fibonacci(value(args[1]))));
+};
+
 @ Alternatively, the function can be done inline like so:
-@ [1 : 10] >> ( (x, a) -> { x > 2 then a[x-1] + a[x-2] else x } )
+@ [0 : 10] >> ( (x, a) -> { #a > 1 then a[#a] + a[#a - 1] else x } )
 @ This uses the >> operator, sending the array as the input arguments to a lambda one at a time.

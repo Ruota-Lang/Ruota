@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cmath>
 #include "Interpreter.h"
 
@@ -74,13 +74,16 @@ int console(){
 	//i->generate("load \"RuotaCode\\System\";" , main_scope, "");
 	//i->execute(main_scope);
 
-	std::cout << "Ruota 0.3.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.3.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		#ifdef WIN32
+		setColor(12);
+		#endif
+		std::cout << "\n> ";
+		#ifdef WIN32
 		setColor(7);
 		#endif
-		std::cout << "> ";
 		std::getline(std::cin, line);
 
 		try {
@@ -88,18 +91,17 @@ int console(){
 			SP_Memory res = i->execute(main_scope);
 			
 			#ifdef WIN32
-			setColor(11);
+			setColor(8);
 			#endif
-
 			if (res->getArray().size() > 1) {
 				int n = 1;
 				for (auto &r : res->getArray()) {
-					std::cout << "(" << n << ")\t" << r->toString() << std::endl;
+					std::cout << "\t(" << n << ")\t" << r->toString() << std::endl;
 					n++;
 				}
 			}
 			else if(!res->getArray().empty()) {
-				std::cout << res->getArray()[0]->toString() << std::endl;
+				std::cout << "\t" << res->getArray()[0]->toString() << std::endl;
 			}
 			#ifdef DEBUG
 			std::cout << "MEM:\t" << Memory::reference_count << std::endl;
@@ -110,7 +112,7 @@ int console(){
 		}
 		catch (std::runtime_error &e) {
 			setColor(4);
-			std::cout << e.what() << std::endl;
+			std::cout << "\t" << e.what() << std::endl;
 		}
 	} while (line != "");
 

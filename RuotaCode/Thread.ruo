@@ -1,12 +1,15 @@
 load "System";
 
 threadTest() => {
-	func() => { 
-		i in [1 : 5] do { 
-			Console.printLine(i); 
+	func(t) => { 
+		i in [1 : 5] do {
+			Console.printLine("Thread " .. t .. ":\t" .. i); 
 		}; 
 	};
-	Console.printLine("Start");
-	thread(func(), func(), func());
-	Console.printLine("Done");
+	Console.printLine("Unthreaded:");
+	func(1), func(2), func(3);
+	Console.printLine("Threaded:");
+	thread(func(1), func(2), func(3));
 };
+
+threadTest();

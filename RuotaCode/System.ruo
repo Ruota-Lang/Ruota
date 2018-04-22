@@ -72,7 +72,7 @@ static Math :: {
 sarr(a) => s from {
 	type a == "array" then {
 		s = "[ ";
-		i in a do { 
+		i in a do {
 			s = s .. idem(i) .. " ";
 		};
 		s = s .. "]";

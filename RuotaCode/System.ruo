@@ -23,6 +23,7 @@ static Console :: {
 	printLine(x) => { print(x .. "\n") };
 	newLine() => { printLine("") };
 	os(x) => { _OUTER_CALL_(0, x)[1] };
+	exit() => { _OUTER_CALL_(2) };
 	
 	color(k, k2) => { _OUTER_CALL_(7, k + 16 * k2) };
 
@@ -44,7 +45,7 @@ static Console :: {
 	};
 
 	static Input :: {
-		number() => { _OUTER_CALL_(2)[1] };
+		number() => { val string() };
 		string() => { _OUTER_CALL_(3)[1] };
 		line() => { _OUTER_CALL_(4)[1] };
 	};
@@ -69,7 +70,7 @@ static Math :: {
 
 @ Converts an array to a string representation
 sarr(a) => s from {
-	&a == "array" then {
+	type a == "array" then {
 		s = "[ ";
 		i in a do { 
 			s = s .. idem(i) .. " ";
@@ -80,16 +81,12 @@ sarr(a) => s from {
 	};
 };
 
-@ Converts a string to its numerical value
-@ Considering adding this as a default operation
-value(s) => { _OUTER_CALL_(8, s)[1] };
-
 @ Returns a paired object array built from the contents of two equally sized arrays
 pairs(a, b) => p from {
 	p = null;
-	#a != #b then return;
+	len a != len b then return;
 	p = [];
-	i in [1 : #a] do {
+	i in [1 : len a] do {
 		local temp;
 		temp.first = a[i];
 		temp.second = b[i];

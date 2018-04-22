@@ -15,14 +15,14 @@ static Strings :: {
 			i == a then {
 				arr = arr ++ [""];
 			} else {
-				arr[#arr] = arr[#arr] ++ [i];
+				arr[len arr] = arr[len arr] ++ [i];
 			};
 		};
 	};
 
 	join(arr, a) => s from {
 		s = arr[1];
-		i in [2 : #arr] do {
+		i in [2 : len arr] do {
 			s = s ++ [ a ] ++ arr[i];
 		};
 	};

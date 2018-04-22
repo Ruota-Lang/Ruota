@@ -9,7 +9,7 @@ struct Map :: {
 			};
 		};
 		contents = contents ++ [null];
-		local e := contents[#contents];
+		local e := contents[len contents];
 		e.key = key;
 		v := e.value;
 	};
@@ -36,7 +36,7 @@ struct Map :: {
 
 	iterator() => { contents; };
 
-	size() => { #contents };
+	size() => { len contents; };
 
 	string() => s from {
 		s = "[ ";

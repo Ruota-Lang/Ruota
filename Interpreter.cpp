@@ -16,8 +16,10 @@ std::map<String, int> Interpreter::operators = {
 	{ ".", 13 },
 	{ "->", 11 },
 	{ "=>", 11 },
-	{ "#", 10 },
-	{ "&", 10 },
+	{ "type", 10 },
+	{ "len", 10 },
+	{ "val", 10 },
+	{ "str", 10 },
 	{ ".negate", 10 },
 	{ "**", -9 },
 	{ "*", 8 },
@@ -143,7 +145,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(std::make_shared<Node>(SET, params));
 			else if (token == ":=")
 				stack.push_back(std::make_shared<Node>(REF_SET, params));
-			else if (token == "#") {
+			else if (token == "len") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
@@ -155,11 +157,23 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				params = { std::make_shared<Node>(0), b };
 				stack.push_back(std::make_shared<Node>(SUB, params));
 			}
-			else if (token == "&") {
+			else if (token == "type") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(std::make_shared<Node>(TYPE, params));
+			}
+			else if (token == "val") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(std::make_shared<Node>(VALUE, params));
+			}
+			else if (token == "str") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(std::make_shared<Node>(TOSTRING, params));
 			}
 			else if (token == "static") {
 				if (a != nullptr)

@@ -75,6 +75,14 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case EXEC:		return executed[0]->getLambda()->execute(executed[1]->getArray());
 	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());
 	case OUT_CALL:	return new_memory(Interpreter::__send(executed));
+	case VALUE:		{
+		try {
+		return new_memory(std::stold(executed[0]->toString()));
+		} catch (...){
+			throw std::runtime_error("Error: cannot convert string \"" + executed[0]->toString() + "\" to a numerical value!");
+		}
+	}
+	case TOSTRING:	return new_memory(executed[0]->toString());
 	case TYPE:
 		switch (executed[0]->getType())
 		{

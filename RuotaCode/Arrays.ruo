@@ -5,15 +5,15 @@ static Arrays :: {
 	@ A comparator lambda may be specified as the second argument
 	sort(a, comp) => n_a from {
 		n_a = a;
-		#a < 2 then return;
+		len a < 2 then return;
 		comp == null then comp = (x, y) -> { x < y };
 		local lower = [];
 		local upper = [];
-		local pivot = System.Random.int(#a);
-		i in [1 : #a] do {
+		local pivot = Random.int(len a);
+		i in [1 : len a] do {
 			i != pivot then {
 				local e = a[i];
-				comp(e, a[pivot]) 
+				comp(e, a[pivot])
 				then lower = lower ++ [ e ];
 				else upper = upper ++ [ e ];
 			};
@@ -24,11 +24,11 @@ static Arrays :: {
 	@ Removes element from array 'a' at position 'pos'
 	remove(a, pos) => n_a from {
 		pos == 1 then {
-			n_a = a[2 : #a];
-		} else pos == #a then {
-			n_a = a[1 :> #a];
+			n_a = a[2 : len a];
+		} else pos == len a then {
+			n_a = a[1 :> len a];
 		} else {
-			n_a = a[1 :> pos, (pos + 1) : #a];
+			n_a = a[1 :> pos, (pos + 1) : len a];
 		};
 	};
 
@@ -49,8 +49,8 @@ static Arrays :: {
 	unshift(a, e) => { [e] ++ a };
 
 	@ Pop the last element of array 'a'
-	pop(a) => { a[1 :> #a] };
+	pop(a) => { a[1 :> len a] };
 
 	@ Pop the first element of array 'a'
-	shift(a) => { a[2 : #a] };
+	shift(a) => { a[2 : len a] };
 }

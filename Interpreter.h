@@ -80,6 +80,8 @@ enum NodeType {
 	STRUCT,		// struct
 	THREAD,		// thread()
 	DETACH,		// detach
+	VALUE,		// val
+	TOSTRING,	// str
 
 	BREAK,		// break
 	RETURN		// return

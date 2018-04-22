@@ -23,10 +23,10 @@ primes(min, max) => a from {
 	};
 };
 
-#args == 0 then {
+len args == 0 then {
 	Console.printLine(sarr(primes(100)));
-} else #args == 1 then {
-	Console.printLine(sarr(primes(value(args[1]))));
+} else len args == 1 then {
+	Console.printLine(sarr(primes(val args[1])));
 } else {
-	Console.printLine(sarr(primes(value(args[1]), value(args[2]))));
+	Console.printLine(sarr(primes(val args[1], val args[2])));
 }

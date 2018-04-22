@@ -24,10 +24,8 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		return { std::make_shared<Memory>() };
 		break;
 	case 2: {
-		long double d;
-		std::cin >> d;
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		return { std::make_shared<Memory>(d) };
+		quick_exit(0);
+		//return { std::make_shared<Memory>() };
 		break;
 	}
 	case 3: {
@@ -71,10 +69,10 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 
 int console(){
 	String line;
-	//i->generate("load \"RuotaCode\\System\";" , main_scope, "");
-	//i->execute(main_scope);
+	i->generate("load \"RuotaCode\\System\";" , main_scope, "");
+	i->execute(main_scope);
 
-	std::cout << "Ruota 0.3.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.4.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		#ifdef WIN32

@@ -1,13 +1,6 @@
-@ This feature does not fully work yet - it is still planned
-
 load "System.ruo";
 
-hello() => { System.printLine("Hello"); };
-salve() => { System.printLine("Salve"); };
-ciao() => { System.printLine("Ciao"); };
-
-thread(
-	hello(), 
-	salve(), 
-	ciao()
-);
+threadTest() => {
+	func(x) => { i in [1 : x] do { Console.printLine(i); }; };
+	thread(func(5), func(10), func(15));
+};

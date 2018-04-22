@@ -33,7 +33,7 @@ Node::~Node(){
 SP_Memory Node::execute(SP_Scope scope) {
 	//std::cout << " >> " << this->toString() << std::endl;
 	VEC_Memory executed;
-	if (nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
@@ -243,15 +243,30 @@ SP_Memory Node::execute(SP_Scope scope) {
 	}
 	case THREAD:{
 		#ifdef THREADING
+		std::vector<std::thread> threads;
 		for (auto &n : params){
-			std::thread th(n->execute, scope);
-			th.join();
+			std::thread th(threadWrapper, n, scope);
+			threads.emplace_back(std::move(th));
 		}
+		for (std::thread & t : threads) {
+			t.join();
+		}
+		threads.clear();
 		#else
 		for (auto &n : params){
 			n->execute(scope);
 		}
 		#endif
+		return new_memory();
+	}
+	case DETACH:{
+		#ifdef THREADING
+		std::thread th(threadWrapper, params[0], scope);
+		th.detach();
+		#else
+		params[0]->execute(scope);
+		#endif
+		return new_memory();
 	}
 	case SOFT_LIST:
 		if (executed.size() == 1)
@@ -277,6 +292,10 @@ SP_Memory Node::execute(SP_Scope scope) {
 	}
 	default: return NULL;
 	}
+}
+
+void Node::threadWrapper(SP_Node n, SP_Scope s){
+	n->execute(s);
 }
 
 SP_Node Node::clone(SP_Scope scope) {

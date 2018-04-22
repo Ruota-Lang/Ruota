@@ -45,6 +45,7 @@ std::map<String, int> Interpreter::operators = {
 	{ "do", 2 },
 	{ "then", 2 },
 	{ "else", -2 },
+	{ "detach", 1 },
 	{ ",", 1 },
 	{ ";", 0 }
 };
@@ -183,6 +184,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(std::make_shared<Node>(NEW, params));
+			}
+			else if (token == "detach") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(std::make_shared<Node>(DETACH, params));
 			}
 			else if (token == "::")
 				stack.push_back(std::make_shared<Node>(OBJ_SET, params));

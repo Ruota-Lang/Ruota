@@ -1,6 +1,8 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
+#define THREADING
+
 #include "Tokenizer.h"
 #include<string>
 #include<map>
@@ -77,6 +79,7 @@ enum NodeType {
 	LOCAL,		// local
 	STRUCT,		// struct
 	THREAD,		// thread()
+	DETACH,		// detach
 
 	BREAK,		// break
 	RETURN		// return
@@ -174,6 +177,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	SP_Memory	execute(SP_Scope);
 	SP_Node		clone(SP_Scope);
 	void		weakListCheck();
+	static void	threadWrapper(SP_Node, SP_Scope);
 };
 
 struct Lambda : std::enable_shared_from_this<Lambda> {

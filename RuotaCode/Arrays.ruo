@@ -1,4 +1,4 @@
-load "System.ruo";
+load "System";
 
 static Arrays :: {
 	@ Sorts an array using quicksort algorithm

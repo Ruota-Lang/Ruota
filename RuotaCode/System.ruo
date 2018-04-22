@@ -80,6 +80,10 @@ sarr(a) => s from {
 	};
 };
 
+@ Converts a string to its numerical value
+@ Considering adding this as a default operation
+value(s) => { _OUTER_CALL_(8, s)[1] };
+
 @ Returns a paired object array built from the contents of two equally sized arrays
 pairs(a, b) => p from {
 	p = null;

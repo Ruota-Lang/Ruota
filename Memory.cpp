@@ -144,9 +144,8 @@ SP_Memory Memory::clone(const SP_Scope parent) {
 		temp->obj_data->variables["self"] = shared_from_this();
 		return temp;
 	}
+	default: return nullptr;
 	}
-
-	return nullptr;
 }
 
 bool Memory::equals(const SP_Memory a) {
@@ -212,6 +211,8 @@ SP_Memory Memory::set(const SP_Memory m) {
 		break;
 	case LAM:
 		this->lambda = m->lambda;
+		break;
+	default:
 		break;
 	}
 	return shared_from_this();

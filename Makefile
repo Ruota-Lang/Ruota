@@ -1,25 +1,28 @@
+CC=clang++
+CFLAGS=-O3 -Wall
+
 all: bin/ruota.exe
 
 bin/ruota.exe: Compiled/Main.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
-	clang++ Compiled/Main.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o -o bin/ruota.exe -std=c++17
+	$(CC) $(CFLAGS) -o bin/ruota.exe Compiled/Main.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
 
 Compiled/Main.o: Main.cpp
-	clang++ Main.cpp -o Compiled/Main.o -c -std=c++17
+	$(CC) $(CFLAGS) Main.cpp -o Compiled/Main.o -c
 	
 Compiled/Interpreter.o: Interpreter.cpp
-	clang++ Interpreter.cpp -o Compiled/Interpreter.o -c -std=c++17
+	$(CC) $(CFLAGS) Interpreter.cpp -o Compiled/Interpreter.o -c
 
 Compiled/Tokenizer.o: Tokenizer.cpp
-	clang++ Tokenizer.cpp -o Compiled/Tokenizer.o -c -std=c++17
+	$(CC) $(CFLAGS) Tokenizer.cpp -o Compiled/Tokenizer.o -c
 
 Compiled/Scope.o: Scope.cpp
-	clang++ Scope.cpp -o Compiled/Scope.o -c -std=c++17
+	$(CC) $(CFLAGS) Scope.cpp -o Compiled/Scope.o -c
 
 Compiled/Lambda.o: Lambda.cpp
-	clang++ Lambda.cpp -o Compiled/Lambda.o -c -std=c++17
+	$(CC) $(CFLAGS) Lambda.cpp -o Compiled/Lambda.o -c
 
 Compiled/Node.o: Node.cpp
-	clang++ Node.cpp -o Compiled/Node.o -c -std=c++17
+	$(CC) $(CFLAGS) Node.cpp -o Compiled/Node.o -c
 
 Compiled/Memory.o: Memory.cpp
-	clang++ Memory.cpp -o Compiled/Memory.o -c -std=c++17
+	$(CC) $(CFLAGS) Memory.cpp -o Compiled/Memory.o -c

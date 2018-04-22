@@ -18,7 +18,7 @@ std::map<String, int> Interpreter::operators = {
 	{ "=>", 11 },
 	{ "#", 10 },
 	{ "&", 10 },
-	{ "--", 10 },
+	{ ".negate", 10 },
 	{ "**", -9 },
 	{ "*", 8 },
 	{ "/", 8 },
@@ -68,7 +68,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 	for (auto &token : tokens) {
 		if (token == "," || token == ";") continue;
 		if (token == "load") {
-			String filename = stack.back()->execute(current)->toString();
+			String filename = stack.back()->execute(current)->toString() + ".ruo";
 			stack.pop_back();
 
 			String full_path_string = local_file;
@@ -149,7 +149,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				params = { b };
 				stack.push_back(std::make_shared<Node>(SIZE_O, params));
 			}
-			else if (token == "--") {
+			else if (token == ".negate") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { std::make_shared<Node>(0), b };

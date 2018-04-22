@@ -1,3 +1,5 @@
+load "System";
+
 primes(min, max) => a from {
 	a = [];
 	max == null then { 
@@ -5,7 +7,10 @@ primes(min, max) => a from {
 		min = 2;
 	};
 	isPrime(x) => prime from {
-		prime = true;
+		x < 2 then 
+			prime = false
+		else
+			prime = true;
 		i in [2 : x ** 0.5] do {
 			x % i == 0 then {
 				prime = false;
@@ -17,3 +22,11 @@ primes(min, max) => a from {
 		isPrime(i) then a = a ++ [i];
 	};
 };
+
+#args == 0 then {
+	Console.printLine(sarr(primes(100)));
+} else #args == 1 then {
+	Console.printLine(sarr(primes(value(args[1]))));
+} else {
+	Console.printLine(sarr(primes(value(args[1]), value(args[2]))));
+}

@@ -59,6 +59,10 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		return { std::make_shared<Memory>(1) };
 		#endif
 	}
+	case 8: {
+		return { std::make_shared<Memory>(std::stod(args[1]->toString())) };
+		break;
+	}
 	default:
 		return { std::make_shared<Memory>(1) };
 		break;
@@ -67,10 +71,10 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 
 int console(){
 	String line;
-	//i->generate("load \"RuotaCode\\System.ruo\";" , main_scope, "");
+	//i->generate("load \"RuotaCode\\System\";" , main_scope, "");
 	//i->execute(main_scope);
 
-	std::cout << "Ruota 0.2.1 Alpha - Runtime Console" << std::endl;
+	std::cout << "Ruota 0.3.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		#ifdef WIN32
@@ -121,8 +125,12 @@ int main(int argc, char * argv[]) {
 	i = new Interpreter(&__send);
 	main_scope = std::make_shared<Scope>(nullptr);
 
-	if (argc == 2) {
-		i->generate("load \"" + String(argv[1]) + "\";" , main_scope, "");
+	if (argc >= 2) {
+		std::string var = "[ ";
+		for (int i = 2; i < argc; i++)
+			var += "\"" + String(argv[i]) + "\" ";
+		var += "]";
+		i->generate("args = " + var + "; load \"" + String(argv[1]) + "\";" , main_scope, "");
 		i->execute(main_scope);
 	}else{
 		console();

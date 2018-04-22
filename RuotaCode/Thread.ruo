@@ -1,6 +1,12 @@
-load "System.ruo";
+load "System";
 
 threadTest() => {
-	func(x) => { i in [1 : x] do { Console.printLine(i); }; };
-	thread(func(5), func(10), func(15));
+	func() => { 
+		i in [1 : 5] do { 
+			Console.printLine(i); 
+		}; 
+	};
+	Console.printLine("Start");
+	thread(func(), func(), func());
+	Console.printLine("Done");
 };

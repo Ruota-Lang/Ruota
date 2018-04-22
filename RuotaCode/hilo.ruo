@@ -1,6 +1,6 @@
 @ Basic Game of HiLo
 
-load "System.ruo";
+load "System";
 
 hilo(min, max) => {
 	min == null then {
@@ -28,4 +28,13 @@ hilo(min, max) => {
 	};
 	Console.color(Colors.GREEN);
 	Console.printLine("Correct! The answer was " .. a);
+	Console.color(Colors.WHITE);
 };
+
+#args == 0 then {
+	hilo(10);
+} else #args == 1 then {
+	hilo(value(args[1]));
+} else {
+	hilo(value(args[1]), value(args[2]));
+}

@@ -25,7 +25,7 @@ static Arrays :: {
 	remove(a, pos) => n_a from {
 		n_a = a;
 		pos == 1 then {
-			shift n_a;
+			mov n_a;
 		} else pos == len a then {
 			pop n_a;
 		} else {

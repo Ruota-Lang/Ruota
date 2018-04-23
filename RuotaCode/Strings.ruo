@@ -15,7 +15,7 @@ static Strings :: {
 			i == a then {
 				arr push "";
 			} else {
-				arr[len arr] push i;
+				end arr push i;
 			};
 		};
 	};

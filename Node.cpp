@@ -82,6 +82,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case SHIFT_ARR:	return executed[0]->shift();
 	case PUSH_ARR:	return executed[0]->push(executed[1]);
 	case UNSHIFT_ARR:	return executed[0]->unshift(executed[1]);
+	case LAST_ARR:	return executed[0]->getArray().back();
 	case VALUE:		{
 		try {
 		return new_memory(std::stold(executed[0]->toString()));

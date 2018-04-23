@@ -6,32 +6,32 @@ Side project of mine - works currently as a simple interpreter.
 
 There is no typing system, types are automatically assigned based on context:
 
-	>>>	a = 1;					@ a is of type 'number'
-	>>>	a = [1,2,3];			@ a is of type 'array'
-	>>>	a = new A;				@ a is of type 'object' (prototyped by the structure A)
-	>>>	a = "Hello";			@ a is of type 'array' (strings are not a default type, rather they are arrays of 'number's)
-	>>>	a = 'H';				@ a is of type 'number' (there are no chars - all chars are numbers)
-	>>>	a = (x) -> { x + 1 };	@ a is of type 'lambda'
-	>>>	a;						@ without a declaration, the type is automatically assigned to null
-	>>>	a = null;				@ a is of type (and value) 'null'
+	>>>	a = 1;					# a is of type 'number'
+	>>>	a = [1,2,3];			# a is of type 'array'
+	>>>	a = new A;				# a is of type 'object' (prototyped by the structure A)
+	>>>	a = "Hello";			# a is of type 'array' (strings are not a default type, rather they are arrays of 'number's)
+	>>>	a = 'H';				# a is of type 'number' (there are no chars - all chars are numbers)
+	>>>	a = (x) -> { x + 1 };	# a is of type 'lambda'
+	>>>	a;						# without a declaration, the type is automatically assigned to null
+	>>>	a = null;				# a is of type (and value) 'null'
 
 Variables can be declared as `local`, which ensures that the variable is `a` member of the innermost scope:
 
 	a = 1;
 	{
 		local a = 2;
-		System.print(a);	@ Prints '2'
+		System.print(a);	# Prints '2'
 	};
-	System.print(a);		@ Prints '1'
+	System.print(a);		# Prints '1'
 
 Contrast with:
 
 	a = 1;
 	{
 		a = 2;
-		System.print(a);	@ Prints '2'
+		System.print(a);	# Prints '2'
 	};
-	System.print(a);		@ Also prints '2'
+	System.print(a);		# Also prints '2'
 
 Functions can be declared anonymously:
 
@@ -87,15 +87,15 @@ Accessing `B` here requires only `A.B`.
 
 There is a foreach loop, which operates through the use of the `:` operator. This operator denotes the boundaries of an inclusive range:
 
-	a = [ 1 : 10 ];		@ [1,2,3,4,5,6,7,8,9,10]
+	a = [ 1 : 10 ];		# [1,2,3,4,5,6,7,8,9,10]
 
 It can be further narrowed by specifying a step:
 
-	a = [ 1 : 10 : 2 ];		@ [1,3,5,7,9]
+	a = [ 1 : 10 : 2 ];		# [1,3,5,7,9]
 
 Lists can be further specifed using the `>>` operator. It follows the syntax `a >> b`, where `a` is a list of input values, and `b` is a lambda with a single input, denoting how the input values are transformed.
 
-	a = [ 1 : 10 ] >> ( (x) -> { x ** 2 } );	@ [1,4,9,16,25,36,49,64,81,100]
+	a = [ 1 : 10 ] >> ( (x) -> { x ** 2 } );	# [1,4,9,16,25,36,49,64,81,100]
 
 Putting this all together, we can use the Foreach loop, with the `in` operator:
 
@@ -143,9 +143,16 @@ If-then statements use the keywords `then` and `else`.
 # Notable Operators
 
 	a ** b		The exponential of `a` to the power of `b`
-	#a			Size of array `a`
+	len a		Size of array `a`
+	val a		Numerical value of string-array `a`
+	str a		String value of `a`
+	a push b	Pushes value `b` to the end of `a`
+	a post b	Pushes value `b` to the front of `a`
+	pop a		Pops value from end of `a`
+	mov a		Pops value from front of `a`
+	end a		Returns value from end of `a`
 	a ++ b		Array concatanation of `a` and `b`
 	a .. b		String concatanation of `a` and `b`
 	a := b		`a` refers to `b` - anything done to `a` is done to `b`
 				The syntax `a := null` removes the connection
-	&a			Returns a string-array declaring the type of data `a` holds
+	type a		Returns a string-array declaring the type of data `a` holds

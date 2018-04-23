@@ -84,8 +84,9 @@ enum NodeType {
 	TOSTRING,	// str
 	POP_ARR,	// pop
 	SHIFT_ARR,	// shift
-	UNSHIFT_ARR,	//unshift
+	UNSHIFT_ARR,	//post
 	PUSH_ARR,	// push
+	LAST_ARR,	// last
 
 	BREAK,		// break
 	RETURN		// return

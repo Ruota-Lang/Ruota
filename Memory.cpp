@@ -6,7 +6,7 @@ Memory::Memory() {
 	this->mt = NUL;
 }
 
-Memory::Memory(long double data) {
+Memory::Memory(const long double &data) {
 	reference_count++;
 	this->data = data;
 	this->mt = NUM;
@@ -45,25 +45,25 @@ SP_Scope Memory::getScope() {
 	return this->obj_data;
 }
 
-SP_Memory Memory::setType(const MemType mt) {
+SP_Memory Memory::setType(const MemType &mt) {
 	if (mt == REF)	reference->setType(mt);
 	else			this->mt = mt;
 	return shared_from_this();
 }
 
-SP_Memory Memory::setStatic(const bool s) {
+SP_Memory Memory::setStatic(const bool &s) {
 	if (mt == REF)	reference->setStatic(s);
 	else			this->static_object = s;
 	return shared_from_this();
 }
 
-SP_Memory Memory::setStruct(const bool s) {
+SP_Memory Memory::setStruct(const bool &s) {
 	if (mt == REF) 	reference->setStruct(s);
 	else			this->struct_object = s;
 	return shared_from_this();
 }
 
-SP_Memory Memory::makeScope(const SP_Scope parent) {
+SP_Memory Memory::makeScope(const SP_Scope &parent) {
 	if (mt == REF) {
 		reference->makeScope(parent);
 		return shared_from_this();
@@ -73,7 +73,7 @@ SP_Memory Memory::makeScope(const SP_Scope parent) {
 	return shared_from_this();
 }
 
-Memory::Memory(String s) {
+Memory::Memory(const String &s) {
 	reference_count++;
 	for (auto &c : s)
 		this->arr_data.push_back(new_memory(c));
@@ -96,7 +96,7 @@ VEC_Memory Memory::getArray() {
 	return this->arr_data;
 }
 
-SP_Memory Memory::refer(const SP_Memory m) {
+SP_Memory Memory::refer(const SP_Memory &m) {
 	if (m->mt == NUL && m->getValue() == 1) {
 		this->mt = NUL;
 	}else{
@@ -106,7 +106,7 @@ SP_Memory Memory::refer(const SP_Memory m) {
 	return shared_from_this();
 }
 
-SP_Memory Memory::index(const SP_Memory m) {
+SP_Memory Memory::index(const SP_Memory &m) {
 	if (mt == REF)	return reference->index(m);
 
 	if (mt == ARR) {
@@ -124,7 +124,7 @@ SP_Memory Memory::index(const SP_Memory m) {
 	return new_memory();
 }
 
-SP_Memory Memory::clone(const SP_Scope parent) {
+SP_Memory Memory::clone(const SP_Scope &parent) {
 	switch (mt)
 	{
 	case REF:	return reference->clone(parent);
@@ -148,7 +148,7 @@ SP_Memory Memory::clone(const SP_Scope parent) {
 	}
 }
 
-bool Memory::equals(const SP_Memory a) {
+bool Memory::equals(const SP_Memory &a) {
 	if (mt == REF)		return reference->equals(a);
 	if (a->mt == REF)	return a->reference->equals(shared_from_this());
 	if (mt != a->mt)	return false;
@@ -171,13 +171,13 @@ bool Memory::equals(const SP_Memory a) {
 	return true;
 }
 
-SP_Memory Memory::setValue(const long double data){
+SP_Memory Memory::setValue(const long double &data){
 	if (mt == REF)	this->reference->setValue(data);
 	else			this->data = data;
 	return shared_from_this();
 }
 
-SP_Memory Memory::set(const SP_Memory m) {
+SP_Memory Memory::set(const SP_Memory &m) {
 	if (shared_from_this() == m)
 		return shared_from_this();
 
@@ -218,7 +218,7 @@ SP_Memory Memory::set(const SP_Memory m) {
 	return shared_from_this();
 }
 
-SP_Memory Memory::setScope(const SP_Scope scope) {
+SP_Memory Memory::setScope(const SP_Scope &scope) {
 	if (mt == REF) {
 		reference->setScope(scope);
 		return shared_from_this();
@@ -228,7 +228,7 @@ SP_Memory Memory::setScope(const SP_Scope scope) {
 	return shared_from_this();
 }
 
-SP_Memory Memory::add(const SP_Memory a) {
+SP_Memory Memory::add(const SP_Memory &a) {
 	if (mt == REF)
 		return reference->add(a);
 
@@ -259,7 +259,7 @@ SP_Memory Memory::add(const SP_Memory a) {
 	return nullptr;
 }
 
-SP_Memory Memory::sub(const SP_Memory a) {
+SP_Memory Memory::sub(const SP_Memory &a) {
 	if (mt == REF)
 		return reference->sub(a);
 	switch (mt)
@@ -289,7 +289,7 @@ SP_Memory Memory::sub(const SP_Memory a) {
 	return nullptr;
 }
 
-SP_Memory Memory::mul(const SP_Memory a) {
+SP_Memory Memory::mul(const SP_Memory &a) {
 	if (mt == REF)
 		return reference->mul(a);
 	switch (mt)
@@ -319,7 +319,7 @@ SP_Memory Memory::mul(const SP_Memory a) {
 	return nullptr;
 }
 
-SP_Memory Memory::div(const SP_Memory a) {
+SP_Memory Memory::div(const SP_Memory &a) {
 	if (mt == REF)
 		return reference->div(a);
 	switch (mt)
@@ -349,7 +349,7 @@ SP_Memory Memory::div(const SP_Memory a) {
 	return nullptr;
 }
 
-SP_Memory Memory::mod(const SP_Memory a) {
+SP_Memory Memory::mod(const SP_Memory &a) {
 	if (mt == REF)
 		return reference->mod(a);
 	switch (mt)
@@ -379,7 +379,7 @@ SP_Memory Memory::mod(const SP_Memory a) {
 	return nullptr;
 }
 
-SP_Memory Memory::pow(const SP_Memory a) {
+SP_Memory Memory::pow(const SP_Memory &a) {
 	if (mt == REF)
 		return reference->pow(a);
 	switch (mt)

@@ -68,7 +68,7 @@ SP_Memory Memory::makeScope(const SP_Scope parent) {
 		reference->makeScope(parent);
 		return shared_from_this();
 	}
-	this->obj_data = std::make_shared<Scope>(parent);
+	this->obj_data = new_scope(parent);
 	this->mt = OBJ;
 	return shared_from_this();
 }
@@ -76,7 +76,7 @@ SP_Memory Memory::makeScope(const SP_Scope parent) {
 Memory::Memory(String s) {
 	reference_count++;
 	for (auto &c : s)
-		this->arr_data.push_back(std::make_shared<Memory>(c));
+		this->arr_data.push_back(new_memory(c));
 	this->mt = ARR;
 }
 
@@ -121,24 +121,24 @@ SP_Memory Memory::index(const SP_Memory m) {
 				return l->execute({m});
 		}
 	}
-	return std::make_shared<Memory>();
+	return new_memory();
 }
 
 SP_Memory Memory::clone(const SP_Scope parent) {
 	switch (mt)
 	{
 	case REF:	return reference->clone(parent);
-	case NUM:	return std::make_shared<Memory>(data);
-	case LAM:	return std::make_shared<Memory>(lambda->clone(parent));
-	case NUL:	return std::make_shared<Memory>();
+	case NUM:	return new_memory(data);
+	case LAM:	return new_memory(lambda->clone(parent));
+	case NUL:	return new_memory();
 	case ARR: {
 		VEC_Memory new_arr;
 		for (auto &v : arr_data)
 			new_arr.push_back(v->clone(parent));
-		return std::make_shared<Memory>(new_arr);
+		return new_memory(new_arr);
 	}
 	case OBJ: {
-		auto temp = std::make_shared<Memory>();
+		auto temp = new_memory();
 		temp->mt = OBJ;
 		temp->obj_data = obj_data->clone(parent);
 		temp->obj_data->variables["self"] = shared_from_this();
@@ -201,7 +201,7 @@ SP_Memory Memory::set(const SP_Memory m) {
 		break;
 	case ARR:
 		for (auto &v : m->arr_data) {
-			SP_Memory temp = std::make_shared<Memory>();
+			SP_Memory temp = new_memory();
 			temp->set(v);
 			this->arr_data.push_back(temp);
 		}
@@ -238,12 +238,12 @@ SP_Memory Memory::add(const SP_Memory a) {
 		switch (a->mt)
 		{
 		default:
-			return std::make_shared<Memory>(this->getValue() + a->getValue());
+			return new_memory(this->getValue() + a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->add(v));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -252,7 +252,7 @@ SP_Memory Memory::add(const SP_Memory a) {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->add(a));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	}
 
@@ -268,12 +268,12 @@ SP_Memory Memory::sub(const SP_Memory a) {
 		switch (a->mt)
 		{
 		default:
-			return std::make_shared<Memory>(this->getValue() - a->getValue());
+			return new_memory(this->getValue() - a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->sub(v));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -282,7 +282,7 @@ SP_Memory Memory::sub(const SP_Memory a) {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->sub(a));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	}
 
@@ -298,12 +298,12 @@ SP_Memory Memory::mul(const SP_Memory a) {
 		switch (a->mt)
 		{
 		default:
-			return std::make_shared<Memory>(this->getValue() * a->getValue());
+			return new_memory(this->getValue() * a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->mul(v));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -312,7 +312,7 @@ SP_Memory Memory::mul(const SP_Memory a) {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->mul(a));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	}
 
@@ -328,12 +328,12 @@ SP_Memory Memory::div(const SP_Memory a) {
 		switch (a->mt)
 		{
 		default:
-			return std::make_shared<Memory>(this->getValue() / a->getValue());
+			return new_memory(this->getValue() / a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->div(v));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -342,7 +342,7 @@ SP_Memory Memory::div(const SP_Memory a) {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->div(a));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	}
 
@@ -358,12 +358,12 @@ SP_Memory Memory::mod(const SP_Memory a) {
 		switch (a->mt)
 		{
 		default:
-			return std::make_shared<Memory>((int)this->getValue() % (int)a->getValue());
+			return new_memory((int)this->getValue() % (int)a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->mod(v));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -372,7 +372,7 @@ SP_Memory Memory::mod(const SP_Memory a) {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->mod(a));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	}
 
@@ -388,12 +388,12 @@ SP_Memory Memory::pow(const SP_Memory a) {
 		switch (a->mt)
 		{
 		default:
-			return std::make_shared<Memory>(std::pow(this->getValue(), a->getValue()));
+			return new_memory(std::pow(this->getValue(), a->getValue()));
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->pow(v));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -402,7 +402,7 @@ SP_Memory Memory::pow(const SP_Memory a) {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->pow(a));
-			return std::make_shared<Memory>(new_arr);
+			return new_memory(new_arr);
 		}
 	}
 

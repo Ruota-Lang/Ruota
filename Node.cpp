@@ -152,13 +152,13 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case DES: {
 		VEC_String param_keys;
 		for (auto &n : params[0]->params) param_keys.push_back(n->key);
-		return new_memory(std::make_shared<Lambda>(scope, params[1], param_keys));
+		return new_memory(new_lambda(scope, params[1], param_keys));
 	}
 	case LDES: {
 		VEC_String param_keys;
 		for (auto &n : params[0]->params[1]->params)
 			param_keys.push_back(n->key);
-		auto lambda = new_memory(std::make_shared<Lambda>(scope, params[1], param_keys));
+		auto lambda = new_memory(new_lambda(scope, params[1], param_keys));
 		if (params[0]->params[0]->nt != VAR) {
 			auto e = params[0]->params[0]->execute(scope);
 			e->set(lambda);
@@ -185,7 +185,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 			SP_Memory var = params[0]->params[1]->execute(scope);
 			SP_Memory iter_arr;
 			String iter_key = params[0]->params[0]->key;
-			SP_Scope inner_scope = std::make_shared<Scope>(scope);
+			SP_Scope inner_scope = new_scope(scope);
 			if (var->getType() == ARR)
 				iter_arr = var;
 			else if (var->getType() == OBJ)
@@ -203,7 +203,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		}
 		else {
 			auto dec = params[0];
-			SP_Scope inner_scope = std::make_shared<Scope>(scope);
+			SP_Scope inner_scope = new_scope(scope);
 			while(dec->execute(scope)->getValue() != 0) {
 				inner_scope->main = params[1]->clone(inner_scope);
 				auto v = inner_scope->execute();
@@ -323,7 +323,7 @@ SP_Node Node::clone(SP_Scope scope) {
 	VEC_Node new_params;
 	for (auto &n : params)
 		new_params.push_back(n->clone(scope));
-	SP_Node nn = std::make_shared<Node>(this->nt, new_params);
+	SP_Node nn = new_node(this->nt, new_params);
 	nn->key = this->key;
 	nn->flag = this->flag;
 	if (this->mem_data != nullptr)

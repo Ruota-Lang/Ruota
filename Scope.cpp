@@ -27,9 +27,9 @@ SP_Memory Scope::execute() {
 SP_Scope Scope::clone(SP_Scope parent) {
 	SP_Scope scope;
 	if (main != nullptr)
-		scope = std::make_shared<Scope>(parent, main->clone(parent));
+		scope = new_scope(parent, main->clone(parent));
 	else
-		scope = std::make_shared<Scope>(parent);
+		scope = new_scope(parent);
 
 	for (auto &v : variables)
 		scope->variables[v.first] = v.second->clone(scope);
@@ -56,7 +56,7 @@ SP_Memory Scope::getVariable(String key) {
 
 	if (current == nullptr) {
 		//std::cout << " >> Creating Variable: " << key << std::endl;
-		this->variables[key] = std::make_shared<Memory>();
+		this->variables[key] = new_memory();
 		return this->variables[key];
 	}
 

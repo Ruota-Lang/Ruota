@@ -104,33 +104,33 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(gen->main);
 			}
 			else {
-				stack.push_back(std::make_shared<Node>(0));
+				stack.push_back(new_node(0));
 			}
 		}
 		else if (token == "true")
-			stack.push_back(std::make_shared<Node>(1));
+			stack.push_back(new_node(1));
 		else if (token == "false")
-			stack.push_back(std::make_shared<Node>(0));
+			stack.push_back(new_node(0));
 		else if (token == "break")
-			stack.push_back(std::make_shared<Node>(BREAK, nullvec));
+			stack.push_back(new_node(BREAK, nullvec));
 		else if (token == "return")
-			stack.push_back(std::make_shared<Node>(RETURN, nullvec));
+			stack.push_back(new_node(RETURN, nullvec));
 		else if (token == "null") {
-			SP_Memory nullmem = std::make_shared<Memory>();
+			SP_Memory nullmem = new_memory();
 			nullmem->setValue(1);
-			SP_Node nullnode = std::make_shared<Node>(0);
+			SP_Node nullnode = new_node(0);
 			nullnode->mem_data = nullmem;
 			stack.push_back(nullnode);
 		}
 		else if (isdigit(token[0]))
-			stack.push_back(std::make_shared<Node>(stod(token)));
+			stack.push_back(new_node(stod(token)));
 		else if (token[0] == '\'')
-			stack.push_back(std::make_shared<Node>(token[1]));
+			stack.push_back(new_node(token[1]));
 		else if (token[0] == '\"') {
 			VEC_Node chars;
 			for (int i = 1; i < token.length(); i++)
-				chars.push_back(std::make_shared<Node>(token[i]));
-			stack.push_back(std::make_shared<Node>(LIST, chars));
+				chars.push_back(new_node(token[i]));
+			stack.push_back(new_node(LIST, chars));
 		}
 		else if (operators.find(token) != operators.end()) {
 			auto b = stack.back(); 
@@ -142,115 +142,115 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 			VEC_Node params = { a, b };
 			if (token == "=")
-				stack.push_back(std::make_shared<Node>(SET, params));
+				stack.push_back(new_node(SET, params));
 			else if (token == ":=")
-				stack.push_back(std::make_shared<Node>(REF_SET, params));
+				stack.push_back(new_node(REF_SET, params));
 			else if (token == "len") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(SIZE_O, params));
+				stack.push_back(new_node(SIZE_O, params));
 			}
 			else if (token == ".negate") {
 				if (a != nullptr)
 					stack.push_back(a);
-				params = { std::make_shared<Node>(0), b };
-				stack.push_back(std::make_shared<Node>(SUB, params));
+				params = { new_node(0), b };
+				stack.push_back(new_node(SUB, params));
 			}
 			else if (token == "type") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(TYPE, params));
+				stack.push_back(new_node(TYPE, params));
 			}
 			else if (token == "val") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(VALUE, params));
+				stack.push_back(new_node(VALUE, params));
 			}
 			else if (token == "str") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(TOSTRING, params));
+				stack.push_back(new_node(TOSTRING, params));
 			}
 			else if (token == "static") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(SET_STAT, params));
+				stack.push_back(new_node(SET_STAT, params));
 			}
 			else if (token == "struct") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(STRUCT, params));
+				stack.push_back(new_node(STRUCT, params));
 			}
 			else if (token == "local") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(LOCAL, params));
+				stack.push_back(new_node(LOCAL, params));
 			}
 			else if (token == "new") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(NEW, params));
+				stack.push_back(new_node(NEW, params));
 			}
 			else if (token == "detach") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(std::make_shared<Node>(DETACH, params));
+				stack.push_back(new_node(DETACH, params));
 			}
 			else if (token == "::")
-				stack.push_back(std::make_shared<Node>(OBJ_SET, params));
+				stack.push_back(new_node(OBJ_SET, params));
 			else if (token == "+")
-				stack.push_back(std::make_shared<Node>(ADD, params));
+				stack.push_back(new_node(ADD, params));
 			else if (token == "++")
-				stack.push_back(std::make_shared<Node>(ADD_ARR, params));
+				stack.push_back(new_node(ADD_ARR, params));
 			else if (token == "..")
-				stack.push_back(std::make_shared<Node>(STR_CAT, params));
+				stack.push_back(new_node(STR_CAT, params));
 			else if (token == "-")
-				stack.push_back(std::make_shared<Node>(SUB, params));
+				stack.push_back(new_node(SUB, params));
 			else if (token == "*")
-				stack.push_back(std::make_shared<Node>(MUL, params));
+				stack.push_back(new_node(MUL, params));
 			else if (token == "/")
-				stack.push_back(std::make_shared<Node>(DIV, params));
+				stack.push_back(new_node(DIV, params));
 			else if (token == "%")
-				stack.push_back(std::make_shared<Node>(MOD, params));
+				stack.push_back(new_node(MOD, params));
 			else if (token == "**")
-				stack.push_back(std::make_shared<Node>(POW, params));
+				stack.push_back(new_node(POW, params));
 			else if (token == "==")
-				stack.push_back(std::make_shared<Node>(EQUAL, params));
+				stack.push_back(new_node(EQUAL, params));
 			else if (token == "!=")
-				stack.push_back(std::make_shared<Node>(NEQUAL, params));
+				stack.push_back(new_node(NEQUAL, params));
 			else if (token == "<")
-				stack.push_back(std::make_shared<Node>(LESS, params));
+				stack.push_back(new_node(LESS, params));
 			else if (token == ">")
-				stack.push_back(std::make_shared<Node>(MORE, params));
+				stack.push_back(new_node(MORE, params));
 			else if (token == "<=")
-				stack.push_back(std::make_shared<Node>(ELESS, params));
+				stack.push_back(new_node(ELESS, params));
 			else if (token == ">=")
-				stack.push_back(std::make_shared<Node>(EMORE, params));
+				stack.push_back(new_node(EMORE, params));
 			else if (token == "&&")
-				stack.push_back(std::make_shared<Node>(AND, params));
+				stack.push_back(new_node(AND, params));
 			else if (token == "||")
-				stack.push_back(std::make_shared<Node>(OR, params));
+				stack.push_back(new_node(OR, params));
 			else if (token == ">>")
-				stack.push_back(std::make_shared<Node>(EXEC_ITER, params));
+				stack.push_back(new_node(EXEC_ITER, params));
 			else if (token == "then")
-				stack.push_back(std::make_shared<Node>(THEN, params));
+				stack.push_back(new_node(THEN, params));
 			else if (token == "else") {
 				a->params.push_back(b);
 				stack.push_back(a);
 			}
 			else if (token == ".index")
-				stack.push_back(std::make_shared<Node>(INDEX, params));
+				stack.push_back(new_node(INDEX, params));
 			else if (token == ".")
-				stack.push_back(std::make_shared<Node>(INDEX_OBJ, params));
+				stack.push_back(new_node(INDEX_OBJ, params));
 			else if (token == ".exec") {
 				if (a->key == "_OUTER_CALL_") {
 					b->nt = OUT_CALL;
@@ -262,42 +262,42 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				}
 				else {
 					b->nt = LIST;
-					stack.push_back(std::make_shared<Node>(EXEC, params));
+					stack.push_back(new_node(EXEC, params));
 				}
 			}
 			else if (token == "from")
-				stack.push_back(std::make_shared<Node>(FROM, params));
+				stack.push_back(new_node(FROM, params));
 			else if (token == "in")
-				stack.push_back(std::make_shared<Node>(ITER, params));
+				stack.push_back(new_node(ITER, params));
 			else if (token == "do")
-				stack.push_back(std::make_shared<Node>(DOL, params));
+				stack.push_back(new_node(DOL, params));
 			else if (token == ":") {
 				if (a->nt == RANGE) {
 					a->params.push_back(b);
 					stack.push_back(a);
 				}else
-					stack.push_back(std::make_shared<Node>(RANGE, params));
+					stack.push_back(new_node(RANGE, params));
 			}
 			else if (token == ":>") {
-				stack.push_back(std::make_shared<Node>(RANGE, params));
+				stack.push_back(new_node(RANGE, params));
 				stack.back()->flag = 1;
 			}
 			else if (token == "=>")
-				stack.push_back(std::make_shared<Node>(LDES, params));
+				stack.push_back(new_node(LDES, params));
 			else if (token == "->") {
 				a->nt = LIST;
-				stack.push_back(std::make_shared<Node>(DES, params));
+				stack.push_back(new_node(DES, params));
 			}
 		}
 		else if (token == "[") {
-			stack.push_back(std::make_shared<Node>(M_B, nullvec));
+			stack.push_back(new_node(M_B, nullvec));
 		}
 		else if (token == "{") {
-			stack.push_back(std::make_shared<Node>(M_S, nullvec));
-			current = std::make_shared<Scope>(current);
+			stack.push_back(new_node(M_S, nullvec));
+			current = new_scope(current);
 		}
 		else if (token == "(") {
-			stack.push_back(std::make_shared<Node>(M_P, nullvec));
+			stack.push_back(new_node(M_P, nullvec));
 		}
 		else if (token == "]") {
 			VEC_Node new_list;
@@ -307,7 +307,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 			std::reverse(new_list.begin(), new_list.end());
 			stack.pop_back();
-			stack.push_back(std::make_shared<Node>(LIST, new_list));
+			stack.push_back(new_node(LIST, new_list));
 		}
 		else if (token == ")") {
 			VEC_Node new_list;
@@ -317,7 +317,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 			std::reverse(new_list.begin(), new_list.end());
 			stack.pop_back();
-			stack.push_back(std::make_shared<Node>(SOFT_LIST, new_list));
+			stack.push_back(new_node(SOFT_LIST, new_list));
 		}
 		else if (token == "}") {
 			VEC_Node new_list;
@@ -327,17 +327,17 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 			std::reverse(new_list.begin(), new_list.end());
 			stack.pop_back();
-			auto mainOfScope = std::make_shared<Node>(LIST, new_list);
+			auto mainOfScope = new_node(LIST, new_list);
 			current->main = mainOfScope;
-			stack.push_back(std::make_shared<Node>(current));
+			stack.push_back(new_node(current));
 			current = current->parent;
 		}
 		else {
-			stack.push_back(std::make_shared<Node>(token));
+			stack.push_back(new_node(token));
 		}
 	}
 
-	main->main = std::make_shared<Node>(LIST, stack);
+	main->main = new_node(LIST, stack);
 	main->main->weakListCheck();
 	return main;
 }

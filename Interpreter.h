@@ -110,6 +110,9 @@ typedef	std::vector<SP_Node>	VEC_Node;
 typedef	std::vector<String>		VEC_String;
 
 #define	new_memory	std::make_shared<Memory>
+#define	new_node	std::make_shared<Node>
+#define	new_lambda	std::make_shared<Lambda>
+#define	new_scope	std::make_shared<Scope>
 
 
 struct Memory : std::enable_shared_from_this<Memory> {

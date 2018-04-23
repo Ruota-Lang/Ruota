@@ -26,8 +26,8 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 }
 
 SP_Lambda Lambda::clone(SP_Scope parent) {
-	SP_Lambda new_lambda = std::make_shared<Lambda>(parent, base->clone(parent), param_keys);
-	return new_lambda;
+	SP_Lambda nl = std::make_shared<Lambda>(parent, base->clone(parent), param_keys);
+	return nl;
 };
 
 Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_keys) {
@@ -39,4 +39,6 @@ Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_key
 
 Lambda::~Lambda(){
 	this->reference_count--;
+	this->parent = nullptr;
+	this->base = nullptr;
 }

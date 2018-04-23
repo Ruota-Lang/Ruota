@@ -49,7 +49,7 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 			}
 		}
 		else {
-			if (c == '@') {
+			if (c == '#') {
 				comment = true;
 				continue;
 			}

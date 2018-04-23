@@ -13,6 +13,6 @@ len args == 0 then {
 	Console.printLine(sarr(Fibonacci(val args[1])));
 };
 
-@ Alternatively, the function can be done inline like so:
-@ [0 : 10] >> ( (x, a) -> { len a > 1 then a[len a] + a[len a - 1] else x } )
-@ This uses the >> operator, sending the array as the input arguments to a lambda one at a time.
+# Alternatively, the function can be done inline like so:
+# [0 : 10] >> ( (x, a) -> { len a > 1 then a[len a] + a[len a - 1] else x } )
+# This uses the >> operator, sending the array as the input arguments to a lambda one at a time.

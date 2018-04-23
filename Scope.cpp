@@ -16,6 +16,8 @@ Scope::Scope(SP_Scope parent, SP_Node main) {
 
 Scope::~Scope(){
 	this->reference_count--;
+	this->parent = nullptr;
+	this->main = nullptr;
 }
 
 SP_Memory Scope::execute() {

@@ -1,8 +1,8 @@
 load "System";
 
 static Arrays :: {
-	@ Sorts an array using quicksort algorithm
-	@ A comparator lambda may be specified as the second argument
+	# Sorts an array using quicksort algorithm
+	# A comparator lambda may be specified as the second argument
 	sort(a, comp) => n_a from {
 		n_a = a;
 		len a < 2 then return;
@@ -21,7 +21,7 @@ static Arrays :: {
 		n_a = idem(lower, comp) ++ [ a[pivot] ] ++ idem(upper, comp);
 	};
 
-	@ Removes element from array 'a' at position 'pos'
+	# Removes element from array 'a' at position 'pos'
 	remove(a, pos) => n_a from {
 		pos == 1 then {
 			n_a = a[2 : len a];
@@ -32,7 +32,7 @@ static Arrays :: {
 		};
 	};
 
-	@ Removes elements of equivalent value to 'value'
+	# Removes elements of equivalent value to 'value'
 	removeValue(a, value) => n_a from {
 		n_a = [];
 		e in a do {
@@ -42,15 +42,15 @@ static Arrays :: {
 		};
 	};
 
-	@ Pushes an element 'e' to the back of array 'a'
+	# Pushes an element 'e' to the back of array 'a'
 	push(a, e) => { a ++ [e] };
 
-	@ Pushes an element 'e' to the front of array 'a'
+	# Pushes an element 'e' to the front of array 'a'
 	unshift(a, e) => { [e] ++ a };
 
-	@ Pop the last element of array 'a'
+	# Pop the last element of array 'a'
 	pop(a) => { a[1 :> len a] };
 
-	@ Pop the first element of array 'a'
+	# Pop the first element of array 'a'
 	shift(a) => { a[2 : len a] };
 }

@@ -1,9 +1,9 @@
-@ LinkedList Example
+# LinkedList Example
 
 struct LinkedList :: {
 	local head = null;
 
-	@ Adds element to list
+	# Adds element to list
 	add(e) => {
 		head == null then {
 			head = new Link(e);
@@ -25,7 +25,7 @@ struct LinkedList :: {
 		};
 	};
 
-	@ Retrieves mutable element from list
+	# Retrieves mutable element from list
 	index(pos) => e from {
 		e = null;
 		local curr = head;
@@ -33,7 +33,7 @@ struct LinkedList :: {
 		e := curr.value;
 	};
 
-	@ Removes element from list
+	# Removes element from list
 	remove(pos) => {
 		local curr = head;
 		local prev = null;
@@ -45,7 +45,7 @@ struct LinkedList :: {
 		prev.next = curr.next;
 	};
 
-	@ Retrieves length of the list
+	# Retrieves length of the list
 	size() => s from {
 		s = 0;
 		local curr = head;
@@ -55,7 +55,7 @@ struct LinkedList :: {
 		};
 	};
 
-	@ Returns string version of the list
+	# Returns string version of the list
 	string() => s from {
 		s = "[ ";
 		curr = head;

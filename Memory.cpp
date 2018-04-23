@@ -463,4 +463,8 @@ long Memory::reference_count = 0;
 
 Memory::~Memory() {
 	reference_count--;
+	this->arr_data.clear();
+	this->reference = nullptr;
+	this->lambda = nullptr;
+	this->obj_data = nullptr;
 }

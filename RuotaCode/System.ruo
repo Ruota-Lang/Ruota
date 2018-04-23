@@ -24,6 +24,7 @@ static Console :: {
 	newLine() => { printLine("") };
 	os(x) => { _OUTER_CALL_(0, x)[1] };
 	exit() => { _OUTER_CALL_(2) };
+	rawFile(filename) => { _OUTER_CALL_(8, filename)[1] };
 	
 	color(k, k2) => { _OUTER_CALL_(7, k + 16 * k2) };
 
@@ -68,7 +69,7 @@ static Math :: {
 	min(a, b) => { a < b then a else b };
 };
 
-@ Converts an array to a string representation
+# Converts an array to a string representation
 sarr(a) => s from {
 	type a == "array" then {
 		s = "[ ";
@@ -81,7 +82,7 @@ sarr(a) => s from {
 	};
 };
 
-@ Returns a paired object array built from the contents of two equally sized arrays
+# Returns a paired object array built from the contents of two equally sized arrays
 pairs(a, b) => p from {
 	p = null;
 	len a != len b then return;

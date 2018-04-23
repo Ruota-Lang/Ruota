@@ -28,6 +28,9 @@ Node::Node(SP_Scope scope_ref) {
 
 Node::~Node(){
 	this->reference_count--;
+	this->scope_ref = nullptr;
+	this->mem_data = nullptr;
+	this->params.clear();
 }
 
 SP_Memory Node::execute(SP_Scope scope) {
@@ -320,14 +323,14 @@ SP_Node Node::clone(SP_Scope scope) {
 	VEC_Node new_params;
 	for (auto &n : params)
 		new_params.push_back(n->clone(scope));
-	SP_Node new_node = std::make_shared<Node>(this->nt, new_params);
-	new_node->key = this->key;
-	new_node->flag = this->flag;
+	SP_Node nn = std::make_shared<Node>(this->nt, new_params);
+	nn->key = this->key;
+	nn->flag = this->flag;
 	if (this->mem_data != nullptr)
-		new_node->mem_data = this->mem_data->clone(scope);
+		nn->mem_data = this->mem_data->clone(scope);
 	if (this->scope_ref != nullptr)
-		new_node->scope_ref = this->scope_ref->clone(scope);
-	return new_node;
+		nn->scope_ref = this->scope_ref->clone(scope);
+	return nn;
 }
 
 String Node::toString() {
@@ -385,12 +388,12 @@ String Node::toString() {
 void Node::weakListCheck() {
 	VEC_Node new_params;
 	for (auto &p : params){
-		SP_Node new_node = p;
-		while (new_node->nt == SOFT_LIST && new_node->params.size() == 1){
-			new_node = new_node->params[0];
+		SP_Node nn = p;
+		while (nn->nt == SOFT_LIST && nn->params.size() == 1){
+			nn = nn->params[0];
 		}
-		new_node->weakListCheck();
-		new_params.push_back(new_node);
+		nn->weakListCheck();
+		new_params.push_back(nn);
 	}
 	this->params = new_params;
 }

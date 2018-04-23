@@ -64,8 +64,8 @@ As for the for-loop, it follows the same mechanics we saw above. The `i` is the 
 
 That is the complete function! Always remember to test it out to make sure it works!
 
-	sum([1,2,3])		@ 6
-	sum([1:5])			@ 15
-	sum([1:5, 1:5])		@ 30
-	sum("Hello World")	@ 1052 - Remember that strings are just arrays of numbers
-						@ "Hello World" in this case is [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]
+	sum([1,2,3])		# 6
+	sum([1:5])			# 15
+	sum([1:5, 1:5])		# 30
+	sum("Hello World")	# 1052 - Remember that strings are just arrays of numbers
+						# "Hello World" in this case is [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]

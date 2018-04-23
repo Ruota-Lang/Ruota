@@ -2,6 +2,8 @@
 #include <cmath>
 #include "Interpreter.h"
 
+#define DEBUG
+
 #ifdef WIN32
 	#include<windows.h>
 	void setColor(int k){
@@ -17,52 +19,64 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 	switch ((int)args[0]->getValue())
 	{
 	case 0:
-		return { std::make_shared<Memory>(system(args[1]->toString().c_str())) };
+		return { new_memory(system(args[1]->toString().c_str())) };
 		break;
 	case 1:
 		std::cout << args[1]->toString();
-		return { std::make_shared<Memory>() };
+		return { new_memory() };
 		break;
 	case 2: {
 		quick_exit(0);
-		//return { std::make_shared<Memory>() };
+		//return { new_memory() };
 		break;
 	}
 	case 3: {
 		String d;
 		std::cin >> d;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		return { std::make_shared<Memory>(d) };
+		return { new_memory(d) };
 		break;
 	}
 	case 4: {
 		String d;
 		std::getline(std::cin, d);
-		return { std::make_shared<Memory>(d) };
+		return { new_memory(d) };
 		break;
 	}
 	case 5: {
-		return { std::make_shared<Memory>((long double)rand() / RAND_MAX) };
+		return { new_memory((long double)rand() / RAND_MAX) };
 		break;
 	}
 	case 6: {
-		return { std::make_shared<Memory>(std::floor(args[1]->getValue())) };
+		return { new_memory(std::floor(args[1]->getValue())) };
 		break;
 	}
 	case 7: {
 		#ifdef WIN32
 		setColor(args[1]->getValue());
-		return { std::make_shared<Memory>() };
+		return { new_memory() };
 		#else
-		return { std::make_shared<Memory>(1) };
+		return { new_memory(1) };
 		#endif
 	}
 	case 8: {
-		return { std::make_shared<Memory>(std::stod(args[1]->toString())) };
+		std::ifstream myfile(args[1]->toString());
+		std::string line = "";
+		std::string content = "";
+		if (myfile.is_open())
+		{
+			while (getline(myfile, line)){
+				content += line + "\n";
+			}
+			myfile.close();
+		} else {
+			throw std::runtime_error("Error: cannot open file " + args[1]->toString() + "!");
+		}
+		return { new_memory(content) };
 		break;
 	}
 	default:
-		return { std::make_shared<Memory>(1) };
+		return { new_memory(1) };
 		break;
 	}
 }
@@ -109,7 +123,7 @@ int console(){
 			#endif
 		}
 		catch (std::runtime_error &e) {
-			setColor(4);
+			setColor(12);
 			std::cout << "\t" << e.what() << std::endl;
 		}
 	} while (line != "");
@@ -123,7 +137,7 @@ int console(){
 
 int main(int argc, char * argv[]) {
 	i = new Interpreter(&__send);
-	main_scope = std::make_shared<Scope>(nullptr);
+	main_scope = new_scope(nullptr);
 
 	if (argc >= 2) {
 		std::string var = "[ ";
@@ -136,5 +150,6 @@ int main(int argc, char * argv[]) {
 		console();
 	}
 	delete i;
+	setColor(7);
 	return EXIT_SUCCESS;
 }

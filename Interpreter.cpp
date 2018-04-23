@@ -20,6 +20,8 @@ std::map<String, int> Interpreter::operators = {
 	{ "len", 10 },
 	{ "val", 10 },
 	{ "str", 10 },
+	{ "pop", 10 },
+	{ "shift", 10 },
 	{ ".negate", 10 },
 	{ "**", -9 },
 	{ "*", 8 },
@@ -41,6 +43,8 @@ std::map<String, int> Interpreter::operators = {
 	{ ">=", 5 },
 	{ "&&", 4 },
 	{ "||", 4 },
+	{ "push", 4 },
+	{ "unshift", 4 },
 	{ "=", -3 },
 	{ ":=", -3},
 	{ "in", 2 },
@@ -169,6 +173,18 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				params = { b };
 				stack.push_back(new_node(VALUE, params));
 			}
+			else if (token == "pop") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(POP_ARR, params));
+			}
+			else if (token == "shift") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(SHIFT_ARR, params));
+			}
 			else if (token == "str") {
 				if (a != nullptr)
 					stack.push_back(a);
@@ -239,6 +255,10 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(AND, params));
 			else if (token == "||")
 				stack.push_back(new_node(OR, params));
+			else if (token == "push")
+				stack.push_back(new_node(PUSH_ARR, params));
+			else if (token == "unshift")
+				stack.push_back(new_node(UNSHIFT_ARR, params));
 			else if (token == ">>")
 				stack.push_back(new_node(EXEC_ITER, params));
 			else if (token == "then")

@@ -78,6 +78,10 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case EXEC:		return executed[0]->getLambda()->execute(executed[1]->getArray());
 	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());
 	case OUT_CALL:	return new_memory(Interpreter::__send(executed));
+	case POP_ARR:	return executed[0]->pop();
+	case SHIFT_ARR:	return executed[0]->shift();
+	case PUSH_ARR:	return executed[0]->push(executed[1]);
+	case UNSHIFT_ARR:	return executed[0]->unshift(executed[1]);
 	case VALUE:		{
 		try {
 		return new_memory(std::stold(executed[0]->toString()));

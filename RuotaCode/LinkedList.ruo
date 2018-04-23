@@ -4,7 +4,7 @@ struct LinkedList :: {
 	local head = null;
 
 	# Adds element to list
-	add(e) => {
+	add(e) => v from {
 		head == null then {
 			head = new Link(e);
 		} else {
@@ -12,6 +12,7 @@ struct LinkedList :: {
 			curr.next != null do { curr = curr.next };
 			curr.next = new Link(e);
 		};
+		v = e;
 	};
 
 	iterator() => { toArray() };
@@ -20,7 +21,7 @@ struct LinkedList :: {
 		a = [];
 		local curr = head;
 		curr != null do {
-			a = a ++ [curr.value];
+			a push curr.value;
 			curr = curr.next;
 		};
 	};

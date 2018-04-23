@@ -19,7 +19,7 @@ primes(min, max) => a from {
 		};
 	};
 	i in [min : max] do {
-		isPrime(i) then a = a ++ [i];
+		isPrime(i) then a push [i];
 	};
 };
 

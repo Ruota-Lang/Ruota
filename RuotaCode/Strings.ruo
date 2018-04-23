@@ -13,9 +13,9 @@ static Strings :: {
 		arr = [""];
 		i in s do {
 			i == a then {
-				arr = arr ++ [""];
+				arr push "";
 			} else {
-				arr[len arr] = arr[len arr] ++ [i];
+				arr[len arr] push i;
 			};
 		};
 	};

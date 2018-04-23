@@ -82,6 +82,10 @@ enum NodeType {
 	DETACH,		// detach
 	VALUE,		// val
 	TOSTRING,	// str
+	POP_ARR,	// pop
+	SHIFT_ARR,	// shift
+	UNSHIFT_ARR,	//unshift
+	PUSH_ARR,	// push
 
 	BREAK,		// break
 	RETURN		// return
@@ -163,6 +167,10 @@ public:
 	SP_Memory	makeScope(const SP_Scope&);
 	SP_Memory	setType(const MemType&);
 	SP_Memory	refer(const SP_Memory&);
+	SP_Memory	pop();
+	SP_Memory	shift();
+	SP_Memory	push(SP_Memory&);
+	SP_Memory	unshift(SP_Memory&);
 	VEC_Memory	getArray();
 	MemType		getType();
 };

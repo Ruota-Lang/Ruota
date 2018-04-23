@@ -80,6 +80,30 @@ Memory::Memory(const String &s) {
 	this->mt = ARR;
 }
 
+SP_Memory Memory::pop() {
+	this->arr_data.pop_back();
+	return to_this_ptr;
+}
+
+SP_Memory Memory::shift() {
+	std::reverse(arr_data.begin(), arr_data.end());
+	this->arr_data.pop_back();
+	std::reverse(arr_data.begin(), arr_data.end());
+	return to_this_ptr;
+}
+
+SP_Memory Memory::push(SP_Memory &m) {
+	this->arr_data.push_back(m);
+	return to_this_ptr;
+}
+
+SP_Memory Memory::unshift(SP_Memory &m) {
+	std::reverse(arr_data.begin(), arr_data.end());
+	this->arr_data.push_back(m);
+	std::reverse(arr_data.begin(), arr_data.end());
+	return to_this_ptr;
+}
+
 long double Memory::getValue() {
 	if (mt == REF)	return reference->getValue();
 	return this->data;

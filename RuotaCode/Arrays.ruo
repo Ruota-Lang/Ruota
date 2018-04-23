@@ -14,8 +14,8 @@ static Arrays :: {
 			i != pivot then {
 				local e = a[i];
 				comp(e, a[pivot])
-				then lower = lower ++ [ e ];
-				else upper = upper ++ [ e ];
+				then lower push e;
+				else upper push e;
 			};
 		};
 		n_a = idem(lower, comp) ++ [ a[pivot] ] ++ idem(upper, comp);
@@ -23,12 +23,13 @@ static Arrays :: {
 
 	# Removes element from array 'a' at position 'pos'
 	remove(a, pos) => n_a from {
+		n_a = a;
 		pos == 1 then {
-			n_a = a[2 : len a];
+			shift n_a;
 		} else pos == len a then {
-			n_a = a[1 :> len a];
+			pop n_a;
 		} else {
-			n_a = a[1 :> pos, (pos + 1) : len a];
+			n_a = n_a[1 :> pos, (pos + 1) : len n_a];
 		};
 	};
 
@@ -37,20 +38,8 @@ static Arrays :: {
 		n_a = [];
 		e in a do {
 			e != value then {
-				n_a = n_a ++ [e];
+				n_a push e;
 			};
 		};
 	};
-
-	# Pushes an element 'e' to the back of array 'a'
-	push(a, e) => { a ++ [e] };
-
-	# Pushes an element 'e' to the front of array 'a'
-	unshift(a, e) => { [e] ++ a };
-
-	# Pop the last element of array 'a'
-	pop(a) => { a[1 :> len a] };
-
-	# Pop the first element of array 'a'
-	shift(a) => { a[2 : len a] };
 }

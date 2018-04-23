@@ -3,7 +3,7 @@ load "System";
 Fibonacci(x) => a from {
 	a = [0, 1];
 	i in [3 : x] do {
-		a = a ++ [ a[i - 1] + a[i - 2] ];
+		a push a[i - 1] + a[i - 2];
 	};
 };
 

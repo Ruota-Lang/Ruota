@@ -91,6 +91,6 @@ pairs(a, b) => p from {
 		local temp;
 		temp.first = a[i];
 		temp.second = b[i];
-		p = p ++ [ temp ];
+		p push temp;
 	};
 };

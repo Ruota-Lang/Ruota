@@ -29,6 +29,8 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 					{
 					case '\\':
 						tokens.back().push_back('\\');
+						last_c = 0;
+						continue;
 						break;
 					case 'n':
 						tokens.back().push_back('\n');

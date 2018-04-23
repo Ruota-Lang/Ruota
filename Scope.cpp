@@ -21,7 +21,7 @@ Scope::~Scope(){
 }
 
 SP_Memory Scope::execute() {
-	return main->execute(shared_from_this());
+	return main->execute(to_this_ptr);
 }
 
 SP_Scope Scope::clone(SP_Scope parent) {
@@ -39,7 +39,7 @@ SP_Scope Scope::clone(SP_Scope parent) {
 SP_Memory Scope::getVariable(String key) {
 	//std::cout << " >> Retrieving Variable: " << key << std::endl;
 
-	SP_Scope current = shared_from_this();
+	SP_Scope current = to_this_ptr;
 
 	while (current != nullptr) {
 		auto vars = current->variables;

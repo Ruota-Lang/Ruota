@@ -2,8 +2,6 @@
 #include <cmath>
 #include "Interpreter.h"
 
-#define DEBUG
-
 #ifdef WIN32
 	#include<windows.h>
 	void setColor(int k){

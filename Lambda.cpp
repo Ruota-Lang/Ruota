@@ -7,7 +7,7 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 	auto new_base = base->clone(scope);
 	scope->main = new_base;
 
-	scope->variables["idem"] = new_memory(shared_from_this());
+	scope->variables["idem"] = new_memory(to_this_ptr);
 
 	for (size_t i = 0; i < param_keys.size(); i++) {
 		SP_Memory temp; 

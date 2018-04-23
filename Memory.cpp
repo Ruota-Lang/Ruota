@@ -48,29 +48,29 @@ SP_Scope Memory::getScope() {
 SP_Memory Memory::setType(const MemType &mt) {
 	if (mt == REF)	reference->setType(mt);
 	else			this->mt = mt;
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 SP_Memory Memory::setStatic(const bool &s) {
 	if (mt == REF)	reference->setStatic(s);
 	else			this->static_object = s;
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 SP_Memory Memory::setStruct(const bool &s) {
 	if (mt == REF) 	reference->setStruct(s);
 	else			this->struct_object = s;
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 SP_Memory Memory::makeScope(const SP_Scope &parent) {
 	if (mt == REF) {
 		reference->makeScope(parent);
-		return shared_from_this();
+		return to_this_ptr;
 	}
 	this->obj_data = new_scope(parent);
 	this->mt = OBJ;
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 Memory::Memory(const String &s) {
@@ -103,7 +103,7 @@ SP_Memory Memory::refer(const SP_Memory &m) {
 		this->reference = m;
 		this->mt = REF;
 	}
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 SP_Memory Memory::index(const SP_Memory &m) {
@@ -141,7 +141,7 @@ SP_Memory Memory::clone(const SP_Scope &parent) {
 		auto temp = new_memory();
 		temp->mt = OBJ;
 		temp->obj_data = obj_data->clone(parent);
-		temp->obj_data->variables["self"] = shared_from_this();
+		temp->obj_data->variables["self"] = to_this_ptr;
 		return temp;
 	}
 	default: return nullptr;
@@ -150,7 +150,7 @@ SP_Memory Memory::clone(const SP_Scope &parent) {
 
 bool Memory::equals(const SP_Memory &a) {
 	if (mt == REF)		return reference->equals(a);
-	if (a->mt == REF)	return a->reference->equals(shared_from_this());
+	if (a->mt == REF)	return a->reference->equals(to_this_ptr);
 	if (mt != a->mt)	return false;
 
 	switch (a->mt)
@@ -174,16 +174,16 @@ bool Memory::equals(const SP_Memory &a) {
 SP_Memory Memory::setValue(const long double &data){
 	if (mt == REF)	this->reference->setValue(data);
 	else			this->data = data;
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 SP_Memory Memory::set(const SP_Memory &m) {
-	if (shared_from_this() == m)
-		return shared_from_this();
+	if (to_this_ptr == m)
+		return to_this_ptr;
 
 	if (mt == REF) {
 		reference->set(m);
-		return shared_from_this();
+		return to_this_ptr;
 	}
 
 	this->mt = m->mt;
@@ -215,17 +215,17 @@ SP_Memory Memory::set(const SP_Memory &m) {
 	default:
 		break;
 	}
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 SP_Memory Memory::setScope(const SP_Scope &scope) {
 	if (mt == REF) {
 		reference->setScope(scope);
-		return shared_from_this();
+		return to_this_ptr;
 	}
 	obj_data = scope;
 	mt = OBJ;
-	return shared_from_this();
+	return to_this_ptr;
 }
 
 SP_Memory Memory::add(const SP_Memory &a) {
@@ -435,8 +435,7 @@ String Memory::toString() {
 		return s + "]";*/
 	}
 	case LAM: {
-		Lambda * l = lambda.get();
-		return "LAM-" + std::to_string((int)&l);
+		return "LAM";
 	}
 	case OBJ: {
 		if (obj_data->variables.find("string") != obj_data->variables.end()) {
@@ -445,8 +444,7 @@ String Memory::toString() {
 				return l->execute({})->toString();
 			}
 		}
-		Memory * m = shared_from_this().get();
-		return "OBJ-" + std::to_string((int)&m);
+		return "OBJ";
 	}
 	default:
 		return "null";

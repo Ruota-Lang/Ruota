@@ -99,6 +99,7 @@ enum MemType {
 	REF
 };
 
+
 typedef	std::string				String;
 typedef	std::shared_ptr<Memory>	SP_Memory;
 typedef	std::shared_ptr<Node>	SP_Node;
@@ -113,6 +114,9 @@ typedef	std::vector<String>		VEC_String;
 #define	new_node	std::make_shared<Node>
 #define	new_lambda	std::make_shared<Lambda>
 #define	new_scope	std::make_shared<Scope>
+
+#define to_this_ptr	shared_from_this()
+
 
 
 struct Memory : std::enable_shared_from_this<Memory> {

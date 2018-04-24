@@ -12,12 +12,14 @@ hilo(min, max) => {
 	};
 	Console.color(Colors.MAGENTA + 8);
 	Console.printLine("~~Welcome to HiLo!~~");
-	a = Random.int(min, max);
-	r = min - 1;
+	local a = Random.int(min, max);
+	local r = min - 1;
+	local c = 0;
 	Console.color(Colors.WHITE);
 	Console.printLine("The number is between " .. min .. " and " .. max);
 	Console.printLine("--------------------------------");
 	a != r do {
+		c = c + 1;
 		Console.color(Colors.WHITE);
 		Console.print("Enter a guess: ");
 		Console.color(Colors.YELLOW + 8);
@@ -28,6 +30,7 @@ hilo(min, max) => {
 	};
 	Console.color(Colors.GREEN);
 	Console.printLine("Correct! The answer was " .. a);
+	Console.printLine("It took you " .. c .. " guesses!");
 	Console.color(Colors.WHITE);
 };
 

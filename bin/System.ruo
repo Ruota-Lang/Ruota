@@ -46,7 +46,7 @@ static Console :: {
 	};
 
 	static Input :: {
-		number() => { val string() };
+		number() => { num string() };
 		string() => { _OUTER_CALL_(3)[1] };
 		line() => { _OUTER_CALL_(4)[1] };
 	};

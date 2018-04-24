@@ -9,8 +9,8 @@ There is no typing system, types are automatically assigned based on context:
 	>>>	a = 1;					# a is of type 'number'
 	>>>	a = [1,2,3];			# a is of type 'array'
 	>>>	a = new A;				# a is of type 'object' (prototyped by the structure A)
-	>>>	a = "Hello";			# a is of type 'array' (strings are not a default type, rather they are arrays of 'number's)
-	>>>	a = 'H';				# a is of type 'number' (there are no chars - all chars are numbers)
+	>>>	a = "Hello";			# a is of type 'string' (strings are arrays, they can be indexed and iterated with restrictions: an indexed value of a string can not be set to any value other than a char)
+	>>>	a = 'H';				# a is of type 'char'
 	>>>	a = (x) -> { x + 1 };	# a is of type 'lambda'
 	>>>	a;						# without a declaration, the type is automatically assigned to null
 	>>>	a = null;				# a is of type (and value) 'null'
@@ -144,8 +144,11 @@ If-then statements use the keywords `then` and `else`.
 
 	a ** b		The exponential of `a` to the power of `b`
 	len a		Size of array `a`
-	val a		Numerical value of string-array `a`
+	num a		Numerical value of string-array `a`
 	str a		String value of `a`
+				condenses array into a string format
+	arr a		Array value of string `a`
+				`str (arr "Hello World" + 1)` adds 1 to each char in the string and then converts it back to string
 	a push b	Pushes value `b` to the end of `a`
 	a post b	Pushes value `b` to the front of `a`
 	pop a		Pops value from end of `a`

@@ -1,0 +1,12 @@
+load "System";
+
+shift(s, o) => n_s from {
+	i in s do { 
+		i >= 'a' then i = i - 'a';
+		i >= 'A' then i = i - 'A';
+		i < 26 then i = ((num i + o) % 26) + 'A';
+	}; 
+	n_s = s; 
+};
+
+Console.printLine(shift("Hello World", 1));

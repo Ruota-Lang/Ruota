@@ -20,18 +20,18 @@ Variables can be declared as `local`, which ensures that the variable is `a` mem
 	a = 1;
 	{
 		local a = 2;
-		System.print(a);	# Prints '2'
+		os.print(a);	# Prints '2'
 	};
-	System.print(a);		# Prints '1'
+	os.print(a);		# Prints '1'
 
 Contrast with:
 
 	a = 1;
 	{
 		a = 2;
-		System.print(a);	# Prints '2'
+		os.print(a);	# Prints '2'
 	};
-	System.print(a);		# Also prints '2'
+	os.print(a);		# Also prints '2'
 
 Functions can be declared anonymously:
 

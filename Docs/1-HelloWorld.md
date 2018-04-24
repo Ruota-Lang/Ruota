@@ -12,14 +12,14 @@ Remember, every line needs to end with a semi-colon (;)! Otherwise, the syntax m
 
 The _System_ file/library has various functions that are essentially required for most programming tasks. One of these is the _print_ function, which outputs a sequence of text on the console.
 
-The _print_ function is located within the _Console_ object, declared in the first line of the library. To use it, you call it like so:
+The _print_ function is located within the _os_ object, declared in the first line of the library. To use it, you call it like so:
 
-	Console.print("Hello World!");
+	os.print("Hello World!");
 
 And that's all, quite simple! The full code looks like this:
 
 	load "System";
-	Console.print("Hello World!");
+	os.print("Hello World!");
 
 To run it, execute the `ruota.exe` interpreter with the filename as an argument. It should look something like this:
 

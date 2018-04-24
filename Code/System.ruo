@@ -18,11 +18,11 @@ static Colors :: {
 	local BRIGHT_WHITE = 15;
 };
 
-static Console :: {
+static os :: {
 	print(x) => { _OUTER_CALL_(1, x) };
-	printLine(x) => { print(x .. "\n") };
-	newLine() => { printLine("") };
-	os(x) => { _OUTER_CALL_(0, x)[1] };
+	printl(x) => { print(x .. "\n") };
+	newl() => { printl("") };
+	system(x) => { _OUTER_CALL_(0, x)[1] };
 	exit() => { _OUTER_CALL_(2) };
 	rawFile(filename) => { _OUTER_CALL_(8, filename)[1] };
 	
@@ -41,7 +41,7 @@ static Console :: {
 				};
 				print(k);
 			};
-			newLine();
+			newl();
 		};
 	};
 

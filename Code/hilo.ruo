@@ -10,28 +10,28 @@ hilo(min, max) => {
 		max = min;
 		min = 0;
 	};
-	Console.color(Colors.MAGENTA + 8);
-	Console.printLine("~~Welcome to HiLo!~~");
+	os.color(Colors.MAGENTA + 8);
+	os.printl("~~Welcome to HiLo!~~");
 	local a = Random.int(min, max);
 	local r = min - 1;
 	local c = 0;
-	Console.color(Colors.WHITE);
-	Console.printLine("The number is between " .. min .. " and " .. max);
-	Console.printLine("--------------------------------");
+	os.color(Colors.WHITE);
+	os.printl("The number is between " .. min .. " and " .. max);
+	os.printl("--------------------------------");
 	a != r do {
 		c = c + 1;
-		Console.color(Colors.WHITE);
-		Console.print("Enter a guess: ");
-		Console.color(Colors.YELLOW + 8);
-		r = Console.Input.number();
-		Console.color(Colors.CYAN);
-		r < a then Console.printLine("Too low!");
-		r > a then Console.printLine("Too high!");
+		os.color(Colors.WHITE);
+		os.print("Enter a guess: ");
+		os.color(Colors.YELLOW + 8);
+		r = os.Input.number();
+		os.color(Colors.CYAN);
+		r < a then os.printl("Too low!");
+		r > a then os.printl("Too high!");
 	};
-	Console.color(Colors.GREEN);
-	Console.printLine("Correct! The answer was " .. a);
-	Console.printLine("It took you " .. c .. " guesses!");
-	Console.color(Colors.WHITE);
+	os.color(Colors.GREEN);
+	os.printl("Correct! The answer was " .. a);
+	os.printl("It took you " .. c .. " guesses!");
+	os.color(Colors.WHITE);
 };
 
 len args == 0 then {

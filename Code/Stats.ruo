@@ -2,9 +2,9 @@ load "System";
 load "Map";
 load "Arrays";
 
-s = Console.rawFile(args[1]);
+s = os.rawFile(args[1]);
 
-Console.printLine("Fetched File: " .. len s .. " Chars");
+os.printl("Fetched File: " .. len s .. " Chars");
 
 m = new Map;
 
@@ -19,13 +19,13 @@ m.contents = Arrays.sort(m.contents, ((a,b) -> {a.key < b.key}));
 
 i in m do {
 	i.key == '\t' then {
-		Console.print("\\t");
+		os.print("\\t");
 	} else i.key == '\n' then {
-		Console.print("\\n");
+		os.print("\\n");
 	} else i.key == ' ' then {
-		Console.print("SPACE");
+		os.print("SPACE");
 	} else {
-		Console.print(i.key);
+		os.print(i.key);
 	};
-	Console.printLine("\t" .. i.value);
+	os.printl("\t" .. i.value);
 };

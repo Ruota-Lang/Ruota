@@ -81,8 +81,8 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 
 int console(){
 	String line;
-	//i->generate("args = []; load \"System\";" , main_scope, "");
-	//i->execute(main_scope);
+	i->generate("args = [];", main_scope, ""); //d \"System\";" , main_scope, "");
+	i->execute(main_scope);
 
 	std::cout << "Ruota 0.5.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 

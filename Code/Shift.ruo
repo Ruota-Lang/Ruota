@@ -9,4 +9,4 @@ shift(s, o) => n_s from {
 	n_s = s; 
 };
 
-Console.printLine(shift("Hello World", 1));
+os.printl(shift("Hello World", 1));

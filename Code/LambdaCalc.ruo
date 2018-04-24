@@ -1,0 +1,39 @@
+T(TRUE,FALSE) => TRUE;
+F(TRUE,FALSE) => FALSE;
+NOT(a) => a(F,T);
+
+AND(a,b) => a(b(T, F), F);
+OR(a,b) => a(T, b(T, F));
+
+NAND(a, b) => NOT(AND(a,b));
+NOR(a,b) => NOT(OR(a,b));
+XOR(a,b) => a(b(F, T), b(T, F));
+XNOR(a,b) => NOT(XOR(a,b));
+
+ADD(a,b) => [XOR(a,b), AND(a,b)];
+FADD(a,b,c) => [XOR(XOR(a,b), c), OR(AND(XOR(a,b),c),AND(a,b))];
+
+ADDER(a, b) => r from {
+	bits = (len a > len b then len a else len b);
+	r = [];
+	local carry = F;
+	i in [1 : bits] do {
+		local na = F;
+		local nb = F;
+		len a >= i then na = a[i];
+		len b >= i then nb = b[i];
+		local res = FADD(na,nb,carry);
+		r push res[1];
+		carry = res[2];
+	};
+	r push carry;
+};
+
+binToDec(b) => d from {
+	d = 0;
+	i in [ 1 : len b ] do {
+		b[i](1,0) == 1 then {
+			d = d + 2 ** (i - 1);
+		};
+	};
+};

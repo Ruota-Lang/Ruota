@@ -24,9 +24,9 @@ primes(min, max) => a from {
 };
 
 len args == 0 then {
-	Console.printLine(sarr(primes(100)));
+	os.printl(primes(100));
 } else len args == 1 then {
-	Console.printLine(sarr(primes(num args[1])));
+	os.printl(primes(num args[1]));
 } else {
-	Console.printLine(sarr(primes(num args[1], num args[2])));
+	os.printl(primes(num args[1], num args[2]));
 }

@@ -511,7 +511,7 @@ String Memory::toString() {
 		return s + "]";
 	}
 	case LAM: {
-		return "LAM";
+		return "LAM(" + lambda->base->toString() + ")";
 	}
 	case OBJ: {
 		if (obj_data->variables.find("string") != obj_data->variables.end()) {

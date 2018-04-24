@@ -3,12 +3,12 @@ load "System";
 threadTest() => {
 	func(t) => { 
 		i in [1 : 5] do {
-			Console.printLine("Thread " .. t .. ":\t" .. i); 
+			os.printl("Thread " .. t .. ":\t" .. i); 
 		}; 
 	};
-	Console.printLine("Unthreaded:");
+	os.printl("Unthreaded:");
 	func(1), func(2), func(3);
-	Console.printLine("Threaded:");
+	os.printl("Threaded:");
 	thread(func(1), func(2), func(3));
 };
 

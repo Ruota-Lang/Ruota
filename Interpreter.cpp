@@ -19,8 +19,11 @@ std::map<String, int> Interpreter::operators = {
 	{ "end", -10 },
 	{ "type", -10 },
 	{ "len", -10 },
-	{ "val", -10 },
+
+	{ "num", -10 },
 	{ "str", -10 },
+	{ "arr", -10 },
+
 	{ "pop", -10 },
 	{ "mov", -10 },
 	{ ".negate", -10 },
@@ -102,7 +105,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					myfile.close();
 				}else
 				{
-					throw std::runtime_error("Cannot Load File: " + filename);
+					throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename + "\";");
 				}
 				LOADED.push_back(filename);
 				auto gen = generate(content, current, full_path_string);
@@ -129,13 +132,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 		}
 		else if (isdigit(token[0]))
 			stack.push_back(new_node(stod(token)));
-		else if (token[0] == '\'')
-			stack.push_back(new_node(token[1]));
+		else if (token[0] == '\''){
+			stack.push_back(new_node(new_memory(CHA, token[1])));
+		}
 		else if (token[0] == '\"') {
-			VEC_Node chars;
-			for (int i = 1; i < token.length(); i++)
-				chars.push_back(new_node(token[i]));
-			stack.push_back(new_node(LIST, chars));
+			stack.push_back(new_node(new_memory(token.substr(1))));
 		}
 		else if (operators.find(token) != operators.end()) {
 			auto b = stack.back(); 
@@ -168,7 +169,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				params = { b };
 				stack.push_back(new_node(TYPE, params));
 			}
-			else if (token == "val") {
+			else if (token == "num") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
@@ -197,6 +198,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(new_node(TOSTRING, params));
+			}
+			else if (token == "arr") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(TOARR, params));
 			}
 			else if (token == "static") {
 				if (a != nullptr)
@@ -371,4 +378,10 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 
 SP_Memory Interpreter::execute(SP_Scope main) {
 	return main->execute();
+}
+
+void Interpreter::throwError(String errorMessage, String errorLine){
+	while (errorLine[0] == '(' && errorLine.back() == ')')
+		errorLine = errorLine.substr(1, errorLine.size() - 2);
+	throw std::runtime_error(errorMessage + "\n\t" + errorLine);
 }

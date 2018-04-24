@@ -20,7 +20,7 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 			continue;
 		}
 		if (pChar != 0) {
-			if (c == pChar)
+			if (c == pChar && last_c != '\\')
 				pChar = 0;
 			else {
 				if (last_c == '\\') {
@@ -40,6 +40,12 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 						break;
 					case 'r':
 						tokens.back().push_back('\r');
+						break;
+					case '\'':
+						tokens.back().push_back('\'');
+						break;
+					case '"':
+						tokens.back().push_back('"');
 						break;
 					default:
 						tokens.back().push_back('\\');

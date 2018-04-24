@@ -6,10 +6,17 @@ Memory::Memory() {
 	this->mt = NUL;
 }
 
-Memory::Memory(const long double &data) {
+Memory::Memory(MemType mt, const long double &data) {
 	reference_count++;
-	this->data = data;
-	this->mt = NUM;
+	this->mt = mt;
+	switch(mt){
+		case NUM:
+		this->data = data;
+		break;
+		case CHA:
+		this->char_data = data;
+		break;
+	}
 }
 
 Memory::Memory(SP_Scope scope) {
@@ -75,9 +82,11 @@ SP_Memory Memory::makeScope(const SP_Scope &parent) {
 
 Memory::Memory(const String &s) {
 	reference_count++;
-	for (auto &c : s)
-		this->arr_data.push_back(new_memory(c));
-	this->mt = ARR;
+	for (auto &c : s){
+		this->arr_data.push_back(new_memory(CHA, c));
+		this->arr_data.back()->setStatic(true);
+	}
+	this->mt = STR;
 }
 
 SP_Memory Memory::pop() {
@@ -106,13 +115,19 @@ SP_Memory Memory::unshift(SP_Memory &m) {
 
 long double Memory::getValue() {
 	if (mt == REF)	return reference->getValue();
-	return this->data;
+	switch(mt){
+		case CHA:
+		return this->char_data;
+		case NUM:
+		return this->data;
+		case STR:
+		return std::stold(this->toString());
+	}
+	return 0;
 }
 
 SP_Lambda Memory::getLambda() {
 	if (mt == REF)	return reference->getLambda();
-	if (this->lambda == nullptr)
-		throw std::runtime_error("Error: Lambda does not exist!");
 	return this->lambda;
 }
 VEC_Memory Memory::getArray() {
@@ -133,10 +148,10 @@ SP_Memory Memory::refer(const SP_Memory &m) {
 SP_Memory Memory::index(const SP_Memory &m) {
 	if (mt == REF)	return reference->index(m);
 
-	if (mt == ARR) {
+	if (mt == ARR || mt == STR) {
 		size_t pos = m->getValue() - 1;
 		if (this->arr_data.size() <= pos || pos < 0)
-			throw std::runtime_error(("Error: Index out of range! (Pos=" + std::to_string(pos + 1) + ", Size=" + std::to_string(this->arr_data.size()) + ")").c_str());
+			return nullptr;
 		return this->arr_data[pos];
 	} else if (mt == OBJ) {
 		if (obj_data->variables.find("index") != obj_data->variables.end()) {
@@ -152,9 +167,11 @@ SP_Memory Memory::clone(const SP_Scope &parent) {
 	switch (mt)
 	{
 	case REF:	return reference->clone(parent);
-	case NUM:	return new_memory(data);
+	case CHA:	return new_memory(CHA, char_data);
+	case NUM:	return new_memory(NUM, data);
 	case LAM:	return new_memory(lambda->clone(parent));
 	case NUL:	return new_memory();
+	case STR:	return new_memory(this->toString());
 	case ARR: {
 		VEC_Memory new_arr;
 		for (auto &v : arr_data)
@@ -179,7 +196,9 @@ bool Memory::equals(const SP_Memory &a) {
 
 	switch (a->mt)
 	{
+	case CHA:
 	case NUM:	if (getValue() != a->getValue())	return false;
+	case STR:
 	case ARR: {
 		if (arr_data.size() != a->arr_data.size())	return false;
 		for (int i = 0; i < arr_data.size(); i++)
@@ -210,18 +229,42 @@ SP_Memory Memory::set(const SP_Memory &m) {
 		return to_this_ptr;
 	}
 
+	if (isStatic() && mt == CHA){
+		try {
+		this->char_data = (char)m->getValue();
+		} catch (...){
+			throw std::runtime_error("Error: Cannot set a string-dependent char to a non-char value!");
+		}
+		return to_this_ptr;
+	}
+
 	this->mt = m->mt;
 	this->arr_data.clear();
 	this->lambda = nullptr;
 	this->reference = nullptr;
 	this->data = 0;
+	this->char_data = 0;
 	switch (m->mt)
 	{
 	case REF:
 		this->set(m->reference);
 		break;
+	case CHA:
+		this->char_data = m->getValue();
+		break;
 	case NUM:
-		this->data = m->data;
+		this->data = m->getValue();
+		break;
+	case STR:
+		for (auto &v : m->arr_data) {
+			SP_Memory temp = new_memory();
+			temp->set(v);
+			if (temp->getType() != CHA)
+				this->mt = ARR;
+			else
+				temp->setStatic(true);
+			this->arr_data.push_back(temp);
+		}
 		break;
 	case ARR:
 		for (auto &v : m->arr_data) {
@@ -262,7 +305,7 @@ SP_Memory Memory::add(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->getValue() + a->getValue());
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() + a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -292,7 +335,7 @@ SP_Memory Memory::sub(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->getValue() - a->getValue());
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() - a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -322,7 +365,7 @@ SP_Memory Memory::mul(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->getValue() * a->getValue());
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() * a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -352,7 +395,7 @@ SP_Memory Memory::div(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->getValue() / a->getValue());
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() / a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -382,7 +425,7 @@ SP_Memory Memory::mod(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory((int)this->getValue() % (int)a->getValue());
+			return new_memory(this->mt == CHA ? CHA : NUM, (int)this->getValue() % (int)a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -412,7 +455,7 @@ SP_Memory Memory::pow(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(std::pow(this->getValue(), a->getValue()));
+			return new_memory(this->mt == CHA ? CHA : NUM, std::pow(this->getValue(), a->getValue()));
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -438,6 +481,8 @@ String Memory::toString() {
 	{
 	case REF:
 		return reference->toString();
+	case CHA:
+		return std::string(1, char_data);
 	case NUM: {
 		String s = std::to_string(data);
 		while (s.back() == '0')
@@ -446,17 +491,24 @@ String Memory::toString() {
 			s.pop_back();
 		return s;
 	}
-	case ARR: {
+	case STR: {
 		String s = "";
 		for (auto &m : arr_data) {
 			s.push_back(m->getValue());
 		}
 		return s;
-		/*String s = "[ ";
+	}
+	case ARR:{
+		String s = "[ ";
 		for (auto &m : arr_data) {
-			s += m->toString() + " ";
+			if (m->getType() == CHA)
+				s += "'" + m->toString() + "' ";
+			else if (m->getType() == STR)
+				s += "\"" + m->toString() + "\" ";
+			else
+				s += m->toString() + " ";
 		}
-		return s + "]";*/
+		return s + "]";
 	}
 	case LAM: {
 		return "LAM";
@@ -470,8 +522,10 @@ String Memory::toString() {
 		}
 		return "OBJ";
 	}
-	default:
+	case NUL:
 		return "null";
+	default:
+		return "error-type";
 	}
 }
 

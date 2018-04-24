@@ -17,7 +17,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 	switch ((int)args[0]->getValue())
 	{
 	case 0:
-		return { new_memory(system(args[1]->toString().c_str())) };
+		return { new_memory(NUM, system(args[1]->toString().c_str())) };
 		break;
 	case 1:
 		std::cout << args[1]->toString();
@@ -42,11 +42,11 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		break;
 	}
 	case 5: {
-		return { new_memory((long double)rand() / RAND_MAX) };
+		return { new_memory(NUM, (long double)rand() / RAND_MAX) };
 		break;
 	}
 	case 6: {
-		return { new_memory(std::floor(args[1]->getValue())) };
+		return { new_memory(NUM, std::floor(args[1]->getValue())) };
 		break;
 	}
 	case 7: {
@@ -54,7 +54,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		setColor(args[1]->getValue());
 		return { new_memory() };
 		#else
-		return { new_memory(1) };
+		return { new_memory(NUM, 1) };
 		#endif
 	}
 	case 8: {
@@ -74,14 +74,14 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		break;
 	}
 	default:
-		return { new_memory(1) };
+		return { new_memory(NUM, 1) };
 		break;
 	}
 }
 
 int console(){
 	String line;
-	i->generate("load \"RuotaCode\\System\";" , main_scope, "");
+	i->generate("args = []; load \"RuotaCode\\System\";" , main_scope, "");
 	i->execute(main_scope);
 
 	std::cout << "Ruota 0.4.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;

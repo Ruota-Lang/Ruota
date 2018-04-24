@@ -8,9 +8,9 @@ Fibonacci(x) => a from {
 };
 
 len args == 0 then {
-	Console.printLine(sarr(Fibonacci(10)));
+	Console.printLine(Fibonacci(10));
 } else {
-	Console.printLine(sarr(Fibonacci(val args[1])));
+	Console.printLine(Fibonacci(num args[1]));
 };
 
 # Alternatively, the function can be done inline like so:

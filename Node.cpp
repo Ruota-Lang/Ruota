@@ -4,7 +4,13 @@ long Node::reference_count = 0;
 
 Node::Node(long double data) {
 	this->reference_count++;
-	this->mem_data = new_memory(data);
+	this->mem_data = new_memory(NUM, data);
+	this->nt = MEM;
+}
+
+Node::Node(SP_Memory m) {
+	this->reference_count++;
+	this->mem_data = m;
 	this->nt = MEM;
 }
 
@@ -67,35 +73,77 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case DIV:		return executed[0]->div(executed[1]);
 	case MOD:		return executed[0]->mod(executed[1]);
 	case POW:		return executed[0]->pow(executed[1]);
-	case EQUAL:		return new_memory(executed[0]->equals(executed[1]));
-	case NEQUAL:	return new_memory(!executed[0]->equals(executed[1]));
-	case LESS:		return new_memory(executed[0]->getValue() < executed[1]->getValue());
-	case MORE:		return new_memory(executed[0]->getValue() > executed[1]->getValue());
-	case ELESS:		return new_memory(executed[0]->getValue() <= executed[1]->getValue());
-	case EMORE:		return new_memory(executed[0]->getValue() >= executed[1]->getValue());
-	case AND:		return new_memory(executed[0]->getValue() && executed[1]->getValue());
-	case OR:		return new_memory(executed[0]->getValue() || executed[1]->getValue());
-	case EXEC:		return executed[0]->getLambda()->execute(executed[1]->getArray());
+	case EQUAL:		return new_memory(NUM, executed[0]->equals(executed[1]));
+	case NEQUAL:	return new_memory(NUM, !executed[0]->equals(executed[1]));
+	case LESS:		return new_memory(NUM, executed[0]->getValue() < executed[1]->getValue());
+	case MORE:		return new_memory(NUM, executed[0]->getValue() > executed[1]->getValue());
+	case ELESS:		return new_memory(NUM, executed[0]->getValue() <= executed[1]->getValue());
+	case EMORE:		return new_memory(NUM, executed[0]->getValue() >= executed[1]->getValue());
+	case AND:		return new_memory(NUM, executed[0]->getValue() && executed[1]->getValue());
+	case OR:		return new_memory(NUM, executed[0]->getValue() || executed[1]->getValue());
 	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());
 	case OUT_CALL:	return new_memory(Interpreter::__send(executed));
-	case POP_ARR:	return executed[0]->pop();
-	case SHIFT_ARR:	return executed[0]->shift();
+	case POP_ARR:	{
+		if (executed[0]->getArray().empty())
+			Interpreter::throwError("Error: cannot pop empty array!", toString());
+		return executed[0]->pop();
+	}
+	case SHIFT_ARR:	{		
+		if (executed[0]->getArray().empty())
+			Interpreter::throwError("Error: cannot mov empty array!", toString());
+		return executed[0]->shift();
+	}
 	case PUSH_ARR:	return executed[0]->push(executed[1]);
 	case UNSHIFT_ARR:	return executed[0]->unshift(executed[1]);
 	case LAST_ARR:	return executed[0]->getArray().back();
 	case VALUE:		{
 		try {
-		return new_memory(std::stold(executed[0]->toString()));
+			if (executed[0]->getType() == CHA)
+				return new_memory(NUM, executed[0]->getValue());
+			return new_memory(NUM,std::stold(executed[0]->toString()));
 		} catch (...){
-			throw std::runtime_error("Error: cannot convert string \"" + executed[0]->toString() + "\" to a numerical value!");
+			Interpreter::throwError("Error: cannot convert string \"" + executed[0]->toString() + "\" to a numerical value!", toString());
 		}
 	}
-	case TOSTRING:	return new_memory(executed[0]->toString());
+	case EXEC:		{
+		auto l = executed[0]->getLambda();
+		if (l == nullptr)
+			Interpreter::throwError("Error: Lambda does not exist!", toString());
+		return l->execute(executed[1]->getArray());
+	}
+	case TOSTRING:	{
+		if (executed[0]->getType() != ARR)
+			return new_memory(executed[0]->toString());
+		else {
+			String s = "";
+			for (auto &v : executed[0]->getArray()){
+				if (v->getType() != CHA && v->getType() != NUM)
+					Interpreter::throwError("Error: Cannot convert multidimensional array to a string!", toString());
+				s += String(1,v->getValue());
+			}
+			return new_memory(s);
+		}
+	}
+	case TOARR:	{
+		if (executed[0]->getType() != STR && executed[0]->getType() != ARR)
+			return new_memory();
+		else if (executed[0]->getType() == ARR)
+			return executed[0];
+		else {
+			VEC_Memory new_vec;
+			for (auto &v : executed[0]->getArray()){
+				new_vec.push_back(new_memory(NUM, v->getValue()));
+			}
+			return new_memory(new_vec);
+		}
+	}
 	case TYPE:
 		switch (executed[0]->getType())
 		{
 		case NUM:	return new_memory("number");
 		case ARR:	return new_memory("array");
+		case STR:	return new_memory("string");
+		case CHA:	return new_memory("char");
 		case LAM: 	return new_memory("lambda");
 		case OBJ:	return new_memory("object");
 		default:	return new_memory("null");
@@ -103,7 +151,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case INDEX_OBJ:
 		temp1 = params[0]->execute(scope);
 		if (temp1->isStruct())
-			throw std::runtime_error("Error: Cannot index properties of template object!");
+			Interpreter::throwError("Error: Cannot index properties of template object!", toString());
 		if (temp1->getScope() == nullptr)
 			temp1->makeScope(scope);
 		if (params[1]->nt == VAR && temp1->getScope()->variables.find(params[1]->key) == temp1->getScope()->variables.end())
@@ -119,7 +167,9 @@ SP_Memory Node::execute(SP_Scope scope) {
 			auto var = new_memory();
 			executed.push_back(params[0]->params[0]->execute(scope));
 			if (executed[0]->isStatic())
-				throw std::runtime_error("Error: cannot instantiate a static object!");
+				Interpreter::throwError("Error: cannot instantiate a static object!", toString());
+			if (executed[0]->getScope() == nullptr)
+				Interpreter::throwError("Error: object template does not exist!", toString());
 			auto obj = executed[0]->getScope()->clone(scope);
 			obj->variables["self"] = new_memory(obj);
 			auto args = params[0]->params[1]->execute(scope)->getArray();
@@ -130,7 +180,9 @@ SP_Memory Node::execute(SP_Scope scope) {
 			executed.push_back(params[0]->execute(scope));
 			auto var = new_memory();
 			if (executed[0]->isStatic())
-				throw std::runtime_error("Error: cannot instantiate a static object!");
+				Interpreter::throwError("Error: cannot instantiate a static object!", toString());
+			if (executed[0]->getScope() == nullptr)
+				Interpreter::throwError("Error: object template does not exist!", toString());
 			auto obj = executed[0]->getScope()->clone(scope);
 			obj->variables["self"] = new_memory(obj);
 			var->setScope(obj);
@@ -147,6 +199,8 @@ SP_Memory Node::execute(SP_Scope scope) {
 			return temp1;
 		return temp1->getArray()[0];
 	case ADD_ARR: {
+		if (executed[0]->getType() != ARR || executed[1]->getType() != ARR)
+			Interpreter::throwError("Error: cannot concatanate non-array values!", toString());
 		auto p1 = executed[0]->getArray();
 		auto p2 = executed[1]->getArray();
 		VEC_Memory new_array;
@@ -191,12 +245,12 @@ SP_Memory Node::execute(SP_Scope scope) {
 			SP_Memory iter_arr;
 			String iter_key = params[0]->params[0]->key;
 			SP_Scope inner_scope = new_scope(scope);
-			if (var->getType() == ARR)
+			if (var->getType() == ARR || var->getType() == STR)
 				iter_arr = var;
 			else if (var->getType() == OBJ)
 				iter_arr = var->getScope()->variables["iterator"]->getLambda()->execute({});
 			else
-				throw std::runtime_error("Error: Cannot iterate over non-iterable value!");
+				Interpreter::throwError("Error: Cannot iterate over non-iterable value!", toString());
 			for (auto &m : iter_arr->getArray()) {
 				inner_scope->main = params[1]->clone(inner_scope);
 				inner_scope->variables[iter_key] = m;
@@ -237,18 +291,18 @@ SP_Memory Node::execute(SP_Scope scope) {
 		if (flag == 0){
 			if (step >= 0){
 				for (long double i = p1; i <= p2; i += step)
-					range.push_back(new_memory(i));
+					range.push_back(new_memory(NUM, i));
 			}else{
 				for (long double i = p1; i >= p2; i += step)
-					range.push_back(new_memory(i));
+					range.push_back(new_memory(NUM, i));
 			}
 		}else if (flag == 1){
 			if (step >= 0){
 				for (long double i = p1; i < p2; i += step)
-					range.push_back(new_memory(i));
+					range.push_back(new_memory(NUM, i));
 			}else{
 				for (long double i = p1; i > p2; i += step)
-					range.push_back(new_memory(i));
+					range.push_back(new_memory(NUM, i));
 			}
 		}
 		return new_memory(range);
@@ -256,16 +310,16 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case LIST:
 		return new_memory(executed);
 	case SIZE_O: {
-		if (executed[0]->getType() == ARR)
-			return new_memory(executed[0]->getArray().size());
+		if (executed[0]->getType() == ARR || executed[0]->getType() == STR)
+			return new_memory(NUM, executed[0]->getArray().size());
 		else if (executed[0]->getType() == OBJ) {
 			if (executed[0]->getScope()->variables.find("size") != executed[0]->getScope()->variables.end()) {
 				auto l = executed[0]->getScope()->variables["size"]->getLambda();
 				if (l != nullptr)
 					return l->execute({});
 			}
-		}
-		return new_memory(0);
+		}else
+			Interpreter::throwError("Error: cannot get size of non-array value, or object value where size() is undefined!", toString());
 	}
 	case THREAD:{
 		#ifdef THREADING
@@ -303,8 +357,12 @@ SP_Memory Node::execute(SP_Scope scope) {
 		auto p1 = executed[0];
 		auto p2 = executed[1];
 		VEC_Memory new_arr;
-		for (auto &i : p2->getArray())
-			new_arr.push_back(p1->index(i));
+		for (auto &i : p2->getArray()){
+			auto temp = p1->index(i);
+			if (temp == nullptr)
+				Interpreter::throwError("Error: index out of bounds!", toString());
+			new_arr.push_back(temp);
+		}
 		if (new_arr.size() > 1 || new_arr.size() == 0)
 			return new_memory(new_arr);
 		else
@@ -352,7 +410,11 @@ String Node::toString() {
 		case EQUAL:		return "(" + params[0]->toString() + " == " + params[1]->toString() + ")";
 		case NEQUAL:	return "(" + params[0]->toString() + " != " + params[1]->toString() + ")";
 		case OBJ_SET:	return "(" + params[0]->toString() + " :: " + params[1]->toString() + ")";
-		case EXEC:		return "(" + params[0]->toString() + " !! " + params[1]->toString() + ")";
+		case EXEC:		{
+			auto args = params[1]->toString().substr(1);
+			args = args.substr(0, args.size() - 1);
+			return params[0]->toString() + "(" + args + ")";
+		}
 		case DES:		return "(" + params[0]->toString() + " -> " + params[1]->toString() + ")";
 		case LDES:		return "(" + params[0]->toString() + " => " + params[1]->toString() + ")";
 		case ADD_ARR:	return "(" + params[0]->toString() + " ++ " + params[1]->toString() + ")";
@@ -365,8 +427,12 @@ String Node::toString() {
 		case RANGE:		return "(" + params[0]->toString() + " : " + params[1]->toString() + (params.size() > 2 ? " : " + params[2]->toString() : "") + ")";
 		case THEN:		return "(" + params[0]->toString() + " then " + params[1]->toString() + (params.size() > 2 ? " else " + params[2]->toString() : "") + ")";
 		case SCOPE:		return scope_ref->toString();
-		case TYPE:		return "(&" + params[0]->toString() + ")";
-		case SIZE_O:	return "(#" + params[0]->toString() + ")";
+		case TYPE:		return "(type " + params[0]->toString() + ")";
+		case SIZE_O:	return "(len " + params[0]->toString() + ")";
+		case VALUE:		return "(num " + params[0]->toString() + ")";
+		case POP_ARR:	return "(pop " + params[0]->toString() + ")";
+		case SHIFT_ARR:	return "(mov " + params[0]->toString() + ")";
+		case TOSTRING:	return "(str " + params[0]->toString() + ")";
 		case LOCAL:		return "(local " + params[0]->toString() + ")";
 		case SET_STAT:	return "(static " + params[0]->toString() + ")";
 		case NEW:		return "(new " + params[0]->toString() + ")";

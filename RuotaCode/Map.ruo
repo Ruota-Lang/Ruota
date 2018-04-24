@@ -9,7 +9,7 @@ struct Map :: {
 			};
 		};
 		contents push null;
-		local e := last contents;
+		local e := end contents;
 		e.key = key;
 		v := e.value;
 	};

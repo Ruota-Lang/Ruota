@@ -87,6 +87,7 @@ enum NodeType {
 	UNSHIFT_ARR,	//post
 	PUSH_ARR,	// push
 	LAST_ARR,	// last
+	TOARR,		// arr
 
 	BREAK,		// break
 	RETURN		// return
@@ -101,7 +102,9 @@ enum MemType {
 	ARR,
 	LAM,
 	OBJ,
-	REF
+	REF,
+	CHA,
+	STR
 };
 
 
@@ -127,6 +130,7 @@ typedef	std::vector<String>		VEC_String;
 struct Memory : std::enable_shared_from_this<Memory> {
 private:
 	long double	data = 0;
+	char		char_data = 0;
 	MemType		mt;
 	VEC_Memory	arr_data;
 	SP_Scope	obj_data = nullptr;
@@ -139,7 +143,7 @@ public:
 	Memory();
 	~Memory();
 	Memory(const String&);
-	Memory(const long double&);
+	Memory(MemType, const long double&);
 	Memory(SP_Scope);
 	Memory(SP_Lambda);
 	Memory(VEC_Memory);
@@ -189,6 +193,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	Node(long double);
 	Node(String);
 	Node(NodeType, VEC_Node);
+	Node(SP_Memory);
 	~Node();
 
 	String		toString();
@@ -239,6 +244,7 @@ public:
 	Interpreter(VEC_Memory (*__send)(VEC_Memory));
 	SP_Scope generate(String, SP_Scope, String);
 	SP_Memory execute(SP_Scope);
+	static void throwError(String errorMessage, String errorLine);
 };
 
 #endif // !INTERPRETER_H

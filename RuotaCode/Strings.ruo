@@ -8,22 +8,23 @@ static Strings :: {
 		n_s = s;
 	};
 
-	split(s, a) => arr from {
+	split(s, a) => array from {
 		a == null then a = ' ';
-		arr = [""];
+		array = [""];
 		i in s do {
 			i == a then {
-				arr push "";
+				array push "";
 			} else {
-				end arr push i;
+				end array push i;
 			};
 		};
 	};
 
-	join(arr, a) => s from {
-		s = arr[1];
-		i in [2 : len arr] do {
-			s = s ++ [ a ] ++ arr[i];
+	join(array, a) => s from {
+		a == null then a = "";
+		s = array[1];
+		i in [2 : len array] do {
+			s = s .. a .. array[i];
 		};
 	};
 };

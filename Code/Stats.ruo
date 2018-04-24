@@ -25,7 +25,7 @@ i in m do {
 	} else i.key == ' ' then {
 		Console.print("SPACE");
 	} else {
-		Console.print([i.key]);
+		Console.print(i.key);
 	};
 	Console.printLine("\t" .. i.value);
 };

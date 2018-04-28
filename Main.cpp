@@ -84,7 +84,7 @@ int console(){
 	i->generate("args := [];", main_scope, ""); //d \"System\";" , main_scope, "");
 	i->execute(main_scope);
 
-	std::cout << "Ruota 0.5.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.6.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		#ifdef WIN32

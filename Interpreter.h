@@ -40,7 +40,9 @@ enum NodeType {
 	SET,		// =
 	SET_STAT,	// static
 	OBJ_SET,	// ::
-	REF_SET,	// :=
+	OBJ_LAM,	// struct
+	DEC_SET,	// :=
+	REF_SET,	// ~>
 	ADD,		// +
 	ADD_ARR,	// ++
 	STR_CAT,	// ..
@@ -82,6 +84,7 @@ enum NodeType {
 	DETACH,		// detach
 	VALUE,		// val
 	TOSTRING,	// str
+	TOCHAR,		// chr
 	POP_ARR,	// pop
 	SHIFT_ARR,	// shift
 	UNSHIFT_ARR,	//post
@@ -104,7 +107,8 @@ enum MemType {
 	OBJ,
 	REF,
 	CHA,
-	STR
+	STR,
+	UND
 };
 
 
@@ -227,6 +231,7 @@ struct Scope : std::enable_shared_from_this<Scope> {
 
 	SP_Memory	execute();
 	SP_Memory	getVariable(String);
+	SP_Memory	declareVariable(String);
 	SP_Scope	clone(SP_Scope);
 	String		toString();
 };

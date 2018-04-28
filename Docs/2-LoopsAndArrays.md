@@ -18,7 +18,7 @@ The above code generates an inclusive array from 1 to 5, which can then be used 
 
 The for-loop will assign each value in the array to `i`, then execute the inner code. `i` will always refer to the exact data point within the array, so if the array happened to be a variable:
 
-	a = [1 : 5];
+	a := [1 : 5];
 	i in a do {
 		...
 	};

@@ -1,0 +1,30 @@
+# Number
+n1 := 1;
+n2 := 1.0;
+n3 := num "1";
+n4 := num 'H';
+
+# Array
+a1 := [];
+a2 := [1,2,3,4];
+a3 := [1:4];
+
+# String
+s1 := "Hello World";
+s2 := str [72, 101, 108, 108, 111];
+s3 := str ['H', 'e', 'l', 'l', 'o'];
+
+# Char
+c1 := 'H';
+c2 := chr 72;
+
+# Object
+static O1 :: {
+	string() => "This is a static object";
+};
+dynamic O2 :: {
+	string() => "This is a dynamic object";
+};
+O3 := struct {
+	string() => "This is an anonymous object";
+};

@@ -81,7 +81,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 
 int console(){
 	String line;
-	i->generate("args = [];", main_scope, ""); //d \"System\";" , main_scope, "");
+	i->generate("args := [];", main_scope, ""); //d \"System\";" , main_scope, "");
 	i->execute(main_scope);
 
 	std::cout << "Ruota 0.5.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
@@ -142,8 +142,13 @@ int main(int argc, char * argv[]) {
 		for (int i = 2; i < argc; i++)
 			var += "\"" + String(argv[i]) + "\" ";
 		var += "]";
-		i->generate("args = " + var + "; load \"" + String(argv[1]) + "\";" , main_scope, "");
+		try {
+		i->generate("args := " + var + "; load \"" + String(argv[1]) + "\";" , main_scope, "");
 		i->execute(main_scope);
+		} catch (std::runtime_error &e) {
+			setColor(12);
+			std::cout << "\t" << e.what() << std::endl;
+		}
 	}else{
 		console();
 	}

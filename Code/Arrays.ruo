@@ -7,12 +7,12 @@ static Arrays :: {
 		n_a = a;
 		len a < 2 then return;
 		comp == null then comp = (x, y) -> { x < y };
-		local lower = [];
-		local upper = [];
-		local pivot = Random.int(len a);
+		lower := [];
+		upper := [];
+		pivot := Random.int(len a);
 		i in [1 : len a] do {
 			i != pivot then {
-				local e = a[i];
+				e := a[i];
 				comp(e, a[pivot])
 				then lower push e;
 				else upper push e;

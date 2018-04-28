@@ -1,21 +1,21 @@
 static Colors :: {
-	local BLACK = 0;
-	local BLUE = 1;
-	local GREEN = 2;
-	local CYAN = 3;
-	local RED = 4;
-	local MAGENTA = 5;
-	local YELLOW = 6;
-	local WHITE = 7;
-	local GREY = 8;
-	local GRAY = 8;
-	local BRIGHT_BLUE = 9;
-	local BRIGHT_GREEN = 10;
-	local BRIGHT_CYAN = 11;
-	local BRIGHT_RED = 12;
-	local BRIGHT_MAGENTA = 13;
-	local BRIGHT_YELLOW = 14;
-	local BRIGHT_WHITE = 15;
+	BLACK := 0;
+	BLUE := 1;
+	GREEN := 2;
+	CYAN := 3;
+	RED := 4;
+	MAGENTA := 5;
+	YELLOW := 6;
+	WHITE := 7;
+	GREY := 8;
+	GRAY := 8;
+	BRIGHT_BLUE := 9;
+	BRIGHT_GREEN := 10;
+	BRIGHT_CYAN := 11;
+	BRIGHT_RED := 12;
+	BRIGHT_MAGENTA := 13;
+	BRIGHT_YELLOW := 14;
+	BRIGHT_WHITE := 15;
 };
 
 static os :: {
@@ -31,7 +31,7 @@ static os :: {
 	colorMap() => {
 		i in [0 : 15] do {
 			j in [0 : 15] do {
-				local k = i + 16 * j;
+				k := i + 16 * j;
 				color(k);
 				print(" ");
 				k < 10 then {
@@ -67,6 +67,19 @@ static Math :: {
 	sqrt(x) => { x ** 0.5 };
 	max(a, b) => { a > b then a else b };
 	min(a, b) => { a < b then a else b };
+	sum(a) => s from {
+		s = 0;
+		i in a do {
+			s = s + i;
+		};
+	};
+	prod(a) => p from {
+		p = 1;
+		i in a do {
+			p = p * i;
+		};
+	};
+	fact(x) => prod([1:x]);
 };
 
 # Converts an array to a string representation
@@ -84,11 +97,10 @@ sarr(a) => s from {
 
 # Returns a paired object array built from the contents of two equally sized arrays
 pairs(a, b) => p from {
-	p = null;
 	len a != len b then return;
 	p = [];
 	i in [1 : len a] do {
-		local temp;
+		temp := null;
 		temp.first = a[i];
 		temp.second = b[i];
 		p push temp;

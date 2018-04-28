@@ -36,28 +36,23 @@ SP_Scope Scope::clone(SP_Scope parent) {
 	return scope;
 }
 
-SP_Memory Scope::getVariable(String key) {
-	//std::cout << " >> Retrieving Variable: " << key << std::endl;
+SP_Memory Scope::declareVariable(String key) {
+	this->variables[key] = new_memory();
+	return this->variables[key];
+}
 
+SP_Memory Scope::getVariable(String key) {
 	SP_Scope current = to_this_ptr;
 
 	while (current != nullptr) {
 		auto vars = current->variables;
-
-		/*std::cout << " >> VAR SELECTION:\n";
-		for (auto &v : vars) {
-			std::cout << v.first << "\t" << v.second->toString() << std::endl;;
-		}*/
-
 		if (vars.find(key) != vars.end())
 			break;
 		current = current->parent;
 	}
 
 	if (current == nullptr) {
-		//std::cout << " >> Creating Variable: " << key << std::endl;
-		this->variables[key] = new_memory();
-		return this->variables[key];
+		throw std::runtime_error("Error: variable `" + key + "` undeclared!");
 	}
 
 	return current->variables[key];

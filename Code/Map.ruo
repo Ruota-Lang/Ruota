@@ -1,17 +1,15 @@
-struct Map :: {
-	local contents = [];
+dynamic Map :: {
+	contents := [];
 
 	index(key) => v from {
 		i in contents do {
 			i.key == key then {
-				v := i.value;
+				v ~> i.value;
 				return;
 			};
 		};
-		contents push null;
-		local e := end contents;
-		e.key = key;
-		v := e.value;
+		contents push new Link(key);
+		v ~> (end contents).value;
 	};
 
 	containsKey(key) => b from {
@@ -41,8 +39,27 @@ struct Map :: {
 	string() => s from {
 		s = "[ ";
 		e in contents do {
-			s = s .. e.key .. "=" .. e.value .. " ";
+			s = s .. e .. " ";
 		};
 		s = s .. "]";
+	};
+
+	invert() => nm from {
+		nm = new Map;
+		e in contents do {
+			nm[e.value] = e.key;
+		};
+	};
+
+	dynamic Link :: {
+		key := null;
+		value := null;
+		init(key, value) => {
+			self.key = key;
+			self.value = value;
+		};
+		string() => {
+			key .. "=" .. value;
+		};
 	};
 };

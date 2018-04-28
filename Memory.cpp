@@ -136,7 +136,7 @@ VEC_Memory Memory::getArray() {
 }
 
 SP_Memory Memory::refer(const SP_Memory &m) {
-	if (m->mt == NUL && m->getValue() == 1) {
+	if (m->mt == NUL && m->data == 1) {
 		this->mt = NUL;
 	}else{
 		this->reference = m;

@@ -14,15 +14,15 @@ ADD(a,b) => [XOR(a,b), AND(a,b)];
 FADD(a,b,c) => [XOR(XOR(a,b), c), OR(AND(XOR(a,b),c),AND(a,b))];
 
 ADDER(a, b) => r from {
-	bits = (len a > len b then len a else len b);
+	bits := (len a > len b then len a else len b);
 	r = [];
-	local carry = F;
+	carry := F;
 	i in [1 : bits] do {
-		local na = F;
-		local nb = F;
+		na := F;
+		nb := F;
 		len a >= i then na = a[i];
 		len b >= i then nb = b[i];
-		local res = FADD(na,nb,carry);
+		res := FADD(na,nb,carry);
 		r push res[1];
 		carry = res[2];
 	};

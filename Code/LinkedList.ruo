@@ -1,25 +1,25 @@
 # LinkedList Example
 
-struct LinkedList :: {
-	local head = null;
+dynamic LinkedList :: {
+	head := null;
 
 	# Adds element to list
 	add(e) => v from {
 		head == null then {
 			head = new Link(e);
 		} else {
-			local curr = head;
+			curr := head;
 			curr.next != null do { curr = curr.next };
 			curr.next = new Link(e);
 		};
-		v = e;
+		v := e;
 	};
 
 	iterator() => { toArray() };
 
 	toArray() => a from {
 		a = [];
-		local curr = head;
+		curr := head;
 		curr != null do {
 			a push curr.value;
 			curr = curr.next;
@@ -29,15 +29,15 @@ struct LinkedList :: {
 	# Retrieves mutable element from list
 	index(pos) => e from {
 		e = null;
-		local curr = head;
+		curr := head;
 		i in [2 : pos] do {curr = curr.next};
-		e := curr.value;
+		e ~> curr.value;
 	};
 
 	# Removes element from list
 	remove(pos) => {
-		local curr = head;
-		local prev = null;
+		curr := head;
+		prev := null;
 		i in [2 : pos] do {
 			prev = curr;
 			curr = curr.next;
@@ -49,7 +49,7 @@ struct LinkedList :: {
 	# Retrieves length of the list
 	size() => s from {
 		s = 0;
-		local curr = head;
+		curr := head;
 		curr != null do {
 			curr = curr.next;
 			s = s + 1;
@@ -59,7 +59,7 @@ struct LinkedList :: {
 	# Returns string version of the list
 	string() => s from {
 		s = "[ ";
-		curr = head;
+		curr := head;
 		curr != null do {
 			s = s .. curr.value .. " ";
 			curr = curr.next;
@@ -67,12 +67,12 @@ struct LinkedList :: {
 		s = s .. "]";
 	};
 
-	struct Link :: {
-		local value;
-		local next;
+	dynamic Link :: {
+		value := null;
+		next := null;
 
-		init(v) => {
-			value = v;
+		init(value) => {
+			self.value = value;
 			next = null;
 		};
 	};

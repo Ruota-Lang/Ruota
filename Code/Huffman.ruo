@@ -1,0 +1,93 @@
+load "System";
+load "Map";
+load "Arrays";
+
+dynamic Huffman :: {
+	head := null;
+	dict := null;
+	undict := null;
+	encoded := "";
+
+	dynamic Node :: {
+		a := null;
+		b := null;
+		parent := null;
+		weight := null;
+		value := null;
+
+		getDict(c) => dict from {
+			dict = new Map;
+			value == null then {
+				adict := a.getDict(c .. "1");
+				bdict := b.getDict(c .. "0");
+				dict.contents = dict.contents ++ adict.contents ++ bdict.contents;
+			} else {
+				dict[value] = c;
+			};
+		};
+
+		init(value, weight) => {
+			self.value = value;
+			self.weight = weight;
+		};
+
+		string() => s from {
+			s = "(W=" .. weight;
+			value == null then {
+				s = s .. ", " .. a .. ", " .. b .. ")";
+			} else {
+				s = s .. ", " .. value .. ")";
+			};
+		};
+	};
+
+	init(text) => {
+		char_table := new Map;
+		c in text do {
+			char_table.containsKey(c) == false then {
+				char_table[c] = 0;
+			};
+			char_table[c] = char_table[c] + 1;
+		};
+		nodes := [];
+		e in char_table do {
+			nodes push new Node(e.key, e.value);
+		};
+		len nodes > 1 do {
+			nodes = Arrays.sort(nodes, ((a, b) -> { a.weight > b.weight }));
+			b := end nodes;
+			pop nodes;
+			a := end nodes;
+			pop nodes;
+			c := new Node(null, a.weight + b.weight);
+			c.a = a;
+			c.b = b;
+			a.parent = c;
+			b.parent = c;
+			nodes push c;
+		};
+
+		head = nodes[1];
+		dict = head.getDict("");
+		undict = dict.invert();
+
+		encoded = "";
+		c in text do {
+			encoded = encoded .. dict[c];
+		};
+	};
+
+	unencode() => unencoded from {
+		unencoded := "";
+		curr := "";
+		c in encoded do {
+			curr = curr .. c;
+			undict.containsKey(curr) then {
+				unencoded = unencoded .. undict[curr];
+				curr = "";
+			};
+		};
+	};
+
+	string() => encoded;
+};

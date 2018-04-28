@@ -12,9 +12,9 @@ hilo(min, max) => {
 	};
 	os.color(Colors.MAGENTA + 8);
 	os.printl("~~Welcome to HiLo!~~");
-	local a = Random.int(min, max);
-	local r = min - 1;
-	local c = 0;
+	a := Random.int(min, max);
+	r := min - 1;
+	c := 0;
 	os.color(Colors.WHITE);
 	os.printl("The number is between " .. min .. " and " .. max);
 	os.printl("--------------------------------");

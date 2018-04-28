@@ -10,9 +10,9 @@ std::map<String, int> Interpreter::operators = {
 	{ ">>", 12 },
 	{ "::", 12 },
 	{ "new", 12 },
+	{ "struct", 12 },
 	{ "static", 14 },
-	{ "local", 14 },
-	{ "struct", 14 },
+	{ "dynamic", 14 },
 	{ ".", 13 },
 	{ "->", 11 },
 	{ "=>", 11 },
@@ -23,6 +23,7 @@ std::map<String, int> Interpreter::operators = {
 	{ "num", -10 },
 	{ "str", -10 },
 	{ "arr", -10 },
+	{ "chr", -10 },
 
 	{ "pop", -10 },
 	{ "mov", -10 },
@@ -51,6 +52,7 @@ std::map<String, int> Interpreter::operators = {
 	{ "post", 4 },
 	{ "=", -3 },
 	{ ":=", -3},
+	{ "~>", -3},
 	{ "in", 2 },
 	{ "do", 2 },
 	{ "then", 2 },
@@ -150,6 +152,8 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			if (token == "=")
 				stack.push_back(new_node(SET, params));
 			else if (token == ":=")
+				stack.push_back(new_node(DEC_SET, params));
+			else if (token == "~>")
 				stack.push_back(new_node(REF_SET, params));
 			else if (token == "len") {
 				if (a != nullptr)
@@ -174,6 +178,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(new_node(VALUE, params));
+			}
+			else if (token == "chr") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(TOCHAR, params));
 			}
 			else if (token == "end") {
 				if (a != nullptr)
@@ -208,20 +218,20 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			else if (token == "static") {
 				if (a != nullptr)
 					stack.push_back(a);
-				params = { b };
-				stack.push_back(new_node(SET_STAT, params));
+				stack.push_back(new_node(b->key));
+				stack.back()->nt = SET_STAT;
+			}
+			else if (token == "dynamic") {
+				if (a != nullptr)
+					stack.push_back(a);
+				stack.push_back(new_node(b->key));
+				stack.back()->nt = STRUCT;
 			}
 			else if (token == "struct") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };
-				stack.push_back(new_node(STRUCT, params));
-			}
-			else if (token == "local") {
-				if (a != nullptr)
-					stack.push_back(a);
-				params = { b };
-				stack.push_back(new_node(LOCAL, params));
+				stack.push_back(new_node(OBJ_LAM, params));
 			}
 			else if (token == "new") {
 				if (a != nullptr)

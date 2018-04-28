@@ -40,9 +40,8 @@ Node::~Node(){
 }
 
 SP_Memory Node::execute(SP_Scope scope) {
-	//std::cout << " >> " << this->toString() << std::endl;
 	VEC_Memory executed;
-	if (nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != OBJ_LAM && nt != REF_SET && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
@@ -62,10 +61,26 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case BREAK:		return temp1->setType(BREAK_M);
 	case RETURN:	return temp1->setType(RETURN_M);
 	case VAR:		return scope->getVariable(key);
-	case SET_STAT:	return executed[0]->setStatic(true);
-	case STRUCT:	return executed[0]->setStruct(true);
+	case SET_STAT:	{
+		temp1 = scope->declareVariable(key);
+		return temp1->setStatic(true);
+	}
+	case STRUCT:	{
+		temp1 = scope->declareVariable(key);
+		return temp1->setStruct(true);
+	}
+	case REF_SET:	{
+		String key = params[0]->key;
+		temp1 = scope->getVariable(key);
+		return temp1->refer(params[1]->execute(scope));
+	}
 	case SET:		return executed[0]->set(executed[1]);
-	case REF_SET:	return executed[0]->refer(executed[1]);
+	case DEC_SET:	{
+		String key = params[0]->key;
+		temp1 = scope->declareVariable(key);
+		temp1->set(params[1]->execute(scope));
+		return temp1;
+	}
 	case MEM:		return this->mem_data;
 	case ADD:		return executed[0]->add(executed[1]);
 	case SUB:		return executed[0]->sub(executed[1]);
@@ -137,6 +152,9 @@ SP_Memory Node::execute(SP_Scope scope) {
 			return new_memory(new_vec);
 		}
 	}
+	case TOCHAR: {
+		return new_memory(CHA, executed[0]->getValue());
+	}
 	case TYPE:
 		switch (executed[0]->getType())
 		{
@@ -162,6 +180,14 @@ SP_Memory Node::execute(SP_Scope scope) {
 		temp1->setScope(params[1]->scope_ref);
 		temp1->getScope()->execute();
 		return temp1;
+	case OBJ_LAM:{
+		temp1 = new_memory();
+		temp1->setScope(params[0]->scope_ref);
+		temp1->getScope()->execute();
+		auto obj = temp1->getScope()->clone(scope);
+		obj->variables["self"] = new_memory(obj);
+		return temp1;
+	}
 	case NEW: {
 		if (params[0]->nt == EXEC){
 			auto var = new_memory();
@@ -372,7 +398,8 @@ SP_Memory Node::execute(SP_Scope scope) {
 		auto scope_inner = params[1]->scope_ref;
 		scope_inner->variables[params[0]->key] = new_memory();
 		params[1]->execute(scope);
-		return scope_inner->variables[params[0]->key];
+		temp1 = scope_inner->getVariable(params[0]->key);
+		return temp1;
 	}
 	default: return NULL;
 	}
@@ -408,6 +435,10 @@ String Node::toString() {
 		case MOD: 		return "(" + params[0]->toString() + " % " + params[1]->toString() + ")";
 		case SET: 		return "(" + params[0]->toString() + " = " + params[1]->toString() + ")";
 		case EQUAL:		return "(" + params[0]->toString() + " == " + params[1]->toString() + ")";
+		case LESS:		return "(" + params[0]->toString() + " < " + params[1]->toString() + ")";
+		case ELESS:		return "(" + params[0]->toString() + " <= " + params[1]->toString() + ")";
+		case MORE:		return "(" + params[0]->toString() + " > " + params[1]->toString() + ")";
+		case EMORE:		return "(" + params[0]->toString() + " >= " + params[1]->toString() + ")";
 		case NEQUAL:	return "(" + params[0]->toString() + " != " + params[1]->toString() + ")";
 		case OBJ_SET:	return "(" + params[0]->toString() + " :: " + params[1]->toString() + ")";
 		case EXEC:		{
@@ -433,8 +464,9 @@ String Node::toString() {
 		case POP_ARR:	return "(pop " + params[0]->toString() + ")";
 		case SHIFT_ARR:	return "(mov " + params[0]->toString() + ")";
 		case TOSTRING:	return "(str " + params[0]->toString() + ")";
-		case LOCAL:		return "(local " + params[0]->toString() + ")";
-		case SET_STAT:	return "(static " + params[0]->toString() + ")";
+		case SET_STAT:	return "(static " + key + ")";
+		case OBJ_LAM:	return "(struct " + params[0]->toString() + ")";
+		case STRUCT:	return "(dynamic " + key + ")";
 		case NEW:		return "(new " + params[0]->toString() + ")";
 		case OUT_CALL:	return "(_OUTER_CALL_ !! (" + params[0]->toString() + "))";
 		case RETURN:	return "return";

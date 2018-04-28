@@ -44,7 +44,7 @@ dynamic Huffman :: {
 	init(text) => {
 		char_table := new Map;
 		c in text do {
-			char_table.containsKey(c) == false then {
+			!char_table.containsKey(c) then {
 				char_table[c] = 0;
 			};
 			char_table[c] = char_table[c] + 1;
@@ -89,5 +89,6 @@ dynamic Huffman :: {
 		};
 	};
 
-	string() => encoded;
+	string() => { encoded };
+	size() => { len encoded };
 };

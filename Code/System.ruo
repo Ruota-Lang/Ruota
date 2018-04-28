@@ -100,9 +100,9 @@ pairs(a, b) => p from {
 	len a != len b then return;
 	p = [];
 	i in [1 : len a] do {
-		temp := null;
-		temp.first = a[i];
-		temp.second = b[i];
-		p push temp;
+		p push struct {
+			first := a[i], 
+			second := b[i]
+		};
 	};
 };

@@ -13,9 +13,11 @@ static Arrays :: {
 		i in [1 : len a] do {
 			i != pivot then {
 				e := a[i];
-				comp(e, a[pivot])
-				then lower push e;
-				else upper push e;
+				comp(e, a[pivot]) then {
+					lower push e;
+				} else {
+					upper push e;
+				};
 			};
 		};
 		n_a = idem(lower, comp) ++ [ a[pivot] ] ++ idem(upper, comp);
@@ -42,4 +44,4 @@ static Arrays :: {
 			};
 		};
 	};
-}
+};

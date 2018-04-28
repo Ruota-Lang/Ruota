@@ -56,6 +56,7 @@ enum NodeType {
 	NEQUAL,		// !=
 	LESS,		// <
 	MORE,		// >
+	NOT,		// !
 	ELESS,		// <=
 	EMORE,		// >=
 	AND,		// &&

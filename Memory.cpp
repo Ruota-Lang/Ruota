@@ -223,10 +223,11 @@ SP_Memory Memory::setValue(const long double &data){
 SP_Memory Memory::set(const SP_Memory &m) {
 	if (to_this_ptr == m)
 		return to_this_ptr;
-
 	if (mt == REF) {
 		reference->set(m);
 		return to_this_ptr;
+	} else if (m->mt == REF){
+		return this->set(m->reference);
 	}
 
 	if (isStatic() && mt == CHA){
@@ -246,9 +247,6 @@ SP_Memory Memory::set(const SP_Memory &m) {
 	this->char_data = 0;
 	switch (m->mt)
 	{
-	case REF:
-		this->set(m->reference);
-		break;
 	case CHA:
 		this->char_data = m->getValue();
 		break;

@@ -89,6 +89,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case MOD:		return executed[0]->mod(executed[1]);
 	case POW:		return executed[0]->pow(executed[1]);
 	case EQUAL:		return new_memory(NUM, executed[0]->equals(executed[1]));
+	case NOT:		return new_memory(NUM, !executed[0]->equals(new_memory(NUM, 1)));
 	case NEQUAL:	return new_memory(NUM, !executed[0]->equals(executed[1]));
 	case LESS:		return new_memory(NUM, executed[0]->getValue() < executed[1]->getValue());
 	case MORE:		return new_memory(NUM, executed[0]->getValue() > executed[1]->getValue());

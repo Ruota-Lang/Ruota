@@ -13,6 +13,7 @@ std::map<String, int> Interpreter::operators = {
 	{ "struct", 12 },
 	{ "static", 14 },
 	{ "dynamic", 14 },
+	{ "!", -13 },
 	{ ".", 13 },
 	{ "->", 11 },
 	{ "=>", 11 },
@@ -244,6 +245,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(new_node(DETACH, params));
+			}
+			else if (token == "!") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(NOT, params));
 			}
 			else if (token == "::")
 				stack.push_back(new_node(OBJ_SET, params));

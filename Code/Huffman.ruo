@@ -77,13 +77,13 @@ dynamic Huffman :: {
 		};
 	};
 
-	unencode() => unencoded from {
-		unencoded := "";
+	decode() => decoded from {
+		decoded := "";
 		curr := "";
 		c in encoded do {
 			curr = curr .. c;
 			undict.containsKey(curr) then {
-				unencoded = unencoded .. undict[curr];
+				decoded = decoded .. undict[curr];
 				curr = "";
 			};
 		};

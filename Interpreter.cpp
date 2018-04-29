@@ -25,6 +25,7 @@ std::map<String, int> Interpreter::operators = {
 	{ "str", -10 },
 	{ "arr", -10 },
 	{ "chr", -10 },
+	{ "alloc", -10 },
 
 	{ "pop", -10 },
 	{ "mov", -10 },
@@ -185,6 +186,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(new_node(TOCHAR, params));
+			}
+			else if (token == "alloc") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(ALLOC, params));
 			}
 			else if (token == "end") {
 				if (a != nullptr)

@@ -71,24 +71,41 @@ dynamic Huffman :: {
 		dict = head.getDict("");
 		undict = dict.invert();
 
-		encoded = "";
+		encoded = alloc(len text * 127);
+		i := 0;
 		c in text do {
-			encoded = encoded .. dict[c];
+			val := dict[c];
+			c2 in val do {
+				i = i + 1;
+				encoded[i] = c2;
+			};
 		};
+		encoded = str encoded[1:i];
 	};
 
 	decode() => decoded from {
-		decoded := "";
+		decoded := alloc(len encoded);
 		curr := "";
+		i := 0;
 		c in encoded do {
 			curr = curr .. c;
 			undict.containsKey(curr) then {
-				decoded = decoded .. undict[curr];
+				i = i + 1;
+				decoded[i] = undict[curr];
 				curr = "";
 			};
 		};
+		decoded = str decoded[1:i];
 	};
 
+	toArray() => array from {
+		array = [1 : len encoded];
+		i in [1 : len encoded] do {
+			array[i] = index(i);
+		};
+	};
+	
+	index(pos) => { num str encoded[pos] };
 	string() => { encoded };
 	size() => { len encoded };
 };

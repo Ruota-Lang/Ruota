@@ -109,6 +109,14 @@ SP_Memory Node::execute(SP_Scope scope) {
 			Interpreter::throwError("Error: cannot mov empty array!", toString());
 		return executed[0]->shift();
 	}
+	case ALLOC: {
+		auto len = executed[0]->getValue();
+		VEC_Memory list;
+		for (auto i = 0; i < len; i++){
+			list.push_back(new_memory());
+		}
+		return new_memory(list);
+	}
 	case PUSH_ARR:	return executed[0]->push(executed[1]);
 	case UNSHIFT_ARR:	return executed[0]->unshift(executed[1]);
 	case LAST_ARR:	return executed[0]->getArray().back();

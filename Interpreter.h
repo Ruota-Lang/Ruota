@@ -85,6 +85,7 @@ enum NodeType {
 	DETACH,		// detach
 	VALUE,		// val
 	TOSTRING,	// str
+	ALLOC,		// alloc
 	TOCHAR,		// chr
 	POP_ARR,	// pop
 	SHIFT_ARR,	// shift

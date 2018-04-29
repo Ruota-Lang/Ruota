@@ -30,7 +30,7 @@ dynamic Huffman :: {
 				self.a = value;
 				self.b = weight;
 				self.weight = a.weight + b.weight;
-				self.value = a.value .. b.value;
+				self.value = 0;
 			} else {
 				self.value = value;
 				self.weight = weight;
@@ -67,7 +67,11 @@ dynamic Huffman :: {
 			nodes push new Node(e.key, e.value);
 		};
 		len nodes > 1 do {
-			nodes = Arrays.sort(nodes, ((a, b) -> { a.weight > b.weight }));
+			nodes = Arrays.sort(nodes, ((a, b) -> { 
+				a.weight == b.weight 
+				then a.value < b.value
+				else a.weight > b.weight;
+			}));
 			b := end nodes; pop nodes;
 			a := end nodes;	pop nodes;
 			nodes push new Node(a,b);
@@ -119,8 +123,8 @@ dynamic Huffman :: {
 			}; 
 		};
 		a = [];
-		b in [1 : len encoded : 8] do {
-			a push btod(self[b : Math.min(b + 8, len encoded)]);
+		b in [1 : len encoded : 7] do {
+			a push btod(self[b : Math.min(b + 7, len encoded)]);
 		};
 	};
 	

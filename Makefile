@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-Ofast
+CFLAGS=-O3
 
 all: bin/ruota.exe
 

@@ -27,6 +27,7 @@ Node::Node(String key) {
 }
 
 Node::Node(SP_Node val, std::map<long double, SP_Node> switch_values){
+	this->reference_count++;
 	this->switch_values = switch_values;
 	this->nt = SWITCH;
 	this->params.push_back(val);
@@ -43,6 +44,7 @@ Node::~Node(){
 	this->scope_ref = nullptr;
 	this->mem_data = nullptr;
 	this->params.clear();
+	this->switch_values.clear();
 }
 
 SP_Memory Node::execute(SP_Scope scope) {

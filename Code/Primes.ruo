@@ -23,10 +23,8 @@ primes(min, max) => a from {
 	};
 };
 
-len args == 0 then {
-	os.printl(primes(100));
-} else len args == 1 then {
-	os.printl(primes(num args[1]));
-} else {
-	os.printl(primes(num args[1], num args[2]));
-};
+len args switch {
+0 >> os.printl(primes(10));
+1 >> os.printl(primes(num args[1]));
+2 >> os.printl(primes(num args[1], num args[2]));
+} >> os.printl("Improper Arguments");

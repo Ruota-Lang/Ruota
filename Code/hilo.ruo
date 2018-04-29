@@ -34,10 +34,8 @@ hilo(min, max) => {
 	os.color(Colors.WHITE);
 };
 
-len args == 0 then {
-	hilo(10);
-} else len args == 1 then {
-	hilo(num args[1]);
-} else {
-	hilo(num args[1], num args[2]);
-};
+len args switch {
+0 >> hilo(10);
+1 >> hilo(num args[1]);
+2 >> hilo(num args[1], num args[2]);
+} >> os.printl("Improper Arguments");

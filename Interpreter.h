@@ -9,6 +9,7 @@
 #include<vector>
 #include<fstream>
 #include<iostream>
+#include<algorithm>
 #include<memory>
 #include<time.h>
 #include<windows.h>
@@ -52,6 +53,9 @@ enum NodeType {
 	DIV,		// /
 	MOD,		// %
 	POW,		// **
+
+	SWITCH,		// switch
+	CASE,		// >>
 
 	EQUAL,		// ==
 	NEQUAL,		// !=
@@ -194,10 +198,12 @@ struct Node : std::enable_shared_from_this<Node> {
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
 	String		key;
+	std::map<long double, SP_Node> switch_values;
 	int			flag = 0;
 
 	Node(SP_Scope);
 	Node(long double);
+	Node(SP_Node, std::map<long double, SP_Node>);
 	Node(String);
 	Node(NodeType, VEC_Node);
 	Node(SP_Memory);

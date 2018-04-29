@@ -26,6 +26,12 @@ Node::Node(String key) {
 	this->nt = VAR;
 }
 
+Node::Node(SP_Node val, std::map<long double, SP_Node> switch_values){
+	this->switch_values = switch_values;
+	this->nt = SWITCH;
+	this->params.push_back(val);
+}
+
 Node::Node(SP_Scope scope_ref) {
 	this->reference_count++;
 	this->scope_ref = scope_ref;
@@ -41,7 +47,7 @@ Node::~Node(){
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != REF_SET_DEC && nt != OBJ_LAM && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != SWITCH && nt != REF_SET_DEC && nt != OBJ_LAM && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
@@ -100,6 +106,14 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case OR:		return new_memory(NUM, executed[0]->getValue() || executed[1]->getValue());
 	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());
 	case OUT_CALL:	return new_memory(Interpreter::__send(executed));
+	case SWITCH:	{
+		executed.push_back(params[0]->execute(scope));
+		if (switch_values.find(executed[0]->getValue()) != switch_values.end())
+			temp1 = switch_values[executed[0]->getValue()]->execute(scope);
+		else if (params.size() > 1)
+			temp1 = params[1]->execute(scope);
+		return temp1;
+	}
 	case POP_ARR:	{
 		if (executed[0]->getArray().empty())
 			Interpreter::throwError("Error: cannot pop empty array!", toString());
@@ -426,6 +440,13 @@ SP_Node Node::clone(SP_Scope scope) {
 	SP_Node nn = new_node(this->nt, new_params);
 	nn->key = this->key;
 	nn->flag = this->flag;
+	if (this->nt == SWITCH){
+		std::map<long double, SP_Node> nsw;
+		for (auto &c : switch_values) {
+			nsw[c.first] = c.second->clone(scope);
+		}
+		nn->switch_values = nsw;
+	}
 	if (this->mem_data != nullptr)
 		nn->mem_data = this->mem_data->clone(scope);
 	if (this->scope_ref != nullptr)

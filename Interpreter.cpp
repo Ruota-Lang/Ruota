@@ -56,7 +56,9 @@ std::map<String, int> Interpreter::operators = {
 	{ ":=", -3},
 	{ ".=", -3},
 	{ "..=", -3},
+	{ ">>", 2 },
 	{ "in", 2 },
+	{ "switch", 2 },
 	{ "do", 2 },
 	{ "then", 2 },
 	{ "else", -2 },
@@ -304,6 +306,20 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(EXEC_ITER, params));
 			else if (token == "then")
 				stack.push_back(new_node(THEN, params));
+			else if (token == "switch"){
+				std::map<long double, SP_Node> switch_values;
+				for (auto &n : b->scope_ref->main->params) {
+					switch_values[n->params[0]->mem_data->getValue()] = n->params[1];
+				}
+				stack.push_back(new_node(a, switch_values));
+			}
+			else if (token == ">>") {
+				if (a->nt == SWITCH){
+					a->params.push_back(b);
+					stack.push_back(a);
+				} else
+					stack.push_back(new_node(CASE, params));
+			}
 			else if (token == "else") {
 				a->params.push_back(b);
 				stack.push_back(a);

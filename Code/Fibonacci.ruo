@@ -7,11 +7,10 @@ Fibonacci(x) => a from {
 	};
 };
 
-len args == 0 then {
-	os.printl(Fibonacci(10));
-} else {
-	os.printl(Fibonacci(num args[1]));
-};
+len args switch {
+0 >> os.printl(Fibonacci(10));
+1 >> os.printl(Fibonacci(num args[1]));
+} >> os.printl("Improper Arguments");
 
 # Alternatively, the function can be done inline like so:
 # [0 : 10] ->> ( (x, a) -> { len a > 1 then a[len a] + a[len a - 1] else x } )

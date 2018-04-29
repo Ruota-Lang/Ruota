@@ -7,7 +7,7 @@ std::map<String, int> Interpreter::operators = {
 	{ ".index", 13 },
 	{ ".exec", 13 },
 	{ "from", 12 },
-	{ ">>", 12 },
+	{ "->>", 12 },
 	{ "::", 12 },
 	{ "new", 12 },
 	{ "struct", 12 },
@@ -54,7 +54,8 @@ std::map<String, int> Interpreter::operators = {
 	{ "post", 4 },
 	{ "=", -3 },
 	{ ":=", -3},
-	{ "~>", -3},
+	{ ".=", -3},
+	{ "..=", -3},
 	{ "in", 2 },
 	{ "do", 2 },
 	{ "then", 2 },
@@ -155,8 +156,6 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(SET, params));
 			else if (token == ":=")
 				stack.push_back(new_node(DEC_SET, params));
-			else if (token == "~>")
-				stack.push_back(new_node(REF_SET, params));
 			else if (token == "len") {
 				if (a != nullptr)
 					stack.push_back(a);
@@ -297,7 +296,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(PUSH_ARR, params));
 			else if (token == "post")
 				stack.push_back(new_node(UNSHIFT_ARR, params));
-			else if (token == ">>")
+			else if (token == ".=")
+				stack.push_back(new_node(REF_SET, params));
+			else if (token == "..=")
+				stack.push_back(new_node(REF_SET_DEC, params));
+			else if (token == "->>")
 				stack.push_back(new_node(EXEC_ITER, params));
 			else if (token == "then")
 				stack.push_back(new_node(THEN, params));
@@ -305,7 +308,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				a->params.push_back(b);
 				stack.push_back(a);
 			}
-			else if (token == ".index")
+			else if (token == ".index")	
 				stack.push_back(new_node(INDEX, params));
 			else if (token == ".")
 				stack.push_back(new_node(INDEX_OBJ, params));

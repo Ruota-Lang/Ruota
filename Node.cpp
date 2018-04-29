@@ -41,7 +41,7 @@ Node::~Node(){
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != OBJ_LAM && nt != REF_SET && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != REF_SET_DEC && nt != OBJ_LAM && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
@@ -69,9 +69,10 @@ SP_Memory Node::execute(SP_Scope scope) {
 		temp1 = scope->declareVariable(key);
 		return temp1->setStruct(true);
 	}
-	case REF_SET:	{
+	case REF_SET:	return executed[0]->refer(executed[1]);
+	case REF_SET_DEC:	{
 		String key = params[0]->key;
-		temp1 = scope->getVariable(key);
+		temp1 = scope->declareVariable(key);
 		return temp1->refer(params[1]->execute(scope));
 	}
 	case SET:		return executed[0]->set(executed[1]);

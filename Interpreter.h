@@ -42,7 +42,8 @@ enum NodeType {
 	OBJ_SET,	// ::
 	OBJ_LAM,	// struct
 	DEC_SET,	// :=
-	REF_SET,	// ~>
+	REF_SET,	// .=
+	REF_SET_DEC,// ..=
 	ADD,		// +
 	ADD_ARR,	// ++
 	STR_CAT,	// ..
@@ -66,7 +67,7 @@ enum NodeType {
 	INDEX_OBJ,	// .
 	SIZE_O,		// #
 	EXEC,		// ()
-	EXEC_ITER,	// >>
+	EXEC_ITER,	// ->>
 	FROM,		// from
 	DES,		// ->
 	LDES,		// =>
@@ -89,7 +90,7 @@ enum NodeType {
 	TOCHAR,		// chr
 	POP_ARR,	// pop
 	SHIFT_ARR,	// shift
-	UNSHIFT_ARR,	//post
+	UNSHIFT_ARR,// post
 	PUSH_ARR,	// push
 	LAST_ARR,	// last
 	TOARR,		// arr

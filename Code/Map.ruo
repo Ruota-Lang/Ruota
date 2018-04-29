@@ -4,12 +4,12 @@ dynamic Map :: {
 	index(key) => v from {
 		i in contents do {
 			i.key == key then {
-				v ~> i.value;
+				v .= i.value;
 				return;
 			};
 		};
 		contents push new Link(key);
-		v ~> (end contents).value;
+		v .= (end contents).value;
 	};
 
 	containsKey(key) => b from {

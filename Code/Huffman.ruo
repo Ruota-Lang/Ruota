@@ -11,15 +11,14 @@ dynamic Huffman :: {
 	dynamic Node :: {
 		a := null;
 		b := null;
-		parent := null;
 		weight := null;
 		value := null;
 
 		getDict(c) => dict from {
 			dict = new Map;
-			value == null then {
-				adict := a.getDict(c .. "1");
-				bdict := b.getDict(c .. "0");
+			a != null && b != null then {
+				adict := a.getDict(c .. "0");
+				bdict := b.getDict(c .. "1");
 				dict.contents = dict.contents ++ adict.contents ++ bdict.contents;
 			} else {
 				dict[value] = c;
@@ -27,17 +26,31 @@ dynamic Huffman :: {
 		};
 
 		init(value, weight) => {
-			self.value = value;
-			self.weight = weight;
+			type value == "object" then {
+				self.a = value;
+				self.b = weight;
+				self.weight = a.weight + b.weight;
+				self.value = a.value .. b.value;
+			} else {
+				self.value = value;
+				self.weight = weight;
+			};
 		};
 
 		string() => s from {
-			s = "(W=" .. weight;
-			value == null then {
-				s = s .. ", " .. a .. ", " .. b .. ")";
+			s = "[W=" .. weight;
+			a != null && b != null then {
+				s = s .. ", V=" .. value .. ", " .. a .. ", " .. b .. "]";
 			} else {
-				s = s .. ", " .. value .. ")";
+				s = s .. ", V=" .. value .. "]";
 			};
+		};
+
+		print(t) => {
+			i in [1:t] do os.print("~\t");
+			os.printl(value .. " | " .. weight);
+			a != null then a.print(t + 1);
+			b != null then b.print(t + 1);
 		};
 	};
 
@@ -55,16 +68,9 @@ dynamic Huffman :: {
 		};
 		len nodes > 1 do {
 			nodes = Arrays.sort(nodes, ((a, b) -> { a.weight > b.weight }));
-			b := end nodes;
-			pop nodes;
-			a := end nodes;
-			pop nodes;
-			c := new Node(null, a.weight + b.weight);
-			c.a = a;
-			c.b = b;
-			a.parent = c;
-			b.parent = c;
-			nodes push c;
+			b := end nodes; pop nodes;
+			a := end nodes;	pop nodes;
+			nodes push new Node(a,b);
 		};
 
 		head = nodes[1];
@@ -102,6 +108,19 @@ dynamic Huffman :: {
 		array = [1 : len encoded];
 		i in [1 : len encoded] do {
 			array[i] = index(i);
+		};
+	};
+
+	binToArr() => a from {
+		btod(a) => d from { 
+			d = 0; 
+			i in [0 :> len a] do { 
+				d = d + (2 ** i) * a[i + 1]; 
+			}; 
+		};
+		a = [];
+		b in [1 : len encoded : 8] do {
+			a push btod(self[b : Math.min(b + 8, len encoded)]);
 		};
 	};
 	

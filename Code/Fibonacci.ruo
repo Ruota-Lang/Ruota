@@ -14,5 +14,5 @@ len args == 0 then {
 };
 
 # Alternatively, the function can be done inline like so:
-# [0 : 10] >> ( (x, a) -> { len a > 1 then a[len a] + a[len a - 1] else x } )
+# [0 : 10] ->> ( (x, a) -> { len a > 1 then a[len a] + a[len a - 1] else x } )
 # This uses the >> operator, sending the array as the input arguments to a lambda one at a time.

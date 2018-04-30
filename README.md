@@ -1,4 +1,4 @@
-![RUOTA](https://raw.githubusercontent.com/Agilulfulus/Ruota/master/LogoIdeas/Logo1.png)
+![RUOTA](https://raw.githubusercontent.com/Agilulfulus/Ruota/master/LogoIdeas/LogoMinimal.png)
 
 # Ruota Programming Language
 

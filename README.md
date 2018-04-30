@@ -2,7 +2,23 @@
 
 # Ruota Programming Language
 
-Side project of mine - works currently as a simple interpreter.
+Side project of mine - all features below (unless otherwise specified) should work. Unfortunately, it is a little slow right now during runtime, but as the language and interpreter improves I hope that I may get it to the speed of other major interpreted languages.
+
+Ruota is a high-level abstract weakly-typed langauge. Variable types are, where applicable, implicitly converted. The language is both functional and object-oriented. The essential foundation is that everything, including functions, are variables and are stored as such. "Objects" or "Classes" as they may be called are essentially scopes and functions (variables) that are cloned and manipulated across mutliple instances. 
+
+The language is designed to give a lot of freedom to the programmer in regards to the format, style, and functionality. In addition, the overall goal of Ruota is to make available an extensible and efficient interpreted code that can be embedded into any application. I also hope that the language may be more intuitive for mathematics while style mantaining a C-style foundation.
+
+At the moment, the language has no implementations outside of the command line.
+
+# Planned Features
+
+There are, of course, a few features that I wish to see implemented in the future:
+
+1.	Proper memory management (moving away from using std::shared_ptr) and overall optimization
+2.	Ruota to C++/C compiler
+3.	Inline C++/C code - probably will come with point 2
+4.	DLL Loading for more usability (i.e., a curses module, graphicals module, etc.)
+5.	Full fledged documentation
 
 # Basic Syntax
 
@@ -33,7 +49,7 @@ The `=>` operator is essential shorthand for declaring a function, notice that t
 
 Objects are declared with the following syntax:
 
-	ObjectName :: {
+	static/dynamic ObjectName :: {
 		...properties...
 	};
 	static A :: {
@@ -81,7 +97,7 @@ It can be further narrowed by specifying a step:
 
 Lists can be further specifed using the `>>` operator. It follows the syntax `a >> b`, where `a` is a list of input values, and `b` is a lambda with a single input, denoting how the input values are transformed.
 
-	a := [ 1 : 10 ] >> ( (x) -> { x ** 2 } );	# [1,4,9,16,25,36,49,64,81,100]
+	a := [ 1 : 10 ] ->> ( (x) -> { x ** 2 } );	# [1,4,9,16,25,36,49,64,81,100]
 
 Putting this all together, we can use the Foreach loop, with the `in` operator:
 
@@ -131,6 +147,7 @@ If-then statements use the keywords `then` and `else`.
 	a ** b		The exponential of `a` to the power of `b`
 	len a		Size of array `a`
 	num a		Numerical value of string-array `a`
+	chr a		Char value of number `a`
 	str a		String value of `a`
 				condenses array into a string format
 	arr a		Array value of string `a`
@@ -142,6 +159,7 @@ If-then statements use the keywords `then` and `else`.
 	end a		Returns value from end of `a`
 	a ++ b		Array concatanation of `a` and `b`
 	a .. b		String concatanation of `a` and `b`
-	a ~> b		`a` refers to `b` - anything done to `a` is done to `b`
-				The syntax `a ~> null` removes the connection
+	a .= b		`a` refers to `b` - anything done to `a` is done to `b`
+				The syntax `a .= null` removes the connection
+	a ..= b		Declare `a`, then refer it to `b`
 	type a		Returns a string-array declaring the type of data `a` holds

@@ -36,6 +36,6 @@ hilo(min, max) => {
 
 len args switch {
 0 >> hilo(10);
-1 >> hilo(num args[1]);
-2 >> hilo(num args[1], num args[2]);
+1 >> hilo(num args[0]);
+2 >> hilo(num args[0], num args[1]);
 } >> os.printl("Improper Arguments");

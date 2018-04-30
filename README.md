@@ -87,21 +87,27 @@ Accessing `B` here requires only `A.B`.
 
 # Lists and Loops
 
-There is a foreach loop, which operates through the use of the `:` operator. This operator denotes the boundaries of an inclusive range:
+Lists/Arrays are 0-indexed.
 
-	a := [ 1 : 10 ];		# [1,2,3,4,5,6,7,8,9,10]
+There is a foreach loop, which operates through the use of the `:` operator. This operator denotes the boundaries of an exclusive (up to) range:
+
+	a := [ 0 : 10 ];		# [0,1,2,3,4,5,6,7,8,9]
 
 It can be further narrowed by specifying a step:
 
-	a := [ 1 : 10 : 2 ];		# [1,3,5,7,9]
+	a := [ 0 : 10 : 2 ];		# [0,2,4,6,8]
 
-Lists can be further specifed using the `>>` operator. It follows the syntax `a >> b`, where `a` is a list of input values, and `b` is a lambda with a single input, denoting how the input values are transformed.
+If one wished to specify an _inclusive_ range, the operator `:>` is available:
 
-	a := [ 1 : 10 ] ->> ( (x) -> { x ** 2 } );	# [1,4,9,16,25,36,49,64,81,100]
+	a := [ 0 :> 10 ];		# [0,1,2,3,4,5,6,7,8,9,10]
+
+Lists can be further specifed using the `->>` operator. It follows the syntax `a ->> b`, where `a` is a list of input values, and `b` is a lambda with a single input, denoting how the input values are transformed.
+
+	a := [ 1 :> 10 ] ->> ( (x) -> { x ** 2 } );	# [1,4,9,16,25,36,49,64,81,100]
 
 Putting this all together, we can use the Foreach loop, with the `in` operator:
 
-	i in [ 1 : 10 ] do {
+	i in [ 0 : 10 ] do {
 		...
 	};
 	iterator in list do {

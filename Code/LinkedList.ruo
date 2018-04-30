@@ -30,7 +30,7 @@ dynamic LinkedList :: {
 	index(pos) => e from {
 		e = null;
 		curr := head;
-		i in [2 : pos] do {curr = curr.next};
+		i in [1 :> pos] do {curr = curr.next};
 		e .= curr.value;
 	};
 
@@ -38,7 +38,7 @@ dynamic LinkedList :: {
 	remove(pos) => {
 		curr := head;
 		prev := null;
-		i in [2 : pos] do {
+		i in [1 : pos] do {
 			prev = curr;
 			curr = curr.next;
 		};

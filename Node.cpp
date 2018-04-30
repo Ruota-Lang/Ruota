@@ -342,18 +342,18 @@ SP_Memory Node::execute(SP_Scope scope) {
 		VEC_Memory range;
 		if (flag == 0){
 			if (step >= 0){
-				for (long double i = p1; i <= p2; i += step)
-					range.push_back(new_memory(NUM, i));
-			}else{
-				for (long double i = p1; i >= p2; i += step)
-					range.push_back(new_memory(NUM, i));
-			}
-		}else if (flag == 1){
-			if (step >= 0){
 				for (long double i = p1; i < p2; i += step)
 					range.push_back(new_memory(NUM, i));
 			}else{
 				for (long double i = p1; i > p2; i += step)
+					range.push_back(new_memory(NUM, i));
+			}
+		}else if (flag == 1){
+			if (step >= 0){
+				for (long double i = p1; i <= p2; i += step)
+					range.push_back(new_memory(NUM, i));
+			}else{
+				for (long double i = p1; i >= p2; i += step)
 					range.push_back(new_memory(NUM, i));
 			}
 		}

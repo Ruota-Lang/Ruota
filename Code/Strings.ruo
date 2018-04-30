@@ -22,8 +22,8 @@ static Strings :: {
 
 	join(array, a) => s from {
 		a == null then a = "";
-		s = array[1];
-		i in [2 : len array] do {
+		s = array[0];
+		i in [1 : len array] do {
 			s = s .. a .. array[i];
 		};
 	};

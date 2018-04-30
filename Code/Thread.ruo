@@ -2,7 +2,7 @@ load "System";
 
 threadTest() => {
 	func(t) => { 
-		i in [1 : 5] do {
+		i in [0 : 5] do {
 			os.printl("Thread " .. t .. ":\t" .. i); 
 		}; 
 	};

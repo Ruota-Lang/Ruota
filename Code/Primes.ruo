@@ -18,13 +18,13 @@ primes(min, max) => a from {
 			};
 		};
 	};
-	i in [min : max] do {
+	i in [min :> max] do {
 		isPrime(i) then a push i;
 	};
 };
 
 len args switch {
 0 >> os.printl(primes(10));
-1 >> os.printl(primes(num args[1]));
-2 >> os.printl(primes(num args[1], num args[2]));
+1 >> os.printl(primes(num args[0]));
+2 >> os.printl(primes(num args[0], num args[1]));
 } >> os.printl("Improper Arguments");

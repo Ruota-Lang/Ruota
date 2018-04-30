@@ -9,8 +9,8 @@ static Arrays :: {
 		comp == null then comp = (x, y) -> { x < y };
 		lower := [];
 		upper := [];
-		pivot := Random.int(len a);
-		i in [1 : len a] do {
+		pivot := Random.int(len a - 1);
+		i in [0 : len a] do {
 			i != pivot then {
 				e := a[i];
 				comp(e, a[pivot]) then {
@@ -26,12 +26,12 @@ static Arrays :: {
 	# Removes element from array 'a' at position 'pos'
 	remove(a, pos) => n_a from {
 		n_a = a;
-		pos == 1 then {
+		pos == 0 then {
 			mov n_a;
-		} else pos == len a then {
+		} else pos == len a - 1 then {
 			pop n_a;
 		} else {
-			n_a = n_a[1 :> pos, (pos + 1) : len n_a];
+			n_a = n_a[0 : pos, (pos + 1) : len n_a];
 		};
 	};
 

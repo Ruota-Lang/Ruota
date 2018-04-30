@@ -17,21 +17,21 @@ ADDER(a, b) => r from {
 	bits := (len a > len b then len a else len b);
 	r = [];
 	carry := F;
-	i in [1 : bits] do {
+	i in [0 : bits] do {
 		na := F;
 		nb := F;
 		len a >= i then na = a[i];
 		len b >= i then nb = b[i];
 		res := FADD(na,nb,carry);
-		r push res[1];
-		carry = res[2];
+		r push res[0];
+		carry = res[1];
 	};
 	r push carry;
 };
 
 binToDec(b) => d from {
 	d = 0;
-	i in [ 1 : len b ] do {
+	i in [ 0 : len b ] do {
 		b[i](1,0) == 1 then {
 			d = d + 2 ** (i - 1);
 		};

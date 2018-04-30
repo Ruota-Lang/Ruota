@@ -7,7 +7,7 @@ n4 := num 'H';
 # Array
 a1 := [];
 a2 := [1,2,3,4];
-a3 := [1:4];
+a3 := [1:>4];
 
 # String
 s1 := "Hello World";

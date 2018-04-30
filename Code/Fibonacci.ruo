@@ -2,16 +2,16 @@ load "System";
 
 Fibonacci(x) => a from {
 	a = [0, 1];
-	i in [3 : x] do {
+	i in [2 : x] do {
 		a push a[i - 1] + a[i - 2];
 	};
 };
 
 len args switch {
 0 >> os.printl(Fibonacci(10));
-1 >> os.printl(Fibonacci(num args[1]));
+1 >> os.printl(Fibonacci(num args[0]));
 } >> os.printl("Improper Arguments");
 
 # Alternatively, the function can be done inline like so:
-# [0 : 10] ->> ( (x, a) -> { len a > 1 then a[len a] + a[len a - 1] else x } )
+# [0 : 10] ->> ( (x, a) -> { len a > 1 then a[len a - 1] + a[len a - 2] else x } )
 # This uses the >> operator, sending the array as the input arguments to a lambda one at a time.

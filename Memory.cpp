@@ -149,7 +149,7 @@ SP_Memory Memory::index(const SP_Memory &m) {
 	if (mt == REF)	return reference->index(m);
 
 	if (mt == ARR || mt == STR) {
-		size_t pos = m->getValue() - 1;
+		size_t pos = m->getValue();
 		if (this->arr_data.size() <= pos || pos < 0)
 			return nullptr;
 		return this->arr_data[pos];

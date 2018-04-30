@@ -22,15 +22,15 @@ static os :: {
 	print(x) => { _OUTER_CALL_(1, x) };
 	printl(x) => { print(x .. "\n") };
 	newl() => { printl("") };
-	system(x) => { _OUTER_CALL_(0, x)[1] };
+	system(x) => { _OUTER_CALL_(0, x)[0] };
 	exit() => { _OUTER_CALL_(2) };
-	rawFile(filename) => { _OUTER_CALL_(8, filename)[1] };
+	rawFile(filename) => { _OUTER_CALL_(8, filename)[0] };
 	
 	color(k, k2) => { _OUTER_CALL_(7, k + 16 * k2) };
 
 	colorMap() => {
-		i in [0 : 15] do {
-			j in [0 : 15] do {
+		i in [0 : 16] do {
+			j in [0 : 16] do {
 				k := i + 16 * j;
 				color(k);
 				print(" ");
@@ -47,23 +47,24 @@ static os :: {
 
 	static Input :: {
 		number() => { num string() };
-		string() => { _OUTER_CALL_(3)[1] };
-		line() => { _OUTER_CALL_(4)[1] };
+		string() => { _OUTER_CALL_(3)[0] };
+		line() => { _OUTER_CALL_(4)[0] };
 	};
 };
 
 static Random :: {
-	double() => { _OUTER_CALL_(5)[1] };
+	double() => { _OUTER_CALL_(5)[0] };
 	int(min, max) => {
-		max == null then 
-			Math.floor(double() * (min - 1) + 1)
-		else
-			Math.floor(double() * (max - min) + min);
+		max == null then {
+			max = min;
+			min = 0;
+		};
+		Math.floor(double() * (max - min) + min);
 	};
 };
 
 static Math :: {
-	floor(x) => { _OUTER_CALL_(6, x)[1] };
+	floor(x) => { _OUTER_CALL_(6, x)[0] };
 	sqrt(x) => { x ** 0.5 };
 	max(a, b) => { a > b then a else b };
 	min(a, b) => { a < b then a else b };
@@ -79,7 +80,7 @@ static Math :: {
 			p = p * i;
 		};
 	};
-	fact(x) => prod([1:x]);
+	fact(x) => prod([1:>x]);
 };
 
 # Converts an array to a string representation
@@ -99,7 +100,7 @@ sarr(a) => s from {
 pairs(a, b) => p from {
 	len a != len b then return;
 	p = [];
-	i in [1 : len a] do {
+	i in [0 : len a] do {
 		p push struct {
 			first := a[i], 
 			second := b[i]

@@ -1,3 +1,5 @@
+![RUOTA](https://raw.githubusercontent.com/Agilulfulus/Ruota/master/LogoIdeas/Logo1.png)
+
 # Ruota Programming Language
 
 Side project of mine - works currently as a simple interpreter.

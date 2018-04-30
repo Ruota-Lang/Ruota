@@ -6,7 +6,7 @@ dynamic Huffman :: {
 	head := null;
 	dict := null;
 	undict := null;
-	encoded := "";
+	encoded := [];
 
 	dynamic Node :: {
 		a := null;
@@ -17,8 +17,8 @@ dynamic Huffman :: {
 		getDict(c) => dict from {
 			dict = new Map;
 			a != null && b != null then {
-				adict := a.getDict(c .. "0");
-				bdict := b.getDict(c .. "1");
+				adict := a.getDict(c ++ [0]);
+				bdict := b.getDict(c ++ [1]);
 				dict.contents = dict.contents ++ adict.contents ++ bdict.contents;
 			} else {
 				dict[value] = c;
@@ -78,7 +78,7 @@ dynamic Huffman :: {
 		};
 
 		head = nodes[1];
-		dict = head.getDict("");
+		dict = head.getDict([]);
 		undict = dict.invert();
 
 		encoded = alloc(len text * 127);
@@ -90,30 +90,29 @@ dynamic Huffman :: {
 				encoded[i] = c2;
 			};
 		};
-		encoded = str encoded[1:i];
+		encoded = encoded[1:i];
 	};
 
-	decode() => decoded from {
-		decoded := alloc(len encoded);
-		curr := "";
+	decode(s) => decoded from {
+		s == null then {
+			s = encoded;
+		};
+		decoded := alloc(len s);
+		curr := [];
 		i := 0;
-		c in encoded do {
-			curr = curr .. c;
+		c in s do {
+			curr push c;
 			undict.containsKey(curr) then {
 				i = i + 1;
 				decoded[i] = undict[curr];
-				curr = "";
+				curr = [];
 			};
 		};
 		decoded = str decoded[1:i];
 	};
 
-	toArray() => array from {
-		array = [1 : len encoded];
-		i in [1 : len encoded] do {
-			array[i] = index(i);
-		};
-	};
+	toArray() => { encoded };
+	iterator() => { encoded };
 
 	binToArr() => a from {
 		btod(a) => d from { 

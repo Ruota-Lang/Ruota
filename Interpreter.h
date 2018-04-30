@@ -136,8 +136,6 @@ typedef	std::vector<String>		VEC_String;
 
 #define to_this_ptr	shared_from_this()
 
-
-
 struct Memory : std::enable_shared_from_this<Memory> {
 private:
 	long double	data = 0;

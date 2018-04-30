@@ -1,0 +1,23 @@
+load "System";
+
+binToDec(b) => d from {
+	d = 0;
+	c := 0;
+	i in b do {
+		d = d + (2 ** c) * i;
+		c = c + 1;
+	};
+};
+
+decToBin(d) => b from {
+	d = Math.floor(d);
+	d == 0 then {
+		b = [0];
+	} else d == 1 then {
+		b = [1];
+	} else d % 2 == 0 then {
+		b = [0] ++ decToBin(d / 2);
+	} else {
+		b = [1] ++ decToBin(d / 2);
+	};
+};

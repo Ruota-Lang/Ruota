@@ -11,13 +11,13 @@ pos_y := 5;
 dir := 0;
 new_dir := 0;
 score := 0;
-map := alloc(map_size);
-buffer := alloc(map_size);
+map := alloc map_size;
+buffer := alloc map_size;
 
 # Set map to 0
 i in [0 : map_size] do {
-	map[i] = alloc(map_size);
-	buffer[i] = alloc(map_size);
+	map[i] = alloc map_size;
+	buffer[i] = alloc map_size;
 	j in [0 : map_size] do {
 		map[i][j] = 0;
 		buffer[i][j] = 0;

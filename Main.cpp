@@ -4,9 +4,14 @@
 
 #ifdef WIN32
 	#include<windows.h>
+	#include <conio.h>
+	#pragma comment(lib, "User32.lib")
 	void setColor(int k){
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     	SetConsoleTextAttribute(hConsole, k);
+	}
+	void printToCoordinates(int x, int y, const std::string& text){
+		printf("\033[%d;%dH%s\n", x, y, text.c_str());
 	}
 #endif
 
@@ -71,6 +76,29 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 			throw std::runtime_error("Error: cannot open file " + args[1]->toString() + "!");
 		}
 		return { new_memory(content) };
+		break;
+	}
+	#ifdef WIN32
+	case 9: {
+		int pos_x = args[1]->getValue();
+		int pos_y = args[2]->getValue();
+		std::string line = args[3]->toString();
+		printToCoordinates(pos_x, pos_y, line);
+		return { new_memory() };
+		break;
+	}
+	case 10: {
+		if(GetAsyncKeyState(args[1]->getValue()) & 0x8000)
+			return {new_memory(NUM, 1)};
+		else
+			return {new_memory(NUM, 0)};
+		break;
+	}
+	#endif
+	case 11: {
+		auto now = std::chrono::high_resolution_clock::now();
+		auto timeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+		return { new_memory(NUM, timeMillis) };
 		break;
 	}
 	default:

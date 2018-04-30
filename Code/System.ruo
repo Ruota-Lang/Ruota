@@ -20,11 +20,14 @@ static Colors :: {
 
 static os :: {
 	print(x) => { _OUTER_CALL_(1, x) };
+	printat(x, y, s) => { _OUTER_CALL_(9, y, x, s) };
 	printl(x) => { print(x .. "\n") };
 	newl() => { printl("") };
 	system(x) => { _OUTER_CALL_(0, x)[0] };
 	exit() => { _OUTER_CALL_(2) };
 	rawFile(filename) => { _OUTER_CALL_(8, filename)[0] };
+	keyDown(c) => { _OUTER_CALL_(10, c)[0] };
+	milli() => { _OUTER_CALL_(11)[0] };
 	
 	color(k, k2) => { _OUTER_CALL_(7, k + 16 * k2) };
 
@@ -54,12 +57,12 @@ static os :: {
 
 static Random :: {
 	double() => { _OUTER_CALL_(5)[0] };
-	int(min, max) => {
+	int(min, max) => i from {
 		max == null then {
 			max = min;
 			min = 0;
 		};
-		Math.floor(double() * (max - min) + min);
+		i = Math.floor(double() * (max - min) + min);
 	};
 };
 

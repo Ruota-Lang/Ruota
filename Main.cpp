@@ -10,10 +10,12 @@
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     	SetConsoleTextAttribute(hConsole, k);
 	}
+#endif
+
+
 	void printToCoordinates(int x, int y, const std::string& text){
 		printf("\033[%d;%dH%s\n", x, y, text.c_str());
 	}
-#endif
 
 Interpreter * i;
 SP_Scope main_scope;
@@ -78,7 +80,6 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		return { new_memory(content) };
 		break;
 	}
-	#ifdef WIN32
 	case 9: {
 		int pos_x = args[1]->getValue();
 		int pos_y = args[2]->getValue();
@@ -87,8 +88,9 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		return { new_memory() };
 		break;
 	}
+	#ifdef WIN32
 	case 10: {
-		if(GetAsyncKeyState(args[1]->getValue()) & 0x8000)
+		if(GetKeyState(args[1]->getValue()) & 0x8000)
 			return {new_memory(NUM, 1)};
 		else
 			return {new_memory(NUM, 0)};
@@ -112,7 +114,7 @@ int console(){
 	i->generate("args := [];", main_scope, ""); //d \"System\";" , main_scope, "");
 	i->execute(main_scope);
 
-	std::cout << "Ruota 0.6.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.6.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		#ifdef WIN32

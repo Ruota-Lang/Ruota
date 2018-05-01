@@ -129,3 +129,4 @@ frames := 0;
 	timer_fps = timer_fps + (os.milli() - time_start);
 };
 drawMap();
+drawBlock(pos_x + 2, pos_y + 2, 'X');

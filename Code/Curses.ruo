@@ -1,0 +1,58 @@
+load "System";
+
+dynamic Curses :: {
+	height := 0;
+	width := 0;
+	buffer := [];
+	screen := [];
+	run := true;
+	init(width, height) => {
+		os.system("cls");
+		self.height = height;
+		self.width = width;
+		buffer = alloc width;
+		screen = alloc width;
+		i in buffer do i = alloc height;
+		i in screen do i = alloc height;
+		clear();
+		detach render();
+	};
+
+	setString(x, y, s) => {
+		i in [0 : len s] do {
+			setChar(x + i, y, s[i]); 
+		};
+	};
+
+	setChar(x, y, c) => {
+		buffer[x][y] != c then {
+			buffer[x][y] = c;
+			#os.printat(x + 1, y + 1, c);
+		};
+	};
+
+	clear() => {
+		i in [0 : width] do {
+			j in [0 : height] do {
+				buffer[i][j] = ' ';
+			};
+		};
+	};
+
+	close() => {
+		run = false;
+	};
+
+	render() => {
+		run do {
+			i in [0 : width] do {
+				j in [0 : height] do {
+					screen[i][j] != buffer[i][j] then {
+						os.printat(i + 1, j + 1, buffer[i][j]);
+						screen[i][j] = buffer[i][j];
+					}
+				};
+			};
+		};
+	};
+};

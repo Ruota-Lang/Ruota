@@ -12,7 +12,9 @@
 #include<algorithm>
 #include<memory>
 #include<time.h>
-#include<windows.h>
+#ifdef WIN32
+	#include<windows.h>
+#endif
 #include<chrono>
 #include<cmath>
 #ifdef THREADING

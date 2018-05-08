@@ -91,9 +91,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			String full_path_string = local_file;
 
 			if (local_file == "") {
+				#ifdef WIN32
 				TCHAR full_path[MAX_PATH];
 				GetFullPathName(filename.c_str(), MAX_PATH, full_path, NULL);
 				full_path_string = full_path;
+				#endif
 				filename = "";
 				while (full_path_string.back() != '\\') {
 					filename = String(1, full_path_string.back()) + filename;

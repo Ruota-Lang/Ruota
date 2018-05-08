@@ -151,7 +151,9 @@ int console(){
 			#endif
 		}
 		catch (std::runtime_error &e) {
+			#ifdef WIN32
 			setColor(12);
+			#endif
 			std::cout << "\t" << e.what() << std::endl;
 		}
 	} while (line != "");
@@ -176,13 +178,17 @@ int main(int argc, char * argv[]) {
 		i->generate("args := " + var + "; load \"" + String(argv[1]) + "\";" , main_scope, "");
 		i->execute(main_scope);
 		} catch (std::runtime_error &e) {
+			#ifdef WIN32
 			setColor(12);
+			#endif
 			std::cout << "\t" << e.what() << std::endl;
 		}
 	}else{
 		console();
 	}
 	delete i;
+	#ifdef WIN32
 	setColor(7);
+	#endif
 	return EXIT_SUCCESS;
 }

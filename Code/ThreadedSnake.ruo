@@ -117,6 +117,7 @@ FPS_thread() => {
 
 detach FPS_thread();
 detach keypress();
+curses.render();
 
 drawBorder();
 timer := 0;

@@ -15,19 +15,18 @@ dynamic Curses :: {
 		i in buffer do i = alloc height;
 		i in screen do i = alloc height;
 		clear();
-		detach render();
 	};
 
-	setString(x, y, s) => {
+	setString(x, y, s, v) => {
 		i in [0 : len s] do {
-			setChar(x + i, y, s[i]); 
+			setChar(x + i, y, s[i], v); 
 		};
 	};
 
-	setChar(x, y, c) => {
+	setChar(x, y, c, v) => {
 		buffer[x][y] != c then {
 			buffer[x][y] = c;
-			#os.printat(x + 1, y + 1, c);
+			v then os.printat(x + 1, y + 1, c);
 		};
 	};
 
@@ -35,6 +34,7 @@ dynamic Curses :: {
 		i in [0 : width] do {
 			j in [0 : height] do {
 				buffer[i][j] = ' ';
+				os.printat(i + 1, j + 1, ' ');
 			};
 		};
 	};
@@ -44,7 +44,7 @@ dynamic Curses :: {
 	};
 
 	render() => {
-		run do {
+		detach run do {
 			i in [0 : width] do {
 				j in [0 : height] do {
 					screen[i][j] != buffer[i][j] then {

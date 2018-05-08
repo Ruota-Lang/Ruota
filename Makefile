@@ -1,10 +1,16 @@
 CC=clang++
-CFLAGS=-O3
+CFLAGS=-O3 -std=c++11
 
-all: bin/ruota.exe
+all: win32 linux
+
+win32: bin/ruota.exe
+linux: bin/ruota.out
 
 bin/ruota.exe: Compiled/Main.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
 	$(CC) $(CFLAGS) -o bin/ruota.exe Compiled/Main.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
+
+bin/ruota.out: Compiled/Main.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
+	$(CC) $(CFLAGS) -o bin/ruota.out Compiled/Main.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
 
 Compiled/Main.o: Main.cpp
 	$(CC) $(CFLAGS) Main.cpp -o Compiled/Main.o -c

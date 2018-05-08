@@ -114,7 +114,7 @@ int console(){
 	i->generate("args := [];", main_scope, ""); //d \"System\";" , main_scope, "");
 	i->execute(main_scope);
 
-	std::cout << "Ruota 0.6.4 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.6.5 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		setColor(12);

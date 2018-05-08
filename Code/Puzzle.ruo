@@ -1,0 +1,58 @@
+# This is the solution to a puzzle I found on the internet
+# Transcription of puzzle:
+#
+# 	Given integers n and m, both greater than 0, return a
+#	rectangular array of size n by m filled with integers
+#	1 through n * m, arranged in an inwards spiral pattern
+#	starting at the top left. For example, given 3 and 5,
+#	you should return
+#
+#		1	2	3	4	5
+#		12	13	14	15	6
+#		11	10	9	8	7
+
+spiral(n, m) => a from {
+	a = alloc [n, m];
+	v := [1 :> n * m];
+	x := 0;
+	y := 0;
+	i := 0;
+	dir := 0;
+	i != len v do {
+		a[x][y] == null then {
+			a[x][y] = v[i];
+			i = i + 1;
+		};
+		n_x := x;
+		n_y := y;
+		dir switch {
+			0 >> { n_y = y + 1 };
+			1 >> { n_x = x - 1 };
+			2 >> { n_y = y - 1 };
+			3 >> { n_x = x + 1 };
+		};
+		n_x >= n || n_y >= m || n_x < 0 || n_y < 0 then {
+			dir = (dir + 1) % 4;
+		} else a[n_x][n_y] != null then {
+			dir = (dir + 1) % 4;
+		} else {
+			x = n_x;
+			y = n_y;
+		};
+	};
+};
+
+# Not part of the puzzle
+
+load "System";
+printSpiral(s) => {
+	i in s do {
+		j in i do os.print(j .. "\t");
+		os.print("\n");
+	};
+};
+
+len args switch {
+0 >> printSpiral(spiral(3,5)); # original problem
+2 >> printSpiral(spiral(num args[0], num args[1]));
+} >> os.printl("Invalid arguments");

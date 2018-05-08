@@ -135,6 +135,12 @@ VEC_Memory Memory::getArray() {
 	return this->arr_data;
 }
 
+SP_Memory Memory::setArray(VEC_Memory arr_data) {
+	this->mt = ARR;
+	this->arr_data = arr_data;
+	return to_this_ptr;
+}
+
 SP_Memory Memory::refer(const SP_Memory &m) {
 	if (m->mt == NUL && m->data == 1) {
 		this->mt = NUL;

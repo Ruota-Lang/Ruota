@@ -174,6 +174,7 @@ public:
 	SP_Memory	index(const String&);
 	SP_Memory	setStatic(const bool&);
 	SP_Memory	setStruct(const bool&);
+	SP_Memory	setArray(VEC_Memory);
 	SP_Memory	setValue(const long double&);
 	String		toString();
 	SP_Memory	clone(const SP_Scope&);

@@ -128,12 +128,30 @@ SP_Memory Node::execute(SP_Scope scope) {
 		return executed[0]->shift();
 	}
 	case ALLOC: {
-		auto len = executed[0]->getValue();
-		VEC_Memory list;
-		for (auto i = 0; i < len; i++){
-			list.push_back(new_memory());
+		if (executed[0]->getType() == ARR){
+			SP_Memory base = new_memory();
+			VEC_Memory base_list = {base};
+			for (auto m : executed[0]->getArray()){
+				VEC_Memory curr_list;
+				for (auto b : base_list) {
+					VEC_Memory temp_list;
+					for (int i = 0; i < m->getValue(); i++){
+						curr_list.push_back(new_memory());
+						temp_list.push_back(curr_list.back());
+					}
+					b->setArray(temp_list);
+				}
+				base_list = curr_list;
+			}
+			return base;
+		} else {
+			auto len = executed[0]->getValue();
+			VEC_Memory list;
+			for (auto i = 0; i < len; i++){
+				list.push_back(new_memory());
+			}
+			return new_memory(list);
 		}
-		return new_memory(list);
 	}
 	case PUSH_ARR:	return executed[0]->push(executed[1]);
 	case UNSHIFT_ARR:	return executed[0]->unshift(executed[1]);

@@ -65,7 +65,7 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 				mode = 0;
 				continue;
 			}
-			else if (c == '\"' || c == '\'') {
+			else if (c == '\"' || c == '\'' || c == '`') {
 				mode = 0;
 				pChar = c;
 				tokens.push_back(std::string(1, c));
@@ -125,7 +125,7 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 	std::vector<std::string> output;
 
 	for (auto token : tokens) {
-		if (((isalnum(token[0]) || token[0] == '_') || token[0] == '\"' || token[0] == '\'') && operators.find(token) == operators.end())
+		if (((isalnum(token[0]) || token[0] == '_') || token[0] == '\"' || token[0] == '\'' || token[0] == '`') && operators.find(token) == operators.end())
 			output.push_back(token);
 		else if (operators.find(token) != operators.end()) {
 			if (!stack.empty()) {

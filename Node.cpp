@@ -86,8 +86,9 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case SET:		return executed[0]->set(executed[1]);
 	case DEC_SET:	{
 		String key = params[0]->key;
+		auto value = params[1]->execute(scope);
 		temp1 = scope->declareVariable(key);
-		temp1->set(params[1]->execute(scope));
+		temp1->set(value);
 		return temp1;
 	}
 	case MEM:		return this->mem_data;

@@ -13,32 +13,32 @@
 
 spiral(n, m) => a from {
 	a = alloc [n, m];
-	v := [1 :> n * m];
+	v := [n * m :> 1 : -1];
 	x := 0;
 	y := 0;
-	i := 0;
 	dir := 0;
-	i != len v do {
+	len v != 0 do {
 		a[x][y] == null then {
-			a[x][y] = v[i];
-			i = i + 1;
+			a[x][y] = end v;
+			pop v;
 		};
 		n_x := x;
 		n_y := y;
 		dir switch {
-			0 >> { n_y = y + 1 };
-			1 >> { n_x = x - 1 };
-			2 >> { n_y = y - 1 };
-			3 >> { n_x = x + 1 };
+			0 >> { n_y += 1 };
+			1 >> { n_x -= 1 };
+			2 >> { n_y -= 1 };
+			3 >> { n_x += 1 };
 		};
 		n_x >= n || n_y >= m || n_x < 0 || n_y < 0 then {
-			dir = (dir + 1) % 4;
+			dir += 1;
 		} else a[n_x][n_y] != null then {
-			dir = (dir + 1) % 4;
+			dir += 1;
 		} else {
 			x = n_x;
 			y = n_y;
 		};
+		dir %= 4;
 	};
 };
 

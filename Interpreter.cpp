@@ -53,6 +53,12 @@ std::map<String, int> Interpreter::operators = {
 	{ "push", 4 },
 	{ "post", 4 },
 	{ "=", -3 },
+	{ "+=", -3},
+	{ "-=", -3},
+	{ "*=", -3},
+	{ "/=", -3},
+	{ "%=", -3},
+	{ "**=", -3},
 	{ ":=", -3},
 	{ ".=", -3},
 	{ "..=", -3},
@@ -266,20 +272,50 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(OBJ_SET, params));
 			else if (token == "+")
 				stack.push_back(new_node(ADD, params));
+			else if (token == "+="){
+				auto s = new_node(ADD, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "++")
 				stack.push_back(new_node(ADD_ARR, params));
 			else if (token == "..")
 				stack.push_back(new_node(STR_CAT, params));
 			else if (token == "-")
 				stack.push_back(new_node(SUB, params));
+			else if (token == "-="){
+				auto s = new_node(SUB, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "*")
 				stack.push_back(new_node(MUL, params));
+			else if (token == "*="){
+				auto s = new_node(MUL, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "/")
 				stack.push_back(new_node(DIV, params));
+			else if (token == "/="){
+				auto s = new_node(DIV, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "%")
 				stack.push_back(new_node(MOD, params));
+			else if (token == "%="){
+				auto s = new_node(MOD, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "**")
 				stack.push_back(new_node(POW, params));
+			else if (token == "**="){
+				auto s = new_node(POW, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "==")
 				stack.push_back(new_node(EQUAL, params));
 			else if (token == "!=")

@@ -1,0 +1,43 @@
+dynamic Vector3 :: {
+	x := 0;
+	y := 0;
+	z := 0;
+
+	init(x, y, z) => {
+		self.x = x;
+		self.y = y;
+		self.z = z;
+	};
+
+	dist(v) => d from {
+		d = (x - v.x) ** 2 + (y - v.y) ** 2 + (z - v.z) ** 2;
+		d = d ** 0.5;
+	};
+
+	add(v) => n_v from {
+		type v != "object" then {
+			n_v = new Vector3(x + v, y + v, z + v);
+		} else {
+			n_v = new Vector3(x + v.x, y + v.y, z + v.z);
+		};
+	};
+
+	mul(v) => n_v from {
+		type v != "object" then {
+			n_v = new Vector3(x * v, y * v, z * v);
+		} else {
+			x := self.y * v.z - self.z * v.y;
+			y := self.z * v.x - self.x * v.z;
+			z := self.x * v.y - self.y * v.x;
+			n_v = new Vector3(x, y, z);
+		};
+	};
+
+	dot(v) => s from {
+		s = x * v.x + y * v.y + z * v.z;
+	};
+
+	string() => {
+		"<" .. str x .. ", " .. str y .. ", " .. str z .. ">";
+	};
+};

@@ -114,7 +114,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					myfile.close();
 				}else
 				{
-					throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename + "\";");
+					throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename.substr(0, filename.length() - 4) + "\";");
 				}
 				LOADED.push_back(filename);
 				auto gen = generate(content, current, full_path_string);

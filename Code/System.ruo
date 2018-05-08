@@ -28,6 +28,10 @@ static os :: {
 	rawFile(filename) => { _OUTER_CALL_(8, filename)[0] };
 	keyDown(c) => { _OUTER_CALL_(10, c)[0] };
 	milli() => { _OUTER_CALL_(11)[0] };
+	prompt(q) => v from {
+		print(q);
+		v = Input.string();
+	};
 	
 	color(k, k2) => { _OUTER_CALL_(7, k + 16 * k2) };
 

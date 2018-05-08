@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-O3 -std=c++11
+CFLAGS=-O3 -std=c++17
 
 all: win32 linux
 

@@ -2,7 +2,7 @@
 #include <cmath>
 #include "Interpreter.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 	#include<windows.h>
 	#include <conio.h>
 	#pragma comment(lib, "User32.lib")
@@ -57,7 +57,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		break;
 	}
 	case 7: {
-		#ifdef WIN32
+		#ifdef _WIN32
 		setColor(args[1]->getValue());
 		return { new_memory() };
 		#else
@@ -88,7 +88,7 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		return { new_memory() };
 		break;
 	}
-	#ifdef WIN32
+	#ifdef _WIN32
 	case 10: {
 		if(GetKeyState(args[1]->getValue()) & 0x8000)
 			return {new_memory(NUM, 1)};
@@ -117,11 +117,11 @@ int console(){
 	std::cout << "Ruota 0.6.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
-		#ifdef WIN32
+		#ifdef _WIN32
 		setColor(12);
 		#endif
 		std::cout << "\n> ";
-		#ifdef WIN32
+		#ifdef _WIN32
 		setColor(7);
 		#endif
 		std::getline(std::cin, line);
@@ -130,7 +130,7 @@ int console(){
 			SP_Scope s = i->generate(line, main_scope, "");
 			SP_Memory res = i->execute(main_scope);
 			
-			#ifdef WIN32
+			#ifdef _WIN32
 			setColor(8);
 			#endif
 			if (res->getArray().size() > 1) {
@@ -151,7 +151,7 @@ int console(){
 			#endif
 		}
 		catch (std::runtime_error &e) {
-			#ifdef WIN32
+			#ifdef _WIN32
 			setColor(12);
 			#endif
 			std::cout << "\t" << e.what() << std::endl;
@@ -159,7 +159,7 @@ int console(){
 	} while (line != "");
 
 
-	#ifdef WIN32
+	#ifdef _WIN32
 	setColor(7);
 	#endif
 	return 0;
@@ -178,7 +178,7 @@ int main(int argc, char * argv[]) {
 		i->generate("args := " + var + "; load \"" + String(argv[1]) + "\";" , main_scope, "");
 		i->execute(main_scope);
 		} catch (std::runtime_error &e) {
-			#ifdef WIN32
+			#ifdef _WIN32
 			setColor(12);
 			#endif
 			std::cout << "\t" << e.what() << std::endl;
@@ -187,7 +187,7 @@ int main(int argc, char * argv[]) {
 		console();
 	}
 	delete i;
-	#ifdef WIN32
+	#ifdef _WIN32
 	setColor(7);
 	#endif
 	return EXIT_SUCCESS;

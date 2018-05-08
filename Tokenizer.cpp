@@ -123,6 +123,9 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> tokens) {
 	std::vector<std::string> stack;
 	std::vector<std::string> output;
+	int p_count = 0;
+	int b_count = 0;
+	int c_count = 0;
 
 	for (auto token : tokens) {
 		if (((isalnum(token[0]) || token[0] == '_') || token[0] == '\"' || token[0] == '\'' || token[0] == '`') && operators.find(token) == operators.end())
@@ -147,25 +150,45 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 		else if (token == "(" || token == "[" || token == "{") {
 			stack.push_back(token);
 			output.push_back(token);
+			switch (token[0]) {
+				case '(': p_count++; break;
+				case '[': b_count++; break;
+				case '{': c_count++; break;
+			}
 		}
 		else if (token == ")" || token == "]" || token == "}") {
 			switch (token[0]) {
 			case ')':
+				p_count--;
+				if (stack.empty())
+					throw std::runtime_error("Error: Unmatched paranthesis!");
 				while (stack.back() != "(") {
 					output.push_back(stack.back());
 					stack.pop_back();
+					if (stack.empty())
+						throw std::runtime_error("Error: Unmatched paranthesis!");
 				}
 				break;
 			case ']':
+				b_count--;
+				if (stack.empty())
+					throw std::runtime_error("Error: Unmatched bracket!");
 				while (stack.back() != "[") {
 					output.push_back(stack.back());
 					stack.pop_back();
+					if (stack.empty())
+						throw std::runtime_error("Error: Unmatched bracket!");
 				}
 				break;
 			case '}':
+				c_count--;
+				if (stack.empty())
+					throw std::runtime_error("Error: Unmatched scoping bracket!");
 				while (stack.back() != "{") {
 					output.push_back(stack.back());
 					stack.pop_back();
+					if (stack.empty())
+						throw std::runtime_error("Error: Unmatched scoping bracket!");
 				}
 				break;
 			}
@@ -173,6 +196,10 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 			output.push_back(token);
 		}
 	}
+
+	if (p_count != 0) throw std::runtime_error("Error: Unmatched paranthesis!");
+	if (b_count != 0) throw std::runtime_error("Error: Unmatched bracket!");
+	if (c_count != 0) throw std::runtime_error("Error: Unmatched scoping bracket!");
 
 	while (!stack.empty()) {
 		output.push_back(stack.back());

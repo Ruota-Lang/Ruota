@@ -10,6 +10,10 @@
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     	SetConsoleTextAttribute(hConsole, k);
 	}
+#else
+	void setColor(int k){
+		std::cout << ("\033[3" + std::to_string(k) + "m");
+	}
 #endif
 
 
@@ -57,12 +61,8 @@ std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
 		break;
 	}
 	case 7: {
-		#ifdef _WIN32
 		setColor(args[1]->getValue());
 		return { new_memory() };
-		#else
-		return { new_memory(NUM, 1) };
-		#endif
 	}
 	case 8: {
 		std::ifstream myfile(args[1]->toString());
@@ -117,22 +117,16 @@ int console(){
 	std::cout << "Ruota 0.6.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
-		#ifdef _WIN32
 		setColor(12);
-		#endif
 		std::cout << "\n> ";
-		#ifdef _WIN32
 		setColor(7);
-		#endif
 		std::getline(std::cin, line);
 
 		try {
 			SP_Scope s = i->generate(line, main_scope, "");
 			SP_Memory res = i->execute(main_scope);
 			
-			#ifdef _WIN32
 			setColor(8);
-			#endif
 			if (res->getArray().size() > 1) {
 				int n = 1;
 				for (auto &r : res->getArray()) {
@@ -151,17 +145,13 @@ int console(){
 			#endif
 		}
 		catch (std::runtime_error &e) {
-			#ifdef _WIN32
 			setColor(12);
-			#endif
 			std::cout << "\t" << e.what() << std::endl;
 		}
 	} while (line != "");
 
 
-	#ifdef _WIN32
 	setColor(7);
-	#endif
 	return 0;
 }
 
@@ -178,17 +168,13 @@ int main(int argc, char * argv[]) {
 		i->generate("args := " + var + "; load \"" + String(argv[1]) + "\";" , main_scope, "");
 		i->execute(main_scope);
 		} catch (std::runtime_error &e) {
-			#ifdef _WIN32
 			setColor(12);
-			#endif
 			std::cout << "\t" << e.what() << std::endl;
 		}
 	}else{
 		console();
 	}
 	delete i;
-	#ifdef _WIN32
 	setColor(7);
-	#endif
 	return EXIT_SUCCESS;
 }

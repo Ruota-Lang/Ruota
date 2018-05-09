@@ -1,4 +1,4 @@
-load "System";
+load "Console";
 
 primes(min, max) => a from {
 	a = [];
@@ -24,7 +24,7 @@ primes(min, max) => a from {
 };
 
 len args switch {
-0 >> os.printl(primes(10));
-1 >> os.printl(primes(num args[0]));
-2 >> os.printl(primes(num args[0], num args[1]));
-} >> os.printl("Improper Arguments");
+0 >> printl(primes(10));
+1 >> printl(primes(num args[0]));
+2 >> printl(primes(num args[0], num args[1]));
+} >> printl("Improper Arguments");

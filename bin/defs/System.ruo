@@ -1,0 +1,18 @@
+static os :: {
+	system(x) => { _OUTER_CALL_("console.system", x)[0] };
+	exit() => { _OUTER_CALL_("console.exit") };
+	rawFile(filename) => { _OUTER_CALL_("console.raw_file", filename)[0] };
+	milli() => { _OUTER_CALL_("console.milli")[0] };
+};
+
+# Returns a paired object array built from the contents of two equally sized arrays
+pairs(a, b) => p from {
+	len a != len b then return;
+	p = [];
+	i in [0 : len a] do {
+		p push struct {
+			first := a[i], 
+			second := b[i]
+		};
+	};
+};

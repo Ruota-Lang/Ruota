@@ -2,6 +2,7 @@
 #define RUOTA_H
 
 #define THREADING
+#define CONSOLE
 
 #include "Tokenizer.h"
 #include<string>
@@ -254,10 +255,11 @@ class Interpreter {
 	friend Memory;
 	friend RuotaWrapper;
 private:
+	String current_dir;
 	static std::unordered_map<String, VEC_Memory(*)(VEC_Memory)> embedded;
 	static std::unordered_map<String, int> operators;
 	std::vector<String> LOADED;
-	Interpreter();
+	Interpreter(String);
 	SP_Scope generate(String, SP_Scope, String);
 	SP_Memory execute(SP_Scope);
 	static void throwError(String errorMessage, String errorLine);
@@ -269,8 +271,9 @@ class RuotaWrapper {
 private:
 	Interpreter * interpreter;
 	SP_Scope main_scope;
+	String current_dir;
 public:
-	RuotaWrapper();
+	RuotaWrapper(String);
 	SP_Memory runLine(String);
 };
 

@@ -1,6 +1,7 @@
 # Basic Game of HiLo
 
-load "System";
+load "Console";
+load "Random";
 
 hilo(min, max) => {
 	min == null then {
@@ -10,32 +11,32 @@ hilo(min, max) => {
 		max = min;
 		min = 0;
 	};
-	os.color(Colors.MAGENTA + 8);
-	os.printl("~~Welcome to HiLo!~~");
+	Color.set(Color.MAGENTA + 8);
+	printl("~~Welcome to HiLo!~~");
 	a := Random.int(min, max);
 	r := min - 1;
 	c := 0;
-	os.color(Colors.WHITE);
-	os.printl("The number is between " .. min .. " and " .. max);
-	os.printl("--------------------------------");
+	Color.set(Color.WHITE);
+	printl("The number is between " .. min .. " and " .. max);
+	printl("--------------------------------");
 	a != r do {
 		c = c + 1;
-		os.color(Colors.WHITE);
-		os.print("Enter a guess: ");
-		os.color(Colors.YELLOW + 8);
-		r = os.Input.number();
-		os.color(Colors.CYAN);
-		r < a then os.printl("Too low!");
-		r > a then os.printl("Too high!");
+		Color.set(Color.WHITE);
+		print("Enter a guess: ");
+		Color.set(Color.YELLOW + 8);
+		r = Input.number();
+		Color.set(Color.CYAN);
+		r < a then printl("Too low!");
+		r > a then printl("Too high!");
 	};
-	os.color(Colors.GREEN);
-	os.printl("Correct! The answer was " .. a);
-	os.printl("It took you " .. c .. " guesses!");
-	os.color(Colors.WHITE);
+	Color.set(Color.GREEN);
+	printl("Correct! The answer was " .. a);
+	printl("It took you " .. c .. " guesses!");
+	Color.set(Color.WHITE);
 };
 
 len args switch {
 0 >> hilo(10);
 1 >> hilo(num args[0]);
 2 >> hilo(num args[0], num args[1]);
-} >> os.printl("Improper Arguments");
+} >> printl("Improper Arguments");

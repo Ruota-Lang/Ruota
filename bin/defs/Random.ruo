@@ -1,0 +1,12 @@
+load "Math";
+
+static Random :: {
+	double() => { _OUTER_CALL_("console.random")[0] };
+	int(min, max) => i from {
+		max == null then {
+			max = min;
+			min = 0;
+		};
+		i = Math.floor(double() * (max - min) + min);
+	};
+};

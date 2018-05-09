@@ -1,0 +1,54 @@
+static Color :: {
+	BLACK := 0;
+	BLUE := 1;
+	GREEN := 2;
+	CYAN := 3;
+	RED := 4;
+	MAGENTA := 5;
+	YELLOW := 6;
+	WHITE := 7;
+	GREY := 8;
+	GRAY := 8;
+	BRIGHT_BLUE := 9;
+	BRIGHT_GREEN := 10;
+	BRIGHT_CYAN := 11;
+	BRIGHT_RED := 12;
+	BRIGHT_MAGENTA := 13;
+	BRIGHT_YELLOW := 14;
+	BRIGHT_WHITE := 15;
+	
+	set(k, k2) => { _OUTER_CALL_("console.color", k + 16 * k2) };
+
+	map() => {
+		i in [0 : 16] do {
+			j in [0 : 16] do {
+				k := i + 16 * j;
+				set(k);
+				print(" ");
+				k < 10 then {
+					print("  ");
+				} else k < 100 then {
+					print(" ");
+				};
+				print(k);
+			};
+			newl();
+		};
+	};
+};
+
+print(x) => { _OUTER_CALL_("console.print", x) };
+printat(x, y, s) => { _OUTER_CALL_("console.printat", y, x, s) };
+printl(x) => { print(x .. "\n") };
+newl() => { printl("") };
+
+static Input :: {
+	number() => { num string() };
+	string() => { _OUTER_CALL_("console.input_str")[0] };
+	line() => { _OUTER_CALL_("console.input_line")[0] };
+	keyDown(c) => { _OUTER_CALL_("console.key_down", c)[0] };
+	prompt(q) => v from {
+		print(q);
+		v = string();
+	};
+};

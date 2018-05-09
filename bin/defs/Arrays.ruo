@@ -1,4 +1,4 @@
-load "System";
+load "Random";
 
 static Arrays :: {
 	# Sorts an array using quicksort algorithm

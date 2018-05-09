@@ -1,4 +1,4 @@
-load "System";
+load "Console";
 
 Fibonacci(x) => a from {
 	a = [0, 1];
@@ -8,9 +8,9 @@ Fibonacci(x) => a from {
 };
 
 len args switch {
-0 >> os.printl(Fibonacci(10));
-1 >> os.printl(Fibonacci(num args[0]));
-} >> os.printl("Improper Arguments");
+0 >> printl(Fibonacci(10));
+1 >> printl(Fibonacci(num args[0]));
+} >> printl("Improper Arguments");
 
 # Alternatively, the function can be done inline like so:
 # [0 : 10] ->> ( (x, a) -> { len a > 1 then a[len a - 1] + a[len a - 2] else x } )

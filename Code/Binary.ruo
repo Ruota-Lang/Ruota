@@ -1,4 +1,4 @@
-load "System";
+load "Math";
 
 binToDec(b) => d from {
 	d = 0;

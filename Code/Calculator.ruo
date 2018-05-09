@@ -1,10 +1,10 @@
-load "System";
+load "Console";
 
-num1 := num os.prompt("Enter Value 1: ");
-num2 := num os.prompt("Enter Value 2: ");
-op := chr os.prompt("Enter Operand: ")[0];
+num1 := num Input.prompt("Enter Value 1: ");
+num2 := num Input.prompt("Enter Value 2: ");
+op := chr Input.prompt("Enter Operand: ")[0];
 
-os.printl(op switch {
+printl(op switch {
 '+' >> num1 + num2;
 '-' >> num1 - num2;
 '*' >> num1 * num2;

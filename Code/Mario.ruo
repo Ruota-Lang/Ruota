@@ -1,4 +1,6 @@
+load "Console";
 load "System";
+load "Math";
 
 os.system("cls");
 
@@ -27,16 +29,16 @@ vel_y := 0;
 
 drawBlock(x, y, s) => {
 	buffer[x][y] != s then {
-		os.printat(x * 2 + 1, y + 1, s);
+		printat(x * 2 + 1, y + 1, s);
 		buffer[x][y] = s;
 	};
 };
 
 keypress() => {
 	map[pos_x][pos_y + 1] == 0 then vel_y = vel_y + 0.2 else vel_y = 0;
-	os.keyDown('A') && map[pos_x - 1][pos_y] == 0 then pos_x = pos_x - 1;
-	os.keyDown('D') && map[pos_x + 1][pos_y] == 0 then pos_x = pos_x + 1;
-	os.keyDown('W') && map[pos_x][pos_y + 1] != 0 then {
+	Input.keyDown('A') && map[pos_x - 1][pos_y] == 0 then pos_x = pos_x - 1;
+	Input.keyDown('D') && map[pos_x + 1][pos_y] == 0 then pos_x = pos_x + 1;
+	Input.keyDown('W') && map[pos_x][pos_y + 1] != 0 then {
 		vel_y = -1;
 	};
 	vel_y != 0 then {
@@ -66,7 +68,7 @@ drawMap() => {
 timer := 0;
 timer_fps := 0;
 frames := 0;
-!os.keyDown('Q') do {
+!Input.keyDown('Q') do {
 	frames = frames + 1;
 	time_start := os.milli();
 	timer > 50 then {

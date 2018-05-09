@@ -113,6 +113,8 @@ SP_Memory Node::execute(SP_Scope scope) {
 		std::reverse(executed.begin(), executed.end());
 		executed.pop_back();
 		std::reverse(executed.begin(), executed.end());
+		if (Interpreter::embedded.find(fname) == Interpreter::embedded.end())
+			Interpreter::throwError	("Error: outer call `" + fname + "` does not exist!", toString());
 		return new_memory(Interpreter::embedded[fname](executed));
 	}
 	case SWITCH:	{

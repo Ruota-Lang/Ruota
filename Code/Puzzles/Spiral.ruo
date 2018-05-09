@@ -44,13 +44,13 @@ spiral(n, m) => a from {
 
 # Not part of the puzzle
 
-load "../System";
+load "Console";
 printSpiral(n, m) => {
 	m == null then m = n;
 	s := spiral(n, m);
 	i in s do {
-		j in i do os.print(j .. "\t");
-		os.print("\n");
+		j in i do print(j .. "\t");
+		newl();
 	};
 };
 
@@ -58,4 +58,4 @@ len args switch {
 0 >> printSpiral(3,5); # original problem
 1 >> printSpiral(num args[0]);
 2 >> printSpiral(num args[0], num args[1]);
-} >> os.printl("Invalid arguments");
+} >> printl("Invalid arguments");

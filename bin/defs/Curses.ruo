@@ -1,3 +1,4 @@
+load "Console";
 load "System";
 
 dynamic Curses :: {
@@ -26,7 +27,7 @@ dynamic Curses :: {
 	setChar(x, y, c, v) => {
 		buffer[x][y] != c then {
 			buffer[x][y] = c;
-			v then os.printat(x + 1, y + 1, c);
+			v then printat(x + 1, y + 1, c);
 		};
 	};
 
@@ -34,7 +35,7 @@ dynamic Curses :: {
 		i in [0 : width] do {
 			j in [0 : height] do {
 				buffer[i][j] = ' ';
-				os.printat(i + 1, j + 1, ' ');
+				printat(i + 1, j + 1, ' ');
 			};
 		};
 	};
@@ -48,7 +49,7 @@ dynamic Curses :: {
 			i in [0 : width] do {
 				j in [0 : height] do {
 					screen[i][j] != buffer[i][j] then {
-						os.printat(i + 1, j + 1, buffer[i][j]);
+						printat(i + 1, j + 1, buffer[i][j]);
 						screen[i][j] = buffer[i][j];
 					}
 				};

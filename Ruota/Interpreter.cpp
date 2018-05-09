@@ -77,10 +77,11 @@ void Interpreter::addEmbed(String s, VEC_Memory(*e)(VEC_Memory)) {
 	embedded[s] = e;
 }
 
-Interpreter::Interpreter() {
+Interpreter::Interpreter(String current_dir) {
 	auto now = std::chrono::high_resolution_clock::now();
 	auto timeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 	srand(timeMillis);
+	this->current_dir = current_dir;
 }
 
 SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
@@ -94,15 +95,16 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 	for (auto &token : tokens) {
 		if (token == "," || token == ";") continue;
 		if (token == "load") {
-			String filename = stack.back()->execute(current)->toString() + ".ruo";
+			String filename_raw = stack.back()->execute(current)->toString() + ".ruo";
 			stack.pop_back();
 
 			String full_path_string = local_file;
+			String filename = filename_raw;
 
 			if (local_file == "") {
 				#ifdef _WIN32
 				TCHAR full_path[MAX_PATH];
-				GetFullPathName(filename.c_str(), MAX_PATH, full_path, NULL);
+				GetFullPathName(filename_raw.c_str(), MAX_PATH, full_path, NULL);
 				full_path_string = full_path;
 				#endif
 				filename = "";
@@ -113,17 +115,22 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 
 			if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
-				String content;
+				String content = "";
 				String line;
 				std::ifstream myfile(full_path_string + filename);
-				if (myfile.is_open())
-				{
+				if (myfile.is_open()){
 					while (getline(myfile, line))
 						content += line + "\n";
 					myfile.close();
-				}else
-				{
-					throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename.substr(0, filename.length() - 4) + "\";");
+				}else{
+					std::ifstream myfilelocal(this->current_dir + "defs\\" + filename_raw);
+					if(myfilelocal.is_open()){
+						while (getline(myfilelocal, line))
+							content += line + "\n";
+						myfilelocal.close();
+					}else {
+						throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename_raw.substr(0, filename_raw.length() - 4) + "\";");
+					}
 				}
 				LOADED.push_back(filename);
 				auto gen = generate(content, current, full_path_string);

@@ -1,14 +1,14 @@
-load "System";
+load "Console";
 
 threadTest() => {
 	func(t) => { 
 		i in [0 : 5] do {
-			os.printl("Thread " .. t .. ":\t" .. i); 
+			printl("Thread " .. t .. ":\t" .. i); 
 		}; 
 	};
-	os.printl("Unthreaded:");
+	printl("Unthreaded:");
 	func(1), func(2), func(3);
-	os.printl("Threaded:");
+	printl("Threaded:");
 	thread(func(1), func(2), func(3));
 };
 

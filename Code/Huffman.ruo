@@ -1,4 +1,4 @@
-load "System";
+load "Console";
 load "Map";
 load "Arrays";
 
@@ -48,7 +48,7 @@ dynamic Huffman :: {
 
 		print(t) => {
 			i in [1:t] do os.print("~\t");
-			os.printl(value .. " | " .. weight);
+			printl(value .. " | " .. weight);
 			a != null then a.print(t + 1);
 			b != null then b.print(t + 1);
 		};

@@ -1,4 +1,4 @@
-load "System";
+load "Console";
 
 shift(s, o) => n_s from {
 	i in s do { 
@@ -9,4 +9,4 @@ shift(s, o) => n_s from {
 	n_s = s; 
 };
 
-os.printl(shift("Hello World", 1));
+printl(shift("Hello World", 1));

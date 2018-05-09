@@ -10,6 +10,10 @@ The language is designed to give a lot of freedom to the programmer in regards t
 
 At the moment, the language has no implementations outside of the command line.
 
+# Contact
+
+Pop in here: https://discord.gg/UCWbyb9
+
 # Planned Features
 
 There are, of course, a few features that I wish to see implemented in the future:

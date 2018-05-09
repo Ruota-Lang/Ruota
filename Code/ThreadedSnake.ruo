@@ -2,8 +2,6 @@
 # This merely exists to provide an example of how threads may be used.
 
 load "Curses";
-load "Math";
-load "Random";
 
 size_x := 15;
 size_y := 15;

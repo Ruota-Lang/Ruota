@@ -1,4 +1,3 @@
-load "Map";
 load "Arrays";
 
 dynamic Huffman :: {

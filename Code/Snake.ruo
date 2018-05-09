@@ -1,7 +1,5 @@
 ﻿# The Greatest Game in the World
 
-load "Random";
-
 snake(map_size) => {
 	# Clear the console and set color
 	os.system("cls");

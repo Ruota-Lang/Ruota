@@ -1,5 +1,3 @@
-load "Random";
-
 static Arrays :: {
 	# Sorts an array using quicksort algorithm
 	# A comparator lambda may be specified as the second argument

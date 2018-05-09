@@ -1,5 +1,3 @@
-load "Math";
-
 binToDec(b) => d from {
 	d = 0;
 	c := 0;

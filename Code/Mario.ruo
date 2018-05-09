@@ -1,5 +1,3 @@
-load "Math";
-
 os.system("cls");
 
 map_x := 49;

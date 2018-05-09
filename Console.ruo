@@ -1,3 +1,5 @@
+R"RU0(
+
 static Color :: {
 	BLACK := 0;
 	BLUE := 1;
@@ -52,3 +54,5 @@ static Input :: {
 		v = string();
 	};
 };
+
+)RU0"

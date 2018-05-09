@@ -4,7 +4,6 @@
 load "Curses";
 load "Math";
 load "Random";
-load "Console";
 
 size_x := 15;
 size_y := 15;

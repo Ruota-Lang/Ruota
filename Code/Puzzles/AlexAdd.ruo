@@ -12,7 +12,6 @@
 # do not have to implement it recursively, as long as 
 # the probabilities are the same.)
 
-load "Console";
 load "Random";
 
 alexAdd(a, b) => { Random.double() <= 0.1 then alexAdd(a, b + 1) else a + b; };

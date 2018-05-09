@@ -1,6 +1,5 @@
 # Basic Game of HiLo
 
-load "Console";
 load "Random";
 
 hilo(min, max) => {

@@ -2,19 +2,69 @@
 #include <cmath>
 #include "Ruota/Ruota.h"
 
+const char * console_compiled = {
+	#include "Console.ruo"
+};
+
 #ifdef _WIN32
 	#include<windows.h>
 	#include <conio.h>
 	#pragma comment(lib, "User32.lib")
-	void _setColor(int k){
+	void setColor(int k){
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     	SetConsoleTextAttribute(hConsole, k);
 	}
 #else
-	void _setColor(int k){
+	void setColor(int k){
 		printf("\033[3%d;40mH", k);
 	}
 #endif
+
+void printToCoordinates(int x, int y, const std::string& text){
+	printf("\033[%d;%dH%s\n", x, y, text.c_str());
+}
+
+std::vector<SP_Memory> __print(std::vector<SP_Memory> args) {
+	std::cout << args[0]->toString();
+	return { new_memory() };
+}
+
+std::vector<SP_Memory> __printat(std::vector<SP_Memory> args) {
+	int pos_x = args[0]->getValue();
+	int pos_y = args[1]->getValue();
+	std::string line = args[2]->toString();
+	printToCoordinates(pos_x, pos_y, line);
+	return { new_memory() };
+}
+
+std::vector<SP_Memory> __color(std::vector<SP_Memory> args) {
+	setColor(args[0]->getValue());
+	return { new_memory() };
+}
+
+std::vector<SP_Memory> __input_str(std::vector<SP_Memory> args) {
+	String d;
+	std::cin >> d;
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	return { new_memory(d) };
+}
+
+std::vector<SP_Memory> __input_line(std::vector<SP_Memory> args) {
+	String d;
+	std::getline(std::cin, d);
+	return { new_memory(d) };
+}
+
+std::vector<SP_Memory> __key_down(std::vector<SP_Memory> args) {
+	#ifdef _WIN32
+		if(GetKeyState(args[0]->getValue()) & 0x8000)
+			return {new_memory(NUM, 1)};
+		else
+			return {new_memory(NUM, 0)};
+	#else
+		return { new_memory(NUM, 0) };
+	#endif
+}
 
 RuotaWrapper * rw;
 
@@ -24,15 +74,15 @@ int console(){
 	std::cout << "Ruota 0.8.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
-		_setColor(12);
+		setColor(12);
 		std::cout << "\n> ";
-		_setColor(7);
+		setColor(7);
 		std::getline(std::cin, line);
 
 		try {
 			SP_Memory res = rw->runLine(line);
 			
-			_setColor(8);
+			setColor(8);
 			if (res->getArray().size() > 1) {
 				int n = 1;
 				for (auto &r : res->getArray()) {
@@ -51,18 +101,25 @@ int console(){
 			#endif
 		}
 		catch (std::runtime_error &e) {
-			_setColor(12);
+			setColor(12);
 			std::cout << "\t" << e.what() << std::endl;
 		}
 	} while (line != "");
 
 
-	_setColor(7);
+	setColor(7);
 	return 0;
 }
 
 int main(int argc, char * argv[]) {
-	rw = new RuotaWrapper(argv[0]);
+	rw = new RuotaWrapper(argv[0]);	
+	Interpreter::addEmbed("console.print", &__print);
+	Interpreter::addEmbed("console.printat", &__printat);
+	Interpreter::addEmbed("console.input_str", &__input_str);
+	Interpreter::addEmbed("console.input_line", &__input_line);
+	Interpreter::addEmbed("console.color", &__color);
+	Interpreter::addEmbed("console.key_down", &__key_down);
+	rw->runLine(console_compiled);
 
 	if (argc >= 2) {
 		std::string var = "[ ";
@@ -72,13 +129,13 @@ int main(int argc, char * argv[]) {
 		try {
 			rw->runLine("args := " + var + "; load \"" + String(argv[1]) + "\";");
 		} catch (std::runtime_error &e) {
-			_setColor(12);
+			setColor(12);
 			std::cout << "\t" << e.what() << std::endl;
 		}
 	}else{
 		console();
 	}
 	delete rw;
-	_setColor(7);
+	setColor(7);
 	return EXIT_SUCCESS;
 }

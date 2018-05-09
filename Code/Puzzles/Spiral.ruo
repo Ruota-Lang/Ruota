@@ -43,8 +43,6 @@ spiral(n, m) => a from {
 };
 
 # Not part of the puzzle
-
-load "Console";
 printSpiral(n, m) => {
 	m == null then m = n;
 	s := spiral(n, m);

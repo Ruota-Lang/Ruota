@@ -1,5 +1,3 @@
-load "Console";
-load "System";
 load "Math";
 
 os.system("cls");

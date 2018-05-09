@@ -1,6 +1,6 @@
-﻿load "Console";
+﻿# The Greatest Game in the World
+
 load "Random";
-load "System";
 
 snake(map_size) => {
 	# Clear the console and set color

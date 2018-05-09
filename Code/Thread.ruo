@@ -1,5 +1,3 @@
-load "Console";
-
 threadTest() => {
 	func(t) => { 
 		i in [0 : 5] do {

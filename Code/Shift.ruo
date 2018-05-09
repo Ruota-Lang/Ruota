@@ -1,5 +1,4 @@
-load "Console";
-
+# Caeserian Shift
 shift(s, o) => n_s from {
 	i in s do { 
 		i >= 'a' then i = i - 'a';

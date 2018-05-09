@@ -2,7 +2,6 @@
 #define RUOTA_H
 
 #define THREADING
-#define CONSOLE
 
 #include "Tokenizer.h"
 #include<string>

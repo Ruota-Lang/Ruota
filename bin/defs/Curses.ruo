@@ -1,5 +1,4 @@
 load "Console";
-load "System";
 
 dynamic Curses :: {
 	height := 0;

@@ -1,3 +1,4 @@
+R"RU0(
 static os :: {
 	system(x) => { _OUTER_CALL_("console.system", x)[0] };
 	exit() => { _OUTER_CALL_("console.exit") };
@@ -16,3 +17,4 @@ pairs(a, b) => p from {
 		};
 	};
 };
+)RU0"

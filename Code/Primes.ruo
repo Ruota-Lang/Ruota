@@ -1,5 +1,4 @@
-load "Console";
-
+# Returns array of prime numbers
 primes(min, max) => a from {
 	a = [];
 	max == null then { 

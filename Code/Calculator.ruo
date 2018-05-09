@@ -1,5 +1,3 @@
-load "Console";
-
 num1 := num Input.prompt("Enter Value 1: ");
 num2 := num Input.prompt("Enter Value 2: ");
 op := chr Input.prompt("Enter Operand: ")[0];

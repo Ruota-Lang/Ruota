@@ -102,7 +102,6 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 
 			//if (local_file == "") {
 				path += filename_raw;
-				filename = "";
 				while (path.back() != '\\' && path.back() != '/') {
 					filename = String(1, path.back()) + filename;
 					path.pop_back();
@@ -119,7 +118,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 						content += line + "\n";
 					myfile.close();
 				}else{
-					std::ifstream myfilelocal(this->current_dir + "defs\\" + filename_raw);
+					std::ifstream myfilelocal(this->current_dir + filename_raw);
 					if(myfilelocal.is_open()){
 						while (getline(myfilelocal, line))
 							content += line + "\n";

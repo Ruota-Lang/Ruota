@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include <cmath>
-#include "Interpreter.h"
+#include "Ruota/Ruota.h"
 
 #ifdef _WIN32
 	#include<windows.h>
@@ -12,109 +12,100 @@
 	}
 #else
 	void setColor(int k){
-		std::cout << ("\033[3" + std::to_string(k) + "m");
+		printf("\033[3%d;40mH", k);
 	}
 #endif
 
+RuotaWrapper * rw;
 
-	void printToCoordinates(int x, int y, const std::string& text){
-		printf("\033[%d;%dH%s\n", x, y, text.c_str());
-	}
+void printToCoordinates(int x, int y, const std::string& text){
+	printf("\033[%d;%dH%s\n", x, y, text.c_str());
+}
 
-Interpreter * i;
-SP_Scope main_scope;
+std::vector<SP_Memory> __system(std::vector<SP_Memory> args) {
+	return { new_memory(NUM, system(args[0]->toString().c_str())) };
+}
 
-std::vector<SP_Memory> __send(std::vector<SP_Memory> args) {
-	switch ((int)args[0]->getValue())
-	{
-	case 0:
-		return { new_memory(NUM, system(args[1]->toString().c_str())) };
-		break;
-	case 1:
-		std::cout << args[1]->toString();
-		return { new_memory() };
-		break;
-	case 2: {
-		quick_exit(0);
-		//return { new_memory() };
-		break;
-	}
-	case 3: {
-		String d;
-		std::cin >> d;
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		return { new_memory(d) };
-		break;
-	}
-	case 4: {
-		String d;
-		std::getline(std::cin, d);
-		return { new_memory(d) };
-		break;
-	}
-	case 5: {
-		return { new_memory(NUM, (long double)rand() / RAND_MAX) };
-		break;
-	}
-	case 6: {
-		return { new_memory(NUM, std::floor(args[1]->getValue())) };
-		break;
-	}
-	case 7: {
-		setColor(args[1]->getValue());
-		return { new_memory() };
-	}
-	case 8: {
-		std::ifstream myfile(args[1]->toString());
-		std::string line = "";
-		std::string content = "";
-		if (myfile.is_open())
-		{
-			while (getline(myfile, line)){
-				content += line + "\n";
-			}
-			myfile.close();
-		} else {
-			throw std::runtime_error("Error: cannot open file " + args[1]->toString() + "!");
+std::vector<SP_Memory> __print(std::vector<SP_Memory> args) {
+	std::cout << args[0]->toString();
+	return { new_memory() };
+}
+
+std::vector<SP_Memory> __printat(std::vector<SP_Memory> args) {
+	int pos_x = args[0]->getValue();
+	int pos_y = args[1]->getValue();
+	std::string line = args[2]->toString();
+	printToCoordinates(pos_x, pos_y, line);
+	return { new_memory() };
+}
+
+std::vector<SP_Memory> __exit(std::vector<SP_Memory> args) {
+	quick_exit(0);
+	return { new_memory() }; //superfluous?
+}
+
+std::vector<SP_Memory> __input_str(std::vector<SP_Memory> args) {
+	String d;
+	std::cin >> d;
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	return { new_memory(d) };
+}
+
+std::vector<SP_Memory> __input_line(std::vector<SP_Memory> args) {
+	String d;
+	std::getline(std::cin, d);
+	return { new_memory(d) };
+}
+
+std::vector<SP_Memory> __random(std::vector<SP_Memory> args) {
+	return { new_memory(NUM, (long double)rand() / RAND_MAX) };
+}
+
+std::vector<SP_Memory> __floor(std::vector<SP_Memory> args) {
+	return { new_memory(NUM, std::floor(args[0]->getValue())) };
+}
+
+std::vector<SP_Memory> __color(std::vector<SP_Memory> args) {
+	setColor(args[0]->getValue());
+	return { new_memory() };
+}
+
+std::vector<SP_Memory> __raw_file(std::vector<SP_Memory> args) {
+	std::ifstream myfile(args[0]->toString());
+	std::string line = "";
+	std::string content = "";
+	if (myfile.is_open()){
+		while (getline(myfile, line)){
+			content += line + "\n";
 		}
-		return { new_memory(content) };
-		break;
+		myfile.close();
+	} else {
+		throw std::runtime_error("Error: cannot open file " + args[1]->toString() + "!");
 	}
-	case 9: {
-		int pos_x = args[1]->getValue();
-		int pos_y = args[2]->getValue();
-		std::string line = args[3]->toString();
-		printToCoordinates(pos_x, pos_y, line);
-		return { new_memory() };
-		break;
-	}
+	return { new_memory(content) };
+}
+
+std::vector<SP_Memory> __key_down(std::vector<SP_Memory> args) {
 	#ifdef _WIN32
-	case 10: {
-		if(GetKeyState(args[1]->getValue()) & 0x8000)
+		if(GetKeyState(args[0]->getValue()) & 0x8000)
 			return {new_memory(NUM, 1)};
 		else
 			return {new_memory(NUM, 0)};
-		break;
-	}
+	#else
+		return { new_memory(NUM, 0) };
 	#endif
-	case 11: {
-		auto now = std::chrono::high_resolution_clock::now();
-		auto timeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-		return { new_memory(NUM, timeMillis) };
-		break;
-	}
-	default:
-		return { new_memory(NUM, 1) };
-		break;
-	}
+}
+
+std::vector<SP_Memory> __milli(std::vector<SP_Memory> args) {
+	auto now = std::chrono::high_resolution_clock::now();
+	auto timeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+	return { new_memory(NUM, timeMillis) };
 }
 
 int console(){
 	String line;
-	i->generate("args := [];", main_scope, ""); //d \"System\";" , main_scope, "");
-	i->execute(main_scope);
-
-	std::cout << "Ruota 0.7.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	rw->runLine("args := [];");
+	std::cout << "Ruota 0.8.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		setColor(12);
@@ -123,8 +114,7 @@ int console(){
 		std::getline(std::cin, line);
 
 		try {
-			SP_Scope s = i->generate(line, main_scope, "");
-			SP_Memory res = i->execute(main_scope);
+			SP_Memory res = rw->runLine(line);
 			
 			setColor(8);
 			if (res->getArray().size() > 1) {
@@ -156,8 +146,19 @@ int console(){
 }
 
 int main(int argc, char * argv[]) {
-	i = new Interpreter(&__send);
-	main_scope = new_scope(nullptr);
+	rw = new RuotaWrapper();
+	Interpreter::addEmbed("console.print", &__print);
+	Interpreter::addEmbed("console.printat", &__printat);
+	Interpreter::addEmbed("console.system", &__system);
+	Interpreter::addEmbed("console.exit", &__exit);
+	Interpreter::addEmbed("console.input_str", &__input_str);
+	Interpreter::addEmbed("console.input_line", &__input_line);
+	Interpreter::addEmbed("console.random", &__random);
+	Interpreter::addEmbed("console.floor", &__floor);
+	Interpreter::addEmbed("console.color", &__color);
+	Interpreter::addEmbed("console.raw_file", &__raw_file);
+	Interpreter::addEmbed("console.key_down", &__key_down);
+	Interpreter::addEmbed("console.milli", &__milli);
 
 	if (argc >= 2) {
 		std::string var = "[ ";
@@ -165,8 +166,7 @@ int main(int argc, char * argv[]) {
 			var += "\"" + String(argv[i]) + "\" ";
 		var += "]";
 		try {
-		i->generate("args := " + var + "; load \"" + String(argv[1]) + "\";" , main_scope, "");
-		i->execute(main_scope);
+			rw->runLine("args := " + var + "; load \"" + String(argv[1]) + "\";");
 		} catch (std::runtime_error &e) {
 			setColor(12);
 			std::cout << "\t" << e.what() << std::endl;
@@ -174,7 +174,7 @@ int main(int argc, char * argv[]) {
 	}else{
 		console();
 	}
-	delete i;
+	delete rw;
 	setColor(7);
 	return EXIT_SUCCESS;
 }

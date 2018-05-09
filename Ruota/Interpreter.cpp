@@ -1,8 +1,6 @@
-#include "Interpreter.h"
+#include "Ruota.h"
 
-VEC_Memory(*Interpreter::__send)(VEC_Memory) = NULL;
-
-std::map<String, int> Interpreter::operators = {
+std::unordered_map<String, int> Interpreter::operators = {
 	{ "load", 999 },
 	{ ".index", 13 },
 	{ ".exec", 13 },
@@ -73,11 +71,16 @@ std::map<String, int> Interpreter::operators = {
 	{ ";", 0 }
 };
 
-Interpreter::Interpreter(VEC_Memory(*__send)(VEC_Memory)) {
+std::unordered_map<String, VEC_Memory(*)(VEC_Memory)> Interpreter::embedded = {};
+
+void Interpreter::addEmbed(String s, VEC_Memory(*e)(VEC_Memory)) {
+	embedded[s] = e;
+}
+
+Interpreter::Interpreter() {
 	auto now = std::chrono::high_resolution_clock::now();
 	auto timeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 	srand(timeMillis);
-	this->__send = __send;
 }
 
 SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
@@ -345,7 +348,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			else if (token == "then")
 				stack.push_back(new_node(THEN, params));
 			else if (token == "switch"){
-				std::map<long double, SP_Node> switch_values;
+				std::unordered_map<long double, SP_Node> switch_values;
 				for (auto &n : b->scope_ref->main->params) {
 					switch_values[n->params[0]->mem_data->getValue()] = n->params[1];
 				}

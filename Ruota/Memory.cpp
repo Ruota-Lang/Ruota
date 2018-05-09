@@ -1,4 +1,4 @@
-#include "Interpreter.h"
+#include "Ruota.h"
 
 Memory::Memory() {
 	reference_count++;

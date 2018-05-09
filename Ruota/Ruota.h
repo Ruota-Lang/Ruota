@@ -1,11 +1,11 @@
-#ifndef INTERPRETER_H
-#define INTERPRETER_H
+#ifndef RUOTA_H
+#define RUOTA_H
 
 #define THREADING
 
 #include "Tokenizer.h"
 #include<string>
-#include<map>
+#include<unordered_map>
 #include<vector>
 #include<fstream>
 #include<iostream>
@@ -24,6 +24,7 @@
 #undef	max
 #undef	min
 
+class	RuotaWrapper;
 class	Interpreter;
 struct	Memory;
 struct	Scope;
@@ -199,12 +200,12 @@ struct Node : std::enable_shared_from_this<Node> {
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
 	String		key;
-	std::map<long double, SP_Node> switch_values;
+	std::unordered_map<long double, SP_Node> switch_values;
 	int			flag = 0;
 
 	Node(SP_Scope);
 	Node(long double);
-	Node(SP_Node, std::map<long double, SP_Node>);
+	Node(SP_Node, std::unordered_map<long double, SP_Node>);
 	Node(String);
 	Node(NodeType, VEC_Node);
 	Node(SP_Memory);
@@ -233,7 +234,7 @@ struct Scope : std::enable_shared_from_this<Scope> {
 	static long reference_count;
 	SP_Scope	parent = nullptr;
 	SP_Node		main = nullptr;
-	std::map<String, SP_Memory> variables;
+	std::unordered_map<String, SP_Memory> variables;
 
 	Scope(SP_Scope);
 	Scope(SP_Scope, SP_Node);
@@ -251,15 +252,26 @@ class Interpreter {
 	friend Lambda;
 	friend Scope;
 	friend Memory;
+	friend RuotaWrapper;
 private:
-	static VEC_Memory(*__send)(VEC_Memory);
-	static std::map<String, int> operators;
+	static std::unordered_map<String, VEC_Memory(*)(VEC_Memory)> embedded;
+	static std::unordered_map<String, int> operators;
 	std::vector<String> LOADED;
-public:
-	Interpreter(VEC_Memory (*__send)(VEC_Memory));
+	Interpreter();
 	SP_Scope generate(String, SP_Scope, String);
 	SP_Memory execute(SP_Scope);
 	static void throwError(String errorMessage, String errorLine);
+public:	
+	static void addEmbed(String, VEC_Memory(*e)(VEC_Memory));
+};
+
+class RuotaWrapper {
+private:
+	Interpreter * interpreter;
+	SP_Scope main_scope;
+public:
+	RuotaWrapper();
+	SP_Memory runLine(String);
 };
 
 #endif // !INTERPRETER_H

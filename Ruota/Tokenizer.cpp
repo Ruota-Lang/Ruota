@@ -1,6 +1,6 @@
 #include "Tokenizer.h"
 
-Tokenizer::Tokenizer(std::map<std::string, int> operators) {
+Tokenizer::Tokenizer(std::unordered_map<std::string, int> operators) {
 	this->operators = operators;
 }
 

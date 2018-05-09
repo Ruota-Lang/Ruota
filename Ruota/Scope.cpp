@@ -1,5 +1,4 @@
-#include "Interpreter.h"
-#include <iostream>
+#include "Ruota.h"
 
 long Scope::reference_count = 0;
 

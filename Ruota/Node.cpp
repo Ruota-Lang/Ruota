@@ -1,4 +1,4 @@
-#include "Interpreter.h"
+#include "Ruota.h"
 
 long Node::reference_count = 0;
 
@@ -26,7 +26,7 @@ Node::Node(String key) {
 	this->nt = VAR;
 }
 
-Node::Node(SP_Node val, std::map<long double, SP_Node> switch_values){
+Node::Node(SP_Node val, std::unordered_map<long double, SP_Node> switch_values){
 	this->reference_count++;
 	this->switch_values = switch_values;
 	this->nt = SWITCH;
@@ -108,7 +108,13 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case AND:		return new_memory(NUM, executed[0]->getValue() && executed[1]->getValue());
 	case OR:		return new_memory(NUM, executed[0]->getValue() || executed[1]->getValue());
 	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());
-	case OUT_CALL:	return new_memory(Interpreter::__send(executed));
+	case OUT_CALL:	{
+		String fname = executed[0]->toString();
+		std::reverse(executed.begin(), executed.end());
+		executed.pop_back();
+		std::reverse(executed.begin(), executed.end());
+		return new_memory(Interpreter::embedded[fname](executed));
+	}
 	case SWITCH:	{
 		executed.push_back(params[0]->execute(scope));
 		if (switch_values.find(executed[0]->getValue()) != switch_values.end())
@@ -462,7 +468,7 @@ SP_Node Node::clone(SP_Scope scope) {
 	nn->key = this->key;
 	nn->flag = this->flag;
 	if (this->nt == SWITCH){
-		std::map<long double, SP_Node> nsw;
+		std::unordered_map<long double, SP_Node> nsw;
 		for (auto &c : switch_values) {
 			nsw[c.first] = c.second->clone(scope);
 		}

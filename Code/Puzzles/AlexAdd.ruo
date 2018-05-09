@@ -1,0 +1,17 @@
+# Alex-style Addition works like this -- it has a 90% 
+# chance of simply returning the sum of the two numbers
+# given and a 10% chance of recursively Alex-adding the 
+# first number and the second number + 1. This means 
+# that, potentially, an addition could be off by 1 or 
+# more.
+#
+# Write a full program or function that takes two 
+# integers and Alex-adds them as defined. You may assume 
+# that your program will not stack overflow if your
+# language doesn't have tail recursion. (Note that you 
+# do not have to implement it recursively, as long as 
+# the probabilities are the same.)
+
+load "../System";
+
+alexAdd(a, b) => { Random.double() <= 0.1 then alexAdd(a, b + 1) else a + b; };

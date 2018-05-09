@@ -19,21 +19,21 @@ static Colors :: {
 };
 
 static os :: {
-	print(x) => { _OUTER_CALL_(1, x) };
-	printat(x, y, s) => { _OUTER_CALL_(9, y, x, s) };
+	print(x) => { _OUTER_CALL_("console.print", x) };
+	printat(x, y, s) => { _OUTER_CALL_("console.printat", y, x, s) };
 	printl(x) => { print(x .. "\n") };
 	newl() => { printl("") };
-	system(x) => { _OUTER_CALL_(0, x)[0] };
-	exit() => { _OUTER_CALL_(2) };
-	rawFile(filename) => { _OUTER_CALL_(8, filename)[0] };
-	keyDown(c) => { _OUTER_CALL_(10, c)[0] };
-	milli() => { _OUTER_CALL_(11)[0] };
+	system(x) => { _OUTER_CALL_("console.system", x)[0] };
+	exit() => { _OUTER_CALL_("console.exit") };
+	rawFile(filename) => { _OUTER_CALL_("console.raw_file", filename)[0] };
+	keyDown(c) => { _OUTER_CALL_("console.key_down", c)[0] };
+	milli() => { _OUTER_CALL_("console.milli")[0] };
 	prompt(q) => v from {
 		print(q);
 		v = Input.string();
 	};
 	
-	color(k, k2) => { _OUTER_CALL_(7, k + 16 * k2) };
+	color(k, k2) => { _OUTER_CALL_("console.color", k + 16 * k2) };
 
 	colorMap() => {
 		i in [0 : 16] do {
@@ -54,13 +54,13 @@ static os :: {
 
 	static Input :: {
 		number() => { num string() };
-		string() => { _OUTER_CALL_(3)[0] };
-		line() => { _OUTER_CALL_(4)[0] };
+		string() => { _OUTER_CALL_("console.input_str")[0] };
+		line() => { _OUTER_CALL_("console.input_line")[0] };
 	};
 };
 
 static Random :: {
-	double() => { _OUTER_CALL_(5)[0] };
+	double() => { _OUTER_CALL_("console.random")[0] };
 	int(min, max) => i from {
 		max == null then {
 			max = min;
@@ -71,7 +71,7 @@ static Random :: {
 };
 
 static Math :: {
-	floor(x) => { _OUTER_CALL_(6, x)[0] };
+	floor(x) => { _OUTER_CALL_("console.floor", x)[0] };
 	sqrt(x) => { x ** 0.5 };
 	max(a, b) => { a > b then a else b };
 	min(a, b) => { a < b then a else b };

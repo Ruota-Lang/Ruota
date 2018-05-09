@@ -71,7 +71,7 @@ RuotaWrapper * rw;
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.8.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.8.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		setColor(12);

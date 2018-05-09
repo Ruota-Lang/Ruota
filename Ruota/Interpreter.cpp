@@ -96,28 +96,24 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 		if (token == "," || token == ";") continue;
 		if (token == "load") {
 			String filename_raw = stack.back()->execute(current)->toString() + ".ruo";
+			String path = local_file;
 			stack.pop_back();
+			String filename = "";
 
-			String full_path_string = local_file;
-			String filename = filename_raw;
-
-			if (local_file == "") {
-				#ifdef _WIN32
-				TCHAR full_path[MAX_PATH];
-				GetFullPathName(filename_raw.c_str(), MAX_PATH, full_path, NULL);
-				full_path_string = full_path;
-				#endif
+			//if (local_file == "") {
+				path += filename_raw;
 				filename = "";
-				while (full_path_string.back() != '\\') {
-					filename = String(1, full_path_string.back()) + filename;
-					full_path_string.pop_back();
+				while (path.back() != '\\' && path.back() != '/') {
+					filename = String(1, path.back()) + filename;
+					path.pop_back();
+					if (path.empty()) break;
 				}
-			}
+			//}
 
 			if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
 				String content = "";
 				String line;
-				std::ifstream myfile(full_path_string + filename);
+				std::ifstream myfile(path.substr(1) + filename);
 				if (myfile.is_open()){
 					while (getline(myfile, line))
 						content += line + "\n";
@@ -133,7 +129,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					}
 				}
 				LOADED.push_back(filename);
-				auto gen = generate(content, current, full_path_string);
+				auto gen = generate(content, current, path);
 				stack.push_back(gen->main);
 			}
 			else {

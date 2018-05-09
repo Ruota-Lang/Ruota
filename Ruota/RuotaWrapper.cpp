@@ -55,12 +55,12 @@ RuotaWrapper::RuotaWrapper(String current_dir){
 	}
 	this->interpreter = new Interpreter(this->current_dir);
 	main_scope = new_scope(nullptr);
-	this->interpreter->generate(os_compiled, main_scope, "");
+	this->interpreter->generate(os_compiled, main_scope, "\\");
 	this->interpreter->execute(main_scope);
 }
 
 
 SP_Memory RuotaWrapper::runLine(String line) {
-	this->interpreter->generate(line , main_scope, "");
+	this->interpreter->generate(line , main_scope, "\\");
 	return this->interpreter->execute(main_scope);
 }

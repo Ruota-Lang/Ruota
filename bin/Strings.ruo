@@ -20,6 +20,13 @@ static Strings :: {
 		};
 	};
 
+	remove(s, a) => n_s from {
+		n_s = "";
+		c in s do {
+			c != a then n_s push c;
+		};
+	};
+
 	join(array, a) => s from {
 		a == null then a = "";
 		s = array[0];

@@ -145,7 +145,9 @@ SP_Memory Memory::refer(const SP_Memory &m) {
 	if (m->mt == NUL && m->data == 1) {
 		this->mt = NUL;
 	}else{
-		this->reference = m;
+		auto rp = m;
+		while (rp->mt == REF) rp = rp->reference;
+		this->reference = rp;
 		this->mt = REF;
 	}
 	return to_this_ptr;

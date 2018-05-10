@@ -4,7 +4,7 @@ dynamic LinkedList :: {
 	head := null;
 
 	# Adds element to list
-	add(e) => v from {
+	add(&e) => v from {
 		head == null then {
 			head = new Link(e);
 		} else {
@@ -71,8 +71,8 @@ dynamic LinkedList :: {
 		value := null;
 		next := null;
 
-		init(value) => {
-			self.value = value;
+		init(&value) => {
+			self.value .= value;
 			next = null;
 		};
 	};

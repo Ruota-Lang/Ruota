@@ -1,0 +1,23 @@
+# Today's challenge is to make icicles out of the input word. 
+# Given a string of entirely printable ASCII, and at least 2 
+# non-space characters, perform the following steps:
+#
+#	1. Print the current state of the string.
+#	2. Replace the lexically smallest character (other than 
+#	spaces) with a space. If there is a tie, replace the 
+#	leftmost character.
+#	3. Repeat on consecutive lines until the string contains
+#	only 1 non-space character.
+#
+# This creates the effect that the input string looks like 
+# it's melting...
+
+load "Arrays";
+load "Strings";
+
+icicle(s) => {
+	Arrays.sort(Strings.remove(s, ' ')) ->> ((curr) -> {
+		printl(s);
+		c in s do { c == curr then { c = ' '; break; }; };
+	});
+};

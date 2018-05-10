@@ -1,0 +1,20 @@
+# This is the Collatz Conjecture (OEIS A006577):
+#
+#	Start with an integer n > 1.
+#	Repeat the following steps:
+#		If n is even, divide it by 2.
+#		If n is odd, multiply it by 3 and add 1.
+#
+# It is proven that for all positive integers up to 5 * 260, or 
+# about 5764000000000000000, n will eventually become 1.
+#
+# Your task is to find out how many iterations it takes (of 
+# halving or tripling-plus-one) to reach 1.
+
+collatz(n)=>i from {
+	i=0;
+	!n do {
+		n=(n%2 then n*3+1 else n/2);
+		i+=1;
+	}
+};

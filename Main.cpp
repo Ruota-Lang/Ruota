@@ -24,12 +24,12 @@ void printToCoordinates(int x, int y, const std::string& text){
 	printf("\033[%d;%dH%s\n", x, y, text.c_str());
 }
 
-std::vector<SP_Memory> __print(std::vector<SP_Memory> args) {
+VEC_Memory __print(VEC_Memory args) {
 	std::cout << args[0]->toString();
 	return { new_memory() };
 }
 
-std::vector<SP_Memory> __printat(std::vector<SP_Memory> args) {
+VEC_Memory __printat(VEC_Memory args) {
 	int pos_x = args[0]->getValue();
 	int pos_y = args[1]->getValue();
 	std::string line = args[2]->toString();
@@ -37,25 +37,25 @@ std::vector<SP_Memory> __printat(std::vector<SP_Memory> args) {
 	return { new_memory() };
 }
 
-std::vector<SP_Memory> __color(std::vector<SP_Memory> args) {
+VEC_Memory __color(VEC_Memory args) {
 	setColor(args[0]->getValue());
 	return { new_memory() };
 }
 
-std::vector<SP_Memory> __input_str(std::vector<SP_Memory> args) {
+VEC_Memory __input_str(VEC_Memory args) {
 	String d;
 	std::cin >> d;
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	return { new_memory(d) };
 }
 
-std::vector<SP_Memory> __input_line(std::vector<SP_Memory> args) {
+VEC_Memory __input_line(VEC_Memory args) {
 	String d;
 	std::getline(std::cin, d);
 	return { new_memory(d) };
 }
 
-std::vector<SP_Memory> __key_down(std::vector<SP_Memory> args) {
+VEC_Memory __key_down(VEC_Memory args) {
 	#ifdef _WIN32
 		if(GetKeyState(args[0]->getValue()) & 0x8000)
 			return {new_memory(NUM, 1)};
@@ -71,7 +71,7 @@ RuotaWrapper * rw;
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.8.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.8.4 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	do {
 		setColor(12);

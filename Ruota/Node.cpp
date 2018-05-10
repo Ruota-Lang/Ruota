@@ -51,6 +51,8 @@ SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
 	if (nt != SWITCH && nt != REF_SET_DEC && nt != OBJ_LAM && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
+			if (n == nullptr)
+				Interpreter::throwError("Error: unbalanced operator!", toString());
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
 				return e;
@@ -289,14 +291,21 @@ SP_Memory Node::execute(SP_Scope scope) {
 	}
 	case DES: {
 		VEC_String param_keys;
-		for (auto &n : params[0]->params) param_keys.push_back(n->key);
-		return new_memory(new_lambda(scope, params[1], param_keys));
+		std::vector<int> param_types;
+		for (auto &n : params[0]->params){
+			param_keys.push_back(n->key);
+			param_types.push_back(n->flag);
+		}
+		return new_memory(new_lambda(scope, params[1], param_keys, param_types));
 	}
 	case LDES: {
 		VEC_String param_keys;
-		for (auto &n : params[0]->params[1]->params)
+		std::vector<int> param_types;
+		for (auto &n : params[0]->params[1]->params){
 			param_keys.push_back(n->key);
-		auto lambda = new_memory(new_lambda(scope, params[1], param_keys));
+			param_types.push_back(n->flag);
+		}
+		auto lambda = new_memory(new_lambda(scope, params[1], param_keys, param_types));
 		if (params[0]->params[0]->nt != VAR) {
 			auto e = params[0]->params[0]->execute(scope);
 			e->set(lambda);

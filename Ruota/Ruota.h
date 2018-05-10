@@ -46,8 +46,9 @@ enum NodeType {
 	OBJ_SET,	// ::
 	OBJ_LAM,	// struct
 	DEC_SET,	// :=
-	REF_SET,	// .=
-	REF_SET_DEC,// ..=
+	REF_SET,	// &=
+	REF_SET_DEC,// :&=
+	ARR_SET,	// .=
 	ADD,		// +
 	ADD_ARR,	// ++
 	STR_CAT,	// ..

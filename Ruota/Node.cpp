@@ -86,6 +86,14 @@ SP_Memory Node::execute(SP_Scope scope) {
 		return temp1->refer(params[1]->execute(scope));
 	}
 	case SET:		return executed[0]->set(executed[1]);
+	case ARR_SET:	{
+		if (executed[0]->getArray().size() != executed[1]->getArray().size())
+			Interpreter::throwError("Error: cannot multi-set arrays of incompatible lengths!", toString());
+		for (int i = 0; i < executed[0]->getArray().size(); i++){
+			executed[0]->getArray()[i]->set(executed[1]->getArray()[i]);
+		}
+		return executed[0];
+	}
 	case DEC_SET:	{
 		String key = params[0]->key;
 		auto value = params[1]->execute(scope);

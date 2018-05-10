@@ -1,0 +1,72 @@
+conway(size_x, size_y) => {
+	os.system("cls");
+	map := alloc [size_x, size_y] * 0;
+	buffer := alloc [size_x, size_y] * 0 + 2;
+	i in map do {
+		j in i do {
+			j = Random.int(0,2);
+		};
+	};
+	
+	drawBlock(x, y, s) => {
+		printat(x * 2, y, s);
+	};
+
+	drawMap() => {
+		i in [0 : size_x] do {
+			j in [0 : size_y] do {
+				buffer[i][j] != map[i][j] then {
+					map[i][j] switch {
+					0 >> drawBlock(i + 2, j + 2, "  ");
+					1 >> drawBlock(i + 2, j + 2, "% ");
+					};
+				};
+			};
+		};
+		buffer = map;
+	};
+
+	getNeighbors(i, j) => n from {
+		n += map[(i + 1) % size_x][j];
+		n += map[(i - 1 + size_x) % size_x][j];
+		n += map[i][(j + 1) % size_y];
+		n += map[i][(j - 1 + size_y) % size_y];
+		n += map[(i + 1) % size_x][(j + 1) % size_y];
+		n += map[(i - 1 + size_x) % size_x][(j + 1) % size_y];
+		n += map[(i + 1) % size_x][(j - 1 + size_y) % size_y];
+		n += map[(i - 1 + size_x) % size_x][(j - 1 + size_y) % size_y];
+	};
+
+	control() => {
+		new_map := alloc [size_x, size_y] * 0;
+
+		i in [0:size_x] do {
+			j in [0:size_y] do {
+				n := getNeighbors(i, j);
+				new_map[i][j] = (map[i][j] switch {
+					0 >> (n switch {3 >> 1});
+					1 >> (n switch {2 >> 1; 3 >> 1});
+				});
+			};
+		};
+
+		map = new_map;
+	};
+	
+	timer := 0;
+	!Input.keyDown('Q') do {
+		time_start := os.milli();
+		timer > 100 then {
+			control();
+			drawMap();
+			timer = 0;
+		};
+		timer += os.milli() - time_start;
+	};
+};
+
+len args switch {
+0 >> conway(20, 20);
+1 >> conway(num args[0], num args[0]);
+2 >> conway(num args[0], num args[1]);
+} >> printl("Invalid Arguments!");

@@ -1,31 +1,23 @@
 ﻿# The Greatest Game in the World
 
-snake(map_size) => {
+snake(size_x, size_y) => {
 	# Clear the console and set color
 	os.system("cls");
 	Color.set(Color.BRIGHT_GREEN);
 
 	# Declare variables
-	pos_x := 5;
-	pos_y := 5;
-	dir := 0;
-	new_dir := 0;
+	pos_x := Math.floor(size_x / 4);
+	pos_y := Math.floor(size_y / 4);
+	dir := 1;
+	new_dir := 1;
 	score := 0;
-	map := alloc map_size;
-	buffer := alloc map_size;
 
-	# Set map to 0
-	i in [0 : map_size] do {
-		map[i] = alloc map_size;
-		buffer[i] = alloc map_size;
-		j in [0 : map_size] do {
-			map[i][j] = 0;
-			buffer[i][j] = 0;
-		};
-	};
+	# Set map and buffer to 0
+	map := alloc [size_x, size_y] * 0;
+	buffer := alloc [size_x, size_y] * 0;
 
 	# Add first fruit
-	map[10][10] = -1;
+	map[Math.floor(size_x / 4 * 3)][Math.floor(size_y / 4 * 3)] = -1;
 
 	# Declare functions
 	drawBlock(x, y, s) => {
@@ -64,7 +56,7 @@ snake(map_size) => {
 		i in [0 : len map] do {
 			j in [0 : len map[i]] do {
 				map[i][j] > 0 then {
-					map[i][j] = map[i][j] - 1;
+					map[i][j] -= 1;
 				};
 			};
 		};
@@ -72,12 +64,12 @@ snake(map_size) => {
 		q = false;
 
 		map[pos_x][pos_y] == -1 then {
-			score = score + 1;
-			rx := Random.int(map_size - 1);
-			ry := Random.int(map_size - 1);
+			score += 1;
+			rx := Random.int(size_x - 1);
+			ry := Random.int(size_y - 1);
 			map[rx][ry] != 0 do {
-				rx = Random.int(map_size - 1);
-				ry = Random.int(map_size - 1);
+				rx = Random.int(size_x - 1);
+				ry = Random.int(size_y - 1);
 			};
 			map[rx][ry] = -1;
 		} else map[pos_x][pos_y] > 0 then {
@@ -87,10 +79,10 @@ snake(map_size) => {
 
 		map[pos_x][pos_y] = score + 1;
 		dir switch {
-		0 >> pos_x = pos_x - 1;
-		1 >> pos_y = pos_y + 1;
-		2 >> pos_x = pos_x + 1;
-		3 >> pos_y = pos_y - 1;
+		0 >> pos_x -= 1;
+		1 >> pos_y += 1;
+		2 >> pos_x += 1;
+		3 >> pos_y -= 1;
 		};
 
 		pos_x >= len map then q = true;
@@ -100,17 +92,17 @@ snake(map_size) => {
 	};
 
 	# Draw Border
-	i in [0 : map_size + 2] do drawBlock(1, i + 1, "[]");
-	i in [0 : map_size + 2] do drawBlock(map_size + 2, i + 1, "[]");
-	i in [0 : map_size + 2] do drawBlock(i + 1, 1, "[]");
-	i in [0 : map_size + 2] do drawBlock(i + 1, map_size + 2, "[]");
+	i in [0 : size_y + 2] do drawBlock(1, i + 1, "[]");
+	i in [0 : size_y + 2] do drawBlock(size_x + 2, i + 1, "[]");
+	i in [0 : size_x + 2] do drawBlock(i + 1, 1, "[]");
+	i in [0 : size_x + 2] do drawBlock(i + 1, size_y + 2, "[]");
 
 	# Game Loop
 	timer := 0;
 	timer_fps := 0;
 	frames := 0;
 	!Input.keyDown('Q') do {
-		frames = frames + 1;
+		frames += 1;
 		time_start := os.milli();
 		keypress();
 		timer > 100 then {
@@ -118,20 +110,21 @@ snake(map_size) => {
 			drawMap();
 			timer = 0;
 		};
-		drawBlock(2, map_size + 2, " WASD - Score: " .. score .. " ");
+		drawBlock(2, size_y + 2, " WASD - Score: " .. score .. " ");
 
 		timer_fps > 1000 then {
 			drawBlock(2, 0, " " .. frames .. " FPS ");
 			frames = 0;
 			timer_fps = 0;
 		};
-		timer = timer + (os.milli() - time_start);
-		timer_fps = timer_fps + (os.milli() - time_start);
+		timer += os.milli() - time_start;
+		timer_fps += os.milli() - time_start;
 	};
 	drawMap();
 	drawBlock(pos_x + 2, pos_y + 2, "><");
 };
 
 len args switch {
-1 >> snake(args[0]);
-} >> snake(15);
+1 >> snake(args[0], args[0]);
+2 >> snake(args[0], args[1]);
+} >> snake(20, 10);

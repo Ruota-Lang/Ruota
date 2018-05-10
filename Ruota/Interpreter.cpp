@@ -58,9 +58,13 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ "/=", -3},
 	{ "%=", -3},
 	{ "**=", -3},
-	{ ":=", -3},
-	{ ".=", -3},
 	{ "..=", -3},
+	{ "++=", -3},
+	{ ":=", -3},
+	{ "&=", -3},
+	{ ":&", -3},
+	{ ":&=", -3},
+	{ ".=", -3},
 	{ ">>", 2 },
 	{ "in", 2 },
 	{ "switch", 2 },
@@ -291,8 +295,18 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 			else if (token == "++")
 				stack.push_back(new_node(ADD_ARR, params));
+			else if (token == "++="){
+				auto s = new_node(ADD_ARR, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "..")
 				stack.push_back(new_node(STR_CAT, params));
+			else if (token == "..="){
+				auto s = new_node(STR_CAT, params);
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
 			else if (token == "-")
 				stack.push_back(new_node(SUB, params));
 			else if (token == "-="){
@@ -348,9 +362,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(PUSH_ARR, params));
 			else if (token == "post")
 				stack.push_back(new_node(UNSHIFT_ARR, params));
-			else if (token == ".=")
+			else if (token == "&=")
 				stack.push_back(new_node(REF_SET, params));
-			else if (token == "..=")
+			else if (token == ".=")
+				stack.push_back(new_node(ARR_SET, params));
+			else if (token == ":&=")
 				stack.push_back(new_node(REF_SET_DEC, params));
 			else if (token == "->>")
 				stack.push_back(new_node(EXEC_ITER, params));

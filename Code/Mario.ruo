@@ -78,6 +78,6 @@ frames := 0;
 		frames = 0;
 		timer_fps = 0;
 	};
-	timer = timer + (os.milli() - time_start);
-	timer_fps = timer_fps + (os.milli() - time_start);
+	timer += os.milli() - time_start;
+	timer_fps += os.milli() - time_start;
 };

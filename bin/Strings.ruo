@@ -31,7 +31,7 @@ static Strings :: {
 		a == null then a = "";
 		s = array[0];
 		i in [1 : len array] do {
-			s = s .. a .. array[i];
+			s ..= a .. array[i];
 		};
 	};
 };

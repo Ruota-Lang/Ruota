@@ -1,4 +1,5 @@
 load "Arrays";
+load "Map";
 
 dynamic Huffman :: {
 	head := null;
@@ -17,7 +18,7 @@ dynamic Huffman :: {
 			a != null && b != null then {
 				adict := a.getDict(c ++ [0]);
 				bdict := b.getDict(c ++ [1]);
-				dict.contents = dict.contents ++ adict.contents ++ bdict.contents;
+				dict.contents ++= adict.contents ++ bdict.contents;
 			} else {
 				dict[value] = c;
 			};
@@ -38,9 +39,9 @@ dynamic Huffman :: {
 		string() => s from {
 			s = "[W=" .. weight;
 			a != null && b != null then {
-				s = s .. ", V=" .. value .. ", " .. a .. ", " .. b .. "]";
+				s ..= ", V=" .. value .. ", " .. a .. ", " .. b .. "]";
 			} else {
-				s = s .. ", V=" .. value .. "]";
+				s ..= ", V=" .. value .. "]";
 			};
 		};
 
@@ -58,7 +59,7 @@ dynamic Huffman :: {
 			!char_table.containsKey(c) then {
 				char_table[c] = 0;
 			};
-			char_table[c] = char_table[c] + 1;
+			char_table[c] += 1;
 		};
 		nodes := [];
 		e in char_table do {
@@ -85,7 +86,7 @@ dynamic Huffman :: {
 			val := dict[c];
 			c2 in val do {
 				encoded[i] = c2;
-				i = i + 1;
+				i += 1;
 			};
 		};
 		encoded = encoded[0:i];
@@ -102,7 +103,7 @@ dynamic Huffman :: {
 			curr push c;
 			undict.containsKey(curr) then {
 				decoded[i] = undict[curr];
-				i = i + 1;
+				i += 1;
 				curr = [];
 			};
 		};
@@ -116,7 +117,7 @@ dynamic Huffman :: {
 		btod(a) => d from { 
 			d = 0; 
 			i in [0 : len a] do { 
-				d = d + (2 ** i) * a[i]; 
+				d += (2 ** i) * a[i]; 
 			}; 
 		};
 		a = [];

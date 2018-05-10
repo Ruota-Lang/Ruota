@@ -19,7 +19,7 @@ hilo(min, max) => {
 	printl("The number is between " .. min .. " and " .. max);
 	printl("--------------------------------");
 	a != r do {
-		c = c + 1;
+		c += 1;
 		Color.set(Color.WHITE);
 		print("Enter a guess: ");
 		Color.set(Color.YELLOW + 8);

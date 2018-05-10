@@ -33,7 +33,7 @@ binToDec(b) => d from {
 	d = 0;
 	i in [ 0 : len b ] do {
 		b[i](1,0) == 1 then {
-			d = d + 2 ** (i - 1);
+			d += 2 ** (i - 1);
 		};
 	};
 };

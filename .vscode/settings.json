@@ -3,6 +3,11 @@
 		"thread": "cpp",
 		"list": "cpp",
 		"vector": "cpp",
-		"xstring": "cpp"
+		"xstring": "cpp",
+		"initializer_list": "cpp",
+		"type_traits": "cpp",
+		"xhash": "cpp",
+		"xutility": "cpp",
+		"cmath": "cpp"
 	}
 }

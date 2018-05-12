@@ -41,14 +41,11 @@ enum NodeType {
 	LIST,		// [ ]
 	SOFT_LIST,	// ( )
 	SCOPE,		// { }
-	SET,		// =
+	SET,		// =	:=
 	SET_STAT,	// static
 	OBJ_SET,	// ::
 	OBJ_LAM,	// struct
-	DEC_SET,	// :=
-	REF_SET,	// &=
-	REF_SET_DEC,// :&=
-	ARR_SET,	// .=
+	REF_SET,	// &=	:&=
 	ADD,		// +
 	ADD_ARR,	// ++
 	STR_CAT,	// ..
@@ -85,7 +82,7 @@ enum NodeType {
 	ITER,		// in
 	RANGE,		// :
 
-	TYPE,		// &
+	TYPE,		// type
 	OUT_CALL,	// _OUTER_CALL_
 	NEW,		// new
 	LOCAL,		// local
@@ -103,6 +100,7 @@ enum NodeType {
 	LAST_ARR,	// last
 	TOARR,		// arr
 	TRY_CATCH,	// try .. catch
+	DECLARE,	// dec
 
 	BREAK,		// break
 	RETURN		// return
@@ -168,6 +166,10 @@ public:
 	SP_Memory 	div(const SP_Memory&);
 	SP_Memory 	mod(const SP_Memory&);
 	SP_Memory 	pow(const SP_Memory&);
+	SP_Memory 	less(const SP_Memory&);
+	SP_Memory 	more(const SP_Memory&);
+	SP_Memory 	eless(const SP_Memory&);
+	SP_Memory 	emore(const SP_Memory&);
 	bool 		equals(const SP_Memory&);
 	bool 		isStatic();
 	bool 		isStruct();

@@ -50,7 +50,7 @@ drawMap() => {
 			i >= 0 && i < map_x && j >= 0 && j < map_y then {
 				i == pos_x && j == pos_y then {
 					drawBlock(i, j, "@");
-				} else ((i - pos_x) ** 2 + (j - pos_y) ** 2) ** 0.5 < 10	 && map[i][j] != 0 then {
+				} else ((i - pos_x) ** 2 + (j - pos_y) ** 2) ** 0.5 < 10 && map[i][j] != 0 then {
 					drawBlock(i, j, "#");
 				} else {
 					drawBlock(i, j, " ");

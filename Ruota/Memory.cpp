@@ -482,6 +482,126 @@ SP_Memory Memory::pow(const SP_Memory &a) {
 	return nullptr;
 }
 
+SP_Memory Memory::less(const SP_Memory &a) {
+	if (mt == REF)
+		return reference->less(a);
+	switch (mt)
+	{
+	default:
+		switch (a->mt)
+		{
+		default:
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() < a->getValue());
+		case ARR:
+			VEC_Memory new_arr;
+			for (auto &v : a->arr_data)
+				new_arr.push_back(this->less(v));
+			return new_memory(new_arr);
+		}
+	case ARR:
+		switch (a->mt)
+		{
+		default:
+			VEC_Memory new_arr;
+			for (auto &v : this->arr_data)
+				new_arr.push_back(v->less(a));
+			return new_memory(new_arr);
+		}
+	}
+
+	return nullptr;
+}
+
+SP_Memory Memory::eless(const SP_Memory &a) {
+	if (mt == REF)
+		return reference->eless(a);
+	switch (mt)
+	{
+	default:
+		switch (a->mt)
+		{
+		default:
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() <= a->getValue());
+		case ARR:
+			VEC_Memory new_arr;
+			for (auto &v : a->arr_data)
+				new_arr.push_back(this->eless(v));
+			return new_memory(new_arr);
+		}
+	case ARR:
+		switch (a->mt)
+		{
+		default:
+			VEC_Memory new_arr;
+			for (auto &v : this->arr_data)
+				new_arr.push_back(v->eless(a));
+			return new_memory(new_arr);
+		}
+	}
+
+	return nullptr;
+}
+
+SP_Memory Memory::more(const SP_Memory &a) {
+	if (mt == REF)
+		return reference->more(a);
+	switch (mt)
+	{
+	default:
+		switch (a->mt)
+		{
+		default:
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() > a->getValue());
+		case ARR:
+			VEC_Memory new_arr;
+			for (auto &v : a->arr_data)
+				new_arr.push_back(this->more(v));
+			return new_memory(new_arr);
+		}
+	case ARR:
+		switch (a->mt)
+		{
+		default:
+			VEC_Memory new_arr;
+			for (auto &v : this->arr_data)
+				new_arr.push_back(v->more(a));
+			return new_memory(new_arr);
+		}
+	}
+
+	return nullptr;
+}
+
+SP_Memory Memory::emore(const SP_Memory &a) {
+	if (mt == REF)
+		return reference->emore(a);
+	switch (mt)
+	{
+	default:
+		switch (a->mt)
+		{
+		default:
+			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() >= a->getValue());
+		case ARR:
+			VEC_Memory new_arr;
+			for (auto &v : a->arr_data)
+				new_arr.push_back(this->emore(v));
+			return new_memory(new_arr);
+		}
+	case ARR:
+		switch (a->mt)
+		{
+		default:
+			VEC_Memory new_arr;
+			for (auto &v : this->arr_data)
+				new_arr.push_back(v->emore(a));
+			return new_memory(new_arr);
+		}
+	}
+
+	return nullptr;
+}
+
 String Memory::toString() {
 	switch (this->mt)
 	{

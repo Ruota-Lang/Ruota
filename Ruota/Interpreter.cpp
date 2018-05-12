@@ -11,7 +11,9 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ "struct", 12 },
 	{ "static", 14 },
 	{ "dynamic", 14 },
+	{ "dec", -13},
 	{ "!", -13 },
+	{ ".!", -13 },
 	{ ".", 13 },
 	{ "->", 11 },
 	{ "=>", 11 },
@@ -30,41 +32,59 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ "mov", -10 },
 	{ ".negate", -10 },
 	{ "**", -9 },
+	{ ".**", -9 },
 	{ "*", 8 },
+	{ ".*", 8 },
 	{ "/", 8 },
+	{ "./", 8 },
 	{ "%", 8 },
+	{ ".%", 8 },
 	{ "+", 7 },
+	{ ".+", 7 },
 	{ "++", 7 },
 	{ "..", 7 },
 	{ "-", 7 },
+	{ ".-", 7 },
 	{ ":", 6 },
 	{ "<:", 6 },
 	{ ":>", 6 },
 	{ "<:>", 6 },
 	{ "==", 5 },
+	{ ".=", 5 },
+	{ ".==", 5 },
 	{ "!=", 5 },
+	{ ".!=", 5 },
 	{ "<", 5 },
+	{ ".<", 5 },
 	{ ">", 5 },
+	{ ".>", 5 },
 	{ "<=", 5 },
+	{ ".<=", 5 },
 	{ ">=", 5 },
+	{ ".>=", 5 },
 	{ "&&", 4 },
 	{ "||", 4 },
 	{ "push", 4 },
 	{ "post", 4 },
 	{ "=", -3 },
 	{ "+=", -3},
+	{ ".+=", -3},
 	{ "-=", -3},
+	{ ".-=", -3},
 	{ "*=", -3},
+	{ ".*=", -3},
 	{ "/=", -3},
+	{ "./=", -3},
 	{ "%=", -3},
+	{ ".%=", -3},
 	{ "**=", -3},
+	{ ".**=", -3},
 	{ "..=", -3},
 	{ "++=", -3},
 	{ ":=", -3},
 	{ "&=", -3},
 	{ ":&", -3},
 	{ ":&=", -3},
-	{ ".=", -3},
 	{ ">>", 2 },
 	{ "in", 2 },
 	{ "switch", 2 },
@@ -95,6 +115,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 	Tokenizer * t = new Tokenizer(operators);
 	auto tokenized = t->tokenize(code);
 	auto tokens = t->infixToPostfix(tokenized);
+
 	SP_Scope current = main;
 	VEC_Node stack;
 	VEC_Node nullvec;
@@ -176,8 +197,18 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			VEC_Node params = { a, b };
 			if (token == "=")
 				stack.push_back(new_node(SET, params));
-			else if (token == ":=")
-				stack.push_back(new_node(DEC_SET, params));
+			else if (token == ":=") {
+				params = { a };
+				auto dec = new_node(DECLARE, params);
+				params = { dec, b };
+				stack.push_back(new_node(SET, params));
+			}
+			else if (token == "dec") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(DECLARE, params));
+			}
 			else if (token == "len") {
 				if (a != nullptr)
 					stack.push_back(a);
@@ -300,13 +331,28 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 			else if (token == "::")
 				stack.push_back(new_node(OBJ_SET, params));
+
+		// ADDITION RELATED OPERATORS
 			else if (token == "+")
 				stack.push_back(new_node(ADD, params));
+			else if (token == ".+") {
+				auto s = new_node(ADD, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
 			else if (token == "+="){
 				auto s = new_node(ADD, params);
 				params = {a, s};
 				stack.push_back(new_node(SET, params));
 			}
+			else if (token == ".+=") {
+				auto s = new_node(ADD, params);
+				s->flag = 1;
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
+		
+		// CONCATANATION RELATED OPERATORS
 			else if (token == "++")
 				stack.push_back(new_node(ADD_ARR, params));
 			else if (token == "++="){
@@ -321,53 +367,161 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				params = {a, s};
 				stack.push_back(new_node(SET, params));
 			}
+
+		// SUBTRACTION RELATED OPERATORS
 			else if (token == "-")
 				stack.push_back(new_node(SUB, params));
+			else if (token == ".-") {
+				auto s = new_node(SUB, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
 			else if (token == "-="){
 				auto s = new_node(SUB, params);
 				params = {a, s};
 				stack.push_back(new_node(SET, params));
 			}
+			else if (token == ".-=") {
+				auto s = new_node(SUB, params);
+				s->flag = 1;
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
+
+		// MULTIPLICATION RELATED OPERATORS
 			else if (token == "*")
 				stack.push_back(new_node(MUL, params));
+			else if (token == ".*") {
+				auto s = new_node(MUL, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
 			else if (token == "*="){
 				auto s = new_node(MUL, params);
 				params = {a, s};
 				stack.push_back(new_node(SET, params));
 			}
+			else if (token == ".*=") {
+				auto s = new_node(MUL, params);
+				s->flag = 1;
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
+
+		// DIVISION RELATED OPERATORS
 			else if (token == "/")
 				stack.push_back(new_node(DIV, params));
+			else if (token == "./") {
+				auto s = new_node(DIV, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
 			else if (token == "/="){
 				auto s = new_node(DIV, params);
 				params = {a, s};
 				stack.push_back(new_node(SET, params));
 			}
+			else if (token == "./=") {
+				auto s = new_node(DIV, params);
+				s->flag = 1;
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
+
+		// MODULUS RELATED OPERATORS
 			else if (token == "%")
 				stack.push_back(new_node(MOD, params));
+			else if (token == ".%") {
+				auto s = new_node(MOD, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
 			else if (token == "%="){
 				auto s = new_node(MOD, params);
 				params = {a, s};
 				stack.push_back(new_node(SET, params));
 			}
+			else if (token == ".%=") {
+				auto s = new_node(MOD, params);
+				s->flag = 1;
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
+
+		// POWER RELATED OPERATORS
 			else if (token == "**")
 				stack.push_back(new_node(POW, params));
+			else if (token == ".**") {
+				auto s = new_node(POW, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
 			else if (token == "**="){
 				auto s = new_node(POW, params);
 				params = {a, s};
 				stack.push_back(new_node(SET, params));
 			}
+			else if (token == ".**=") {
+				auto s = new_node(POW, params);
+				s->flag = 1;
+				params = {a, s};
+				stack.push_back(new_node(SET, params));
+			}
+
+		// EQUALITY RELATED OPERATORS
 			else if (token == "==")
 				stack.push_back(new_node(EQUAL, params));
+			else if (token == ".==") {
+				auto s = new_node(EQUAL, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
+		
+		// INEQUALITY RELATED OPERATORS
 			else if (token == "!=")
 				stack.push_back(new_node(NEQUAL, params));
+			else if (token == ".!=") {
+				auto s = new_node(NEQUAL, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
+		
+		// LESS THAN RELATED OPERATORS
 			else if (token == "<")
 				stack.push_back(new_node(LESS, params));
+			else if (token == ".<") {
+				auto s = new_node(LESS, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
+
+		// MORE THAN RELATED OPERATORS
 			else if (token == ">")
 				stack.push_back(new_node(MORE, params));
+			else if (token == ".>") {
+				auto s = new_node(MORE, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
+
+		// ELESS THAN RELATED OPERATORS
 			else if (token == "<=")
 				stack.push_back(new_node(ELESS, params));
+			else if (token == ".<=") {
+				auto s = new_node(ELESS, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
+
+		// EMORE THAN RELATED OPERATORS
 			else if (token == ">=")
 				stack.push_back(new_node(EMORE, params));
+			else if (token == ".>=") {
+				auto s = new_node(EMORE, params);
+				s->flag = 1;
+				stack.push_back(s);
+			}
+
 			else if (token == "&&")
 				stack.push_back(new_node(AND, params));
 			else if (token == "||")
@@ -378,10 +532,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(UNSHIFT_ARR, params));
 			else if (token == "&=")
 				stack.push_back(new_node(REF_SET, params));
-			else if (token == ".=")
-				stack.push_back(new_node(ARR_SET, params));
-			else if (token == ":&=")
-				stack.push_back(new_node(REF_SET_DEC, params));
+			else if (token == ":&=") {			
+				params = { a };
+				auto dec = new_node(DECLARE, params);
+				params = { dec, b };
+				stack.push_back(new_node(REF_SET, params));
+			}
 			else if (token == "->>")
 				stack.push_back(new_node(EXEC_ITER, params));
 			else if (token == "then")

@@ -49,7 +49,7 @@ Node::~Node(){
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != TRY_CATCH && nt != SWITCH && nt != REF_SET_DEC && nt != OBJ_LAM && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			if (n == nullptr)
 				Interpreter::throwError("Error: unbalanced operator!", toString());
@@ -80,41 +80,176 @@ SP_Memory Node::execute(SP_Scope scope) {
 		return temp1->setStruct(true);
 	}
 	case REF_SET:	return executed[0]->refer(executed[1]);
-	case REF_SET_DEC:	{
-		String key = params[0]->key;
-		temp1 = scope->declareVariable(key);
-		return temp1->refer(params[1]->execute(scope));
-	}
-	case SET:		return executed[0]->set(executed[1]);
-	case ARR_SET:	{
-		if (executed[0]->getArray().size() != executed[1]->getArray().size())
-			Interpreter::throwError("Error: cannot multi-set arrays of incompatible lengths!", toString());
-		for (int i = 0; i < executed[0]->getArray().size(); i++){
-			executed[0]->getArray()[i]->set(executed[1]->getArray()[i]);
+	case SET:		{
+		if (params[0]->nt == LIST || params[0]->nt == SOFT_LIST || (params[0]->nt == DECLARE && (params[0]->params[0]->nt == LIST || params[0]->params[0]->nt == SOFT_LIST))){
+			executed.push_back(params[0]->execute(scope));
+			executed.push_back(params[1]->execute(scope));
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot multi-set arrays of incompatible lengths!", toString());
+			for (int i = 0; i < executed[0]->getArray().size(); i++){
+				executed[0]->getArray()[i]->set(executed[1]->getArray()[i]);
+			}
+			return executed[0];
+		}else{
+			executed.push_back(params[0]->execute(scope));
+			executed.push_back(params[1]->execute(scope));
+			return executed[0]->set(executed[1]);
 		}
-		return executed[0];
 	}
-	case DEC_SET:	{
-		String key = params[0]->key;
-		auto value = params[1]->execute(scope);
-		temp1 = scope->declareVariable(key);
-		temp1->set(value);
-		return temp1;
+	case DECLARE:	{
+		if (params[0]->nt == LIST){
+			for (auto &v : params[0]->params)
+				scope->declareVariable(v->key);
+			return params[0]->execute(scope);
+		} else
+			return scope->declareVariable(params[0]->key);
 	}
 	case MEM:		return this->mem_data;
-	case ADD:		return executed[0]->add(executed[1]);
-	case SUB:		return executed[0]->sub(executed[1]);
-	case MUL:		return executed[0]->mul(executed[1]);
-	case DIV:		return executed[0]->div(executed[1]);
-	case MOD:		return executed[0]->mod(executed[1]);
-	case POW:		return executed[0]->pow(executed[1]);
-	case EQUAL:		return new_memory(NUM, executed[0]->equals(executed[1]));
+	case ADD:		switch(flag) {
+		case 0: return executed[0]->add(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-add arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->add(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case SUB:		switch(flag) {
+		case 0: return executed[0]->sub(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-subtract arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->sub(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case MUL:		switch(flag) {
+		case 0: return executed[0]->mul(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-multiply arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->mul(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case DIV:		switch(flag) {
+		case 0: return executed[0]->div(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-divide arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->div(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case MOD:		switch(flag) {
+		case 0: return executed[0]->mod(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-mod arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->mod(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case POW:		switch(flag) {
+		case 0: return executed[0]->pow(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-add arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->pow(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case EQUAL:		switch(flag) {
+		case 0: return new_memory(NUM, executed[0]->equals(executed[1]));
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-add arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(new_memory(NUM, executed[0]->getArray()[i]->equals(executed[1]->getArray()[i])));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
 	case NOT:		return new_memory(NUM, !executed[0]->equals(new_memory(NUM, 1)));
-	case NEQUAL:	return new_memory(NUM, !executed[0]->equals(executed[1]));
-	case LESS:		return new_memory(NUM, executed[0]->getValue() < executed[1]->getValue());
-	case MORE:		return new_memory(NUM, executed[0]->getValue() > executed[1]->getValue());
-	case ELESS:		return new_memory(NUM, executed[0]->getValue() <= executed[1]->getValue());
-	case EMORE:		return new_memory(NUM, executed[0]->getValue() >= executed[1]->getValue());
+	case NEQUAL:	switch(flag) {
+		case 0: return new_memory(NUM, !executed[0]->equals(executed[1]));
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-add arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(new_memory(NUM, !executed[0]->getArray()[i]->equals(executed[1]->getArray()[i])));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case LESS:		switch(flag) {
+		case 0: return executed[0]->less(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-less-than arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->less(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case MORE:		switch(flag) {
+		case 0: return executed[0]->more(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-more-than arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->more(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case ELESS:		switch(flag) {
+		case 0: return executed[0]->eless(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-less-than-or-equal arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->eless(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
+	case EMORE:		switch(flag) {
+		case 0: return executed[0]->emore(executed[1]);
+		case 1: {
+			if (executed[0]->getArray().size() != executed[1]->getArray().size())
+				Interpreter::throwError("Error: cannot element-more-than-or-equal arrays of unequal sizes!", toString());
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(executed[0]->getArray()[i]->emore(executed[1]->getArray()[i]));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
 	case AND:		return new_memory(NUM, executed[0]->getValue() && executed[1]->getValue());
 	case OR:		return new_memory(NUM, executed[0]->getValue() || executed[1]->getValue());
 	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());

@@ -81,20 +81,9 @@ SP_Memory Node::execute(SP_Scope scope) {
 	}
 	case REF_SET:	return executed[0]->refer(executed[1]);
 	case SET:		{
-		if (params[0]->nt == LIST || params[0]->nt == SOFT_LIST || (params[0]->nt == DECLARE && (params[0]->params[0]->nt == LIST || params[0]->params[0]->nt == SOFT_LIST))){
-			executed.push_back(params[0]->execute(scope));
-			executed.push_back(params[1]->execute(scope));
-			if (executed[0]->getArray().size() != executed[1]->getArray().size())
-				Interpreter::throwError("Error: cannot multi-set arrays of incompatible lengths!", toString());
-			for (int i = 0; i < executed[0]->getArray().size(); i++){
-				executed[0]->getArray()[i]->set(executed[1]->getArray()[i]);
-			}
-			return executed[0];
-		}else{
-			executed.push_back(params[0]->execute(scope));
-			executed.push_back(params[1]->execute(scope));
-			return executed[0]->set(executed[1]);
-		}
+		executed.push_back(params[0]->execute(scope));
+		executed.push_back(params[1]->execute(scope));
+		return executed[0]->set(executed[1]);
 	}
 	case DECLARE:	{
 		if (params[0]->nt == LIST){

@@ -248,7 +248,8 @@ SP_Memory Memory::set(const SP_Memory &m) {
 	}
 
 	this->mt = m->mt;
-	this->arr_data.clear();
+	if (this->arr_data.size() != m->arr_data.size())
+		this->arr_data.clear();
 	this->lambda = nullptr;
 	this->reference = nullptr;
 	this->data = 0;
@@ -262,21 +263,33 @@ SP_Memory Memory::set(const SP_Memory &m) {
 		this->data = m->getValue();
 		break;
 	case STR:
-		for (auto &v : m->arr_data) {
-			SP_Memory temp = new_memory();
-			temp->set(v);
-			if (temp->getType() != CHA)
-				this->mt = ARR;
-			else
-				temp->setStatic(true);
-			this->arr_data.push_back(temp);
+		if (this->arr_data.empty()) {
+			for (auto &v : m->arr_data) {
+				SP_Memory temp = new_memory();
+				temp->set(v);
+				if (temp->getType() != CHA)
+					this->mt = ARR;
+				else
+					temp->setStatic(true);
+				this->arr_data.push_back(temp);
+			}
+		}else {
+			for (int i = 0; i < arr_data.size(); i++){
+				this->arr_data[i]->set(m->arr_data[i]);
+			}
 		}
 		break;
 	case ARR:
-		for (auto &v : m->arr_data) {
-			SP_Memory temp = new_memory();
-			temp->set(v);
-			this->arr_data.push_back(temp);
+		if (this->arr_data.empty()) {
+			for (auto &v : m->arr_data) {
+				SP_Memory temp = new_memory();
+				temp->set(v);
+				this->arr_data.push_back(temp);
+			}
+		}else {
+			for (int i = 0; i < arr_data.size(); i++){
+				this->arr_data[i]->set(m->arr_data[i]);
+			}
 		}
 		break;
 	case OBJ:
@@ -309,7 +322,7 @@ SP_Memory Memory::add(const SP_Memory &a) {
 	{
 	default:
 		switch (a->mt)
-		{
+		{ 
 		default:
 			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() + a->getValue());
 		case ARR:

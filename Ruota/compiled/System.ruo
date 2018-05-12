@@ -58,7 +58,7 @@ static Random :: {
 
 static Regex :: {
 	search(s, e) => { _OUTER_CALL_("regex.search", s, e) };
-	replace(s, r, e) => { _OUTER_CALL_("regex.replace", s, r, e) };
+	replace(s, r, e) => { _OUTER_CALL_("regex.replace", s, r, e)[0] };
 };
 
 )RU0"

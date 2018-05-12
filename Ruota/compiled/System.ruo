@@ -54,6 +54,7 @@ static Random :: {
 		};
 		i = Math.floor(double() * (max - min) + min);
 	};
+	list(&a) => { a[int(0, len a)] };
 };
 
 static Regex :: {

@@ -1,0 +1,35 @@
+# Input
+# 	A non-empty encoded string consisting of printable ASCII 
+# 	characters (in the range 32-126), where some missing letters 
+# 	have been replaced with _.
+# 	
+# Output
+# 	A decoded string of the same length with all letters in 
+# 	lowercase, including the missing ones.
+# 
+# How?
+#     1. Gather all letters in the original string and group them 
+# 	by 5. Additional letters that do not fit in a full group of 5 
+# 	are ignored.
+#     2. Convert each group into binary: lowercase = 0, uppercase = 1. 
+# 	This leads to a list of integers.
+#     3. Use each value N in this list to replace each _ in the original 
+# 	string with the N-th letter of the alphabet (0-indexed), in order 
+# 	of appearance.
+
+cipher(s) => ns from {
+	ns := s;
+	r := Regex.search(Regex.replace(s, "", "[^a-zA-Z]"), "[a-zA-Z]{5}");
+	letters := [];
+	i in r do {
+		k := 0;
+		v := Regex.replace(Regex.replace(i[0], "0", "[a-z]"), "1", "[A-Z]");
+		j in [0 : len v] do	k += (2 ** j) * str v[len v - j - 1];
+		letters push (k + 'a');
+	};
+	i := -1;
+	c in ns do {
+		c == '_' then c = letters[i += 1];
+		c >= 'A' && c <= 'Z' then c = 'a' + (c - 'A');
+	};
+};

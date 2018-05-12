@@ -1,0 +1,37 @@
+# Monday numbers, as defined by Gamow in this question over 
+# on Puzzling, are positive integers N with the following three properties:
+# 
+#     The decimal representation of N does not contain the digit 0
+#     The decimal representation of N does not contain any digit twice
+#     N is divisible by every digit D that occurs in its decimal representation
+# 
+# Note that these are alternatively known, in the OEIS, as Lynch-Bell numbers.
+
+monday(n) => b from {
+	b = true;
+	s_n := str n;
+	len Regex.search(s_n, 0) > 0 then b = false;
+	c in s_n do { Math.floor(n / num str c) != (n / num str c) then b = false; };
+	i in [0 : len s_n] do {
+		j in [0 : i, i + 1 : len s_n] do {
+			s_n[i] == s_n[j] then b = false;
+		};
+	};
+};
+
+genList(min, max) => a from {
+	a = [];
+	max == null then {
+		max = min;
+		min = 1;
+	};
+	i in [min :> max] do {
+		monday(i) then a push i;
+	};
+};
+
+len args switch {
+0 >> printl(genList(100));
+1 >> printl(genList(num args[0]));
+2 >> printl(genList(num args[0], num args[1]));
+} >> printl("Invalid arguments!");

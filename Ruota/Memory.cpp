@@ -142,13 +142,13 @@ SP_Memory Memory::setArray(VEC_Memory arr_data) {
 }
 
 SP_Memory Memory::refer(const SP_Memory &m) {
-	if (m == to_this_ptr)
-		return to_this_ptr;
 	if (m->mt == NUL && m->data == 1) {
 		this->mt = NUL;
 	}else{
 		auto rp = m;
 		while (rp->mt == REF) rp = rp->reference;
+		if (rp == to_this_ptr)
+			throw std::runtime_error("Error: cannot set a variable's reference to itself!");
 		this->reference = rp;
 		this->mt = REF;
 	}
@@ -506,7 +506,7 @@ SP_Memory Memory::less(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() < a->getValue());
+			return new_memory(NUM, this->getValue() < a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -536,7 +536,7 @@ SP_Memory Memory::eless(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() <= a->getValue());
+			return new_memory(NUM, this->getValue() <= a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -566,7 +566,7 @@ SP_Memory Memory::more(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() > a->getValue());
+			return new_memory(NUM, this->getValue() > a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
@@ -596,7 +596,7 @@ SP_Memory Memory::emore(const SP_Memory &a) {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() >= a->getValue());
+			return new_memory(NUM, this->getValue() >= a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)

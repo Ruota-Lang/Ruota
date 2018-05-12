@@ -143,7 +143,7 @@
 
 # DECLARATION-BASED (=)
 
-`dec a`		Declares variable `a`
+`var a`		Declares variable `a`
 
 `a = b`		Sets value `a` to value `b`
 
@@ -153,13 +153,13 @@
 
 			b...:	all
 
-`a := b`	Equivalent to `dec a = b`
+`a := b`	Equivalent to `var a = b`
 
 			b:	all
 
 `a &= b`	Refers `a` to `b`
 
-`a :&= b`	Equivalent to `dec a &= b`
+`a :&= b`	Equivalent to `var a &= b`
 
 # CONCATANATION-BASED (++/..)
 

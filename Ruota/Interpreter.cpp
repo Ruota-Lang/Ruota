@@ -11,7 +11,7 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ "struct", 12 },
 	{ "static", 14 },
 	{ "dynamic", 14 },
-	{ "dec", -13},
+	{ "var", -13},
 	{ "!", -13 },
 	{ ".!", -13 },
 	{ ".", 13 },
@@ -203,7 +203,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				params = { dec, b };
 				stack.push_back(new_node(SET, params));
 			}
-			else if (token == "dec") {
+			else if (token == "var") {
 				if (a != nullptr)
 					stack.push_back(a);
 				params = { b };

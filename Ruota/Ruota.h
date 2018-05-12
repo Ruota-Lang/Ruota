@@ -100,7 +100,7 @@ enum NodeType {
 	LAST_ARR,	// last
 	TOARR,		// arr
 	TRY_CATCH,	// try .. catch
-	DECLARE,	// dec
+	DECLARE,	// var
 
 	BREAK,		// break
 	RETURN		// return

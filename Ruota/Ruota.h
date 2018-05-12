@@ -102,6 +102,7 @@ enum NodeType {
 	PUSH_ARR,	// push
 	LAST_ARR,	// last
 	TOARR,		// arr
+	TRY_CATCH,	// try .. catch
 
 	BREAK,		// break
 	RETURN		// return

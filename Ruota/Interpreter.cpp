@@ -72,6 +72,8 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ "then", 2 },
 	{ "else", -2 },
 	{ "detach", -1 },
+	{ "try", -15 },
+	{ "catch", 14 },
 	{ ",", 1 },
 	{ ";", 0 }
 };
@@ -277,6 +279,18 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(new_node(DETACH, params));
+			}
+			else if (token == "try") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(TRY_CATCH, params));
+			}
+			else if (token == "catch"){
+				if (a->nt != TRY_CATCH)
+					throw std::runtime_error("Error: no `try` section found!");
+				a->params.push_back(b);
+				stack.push_back(a);
 			}
 			else if (token == "!") {
 				if (a != nullptr)

@@ -49,7 +49,7 @@ Node::~Node(){
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != SWITCH && nt != REF_SET_DEC && nt != OBJ_LAM && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != TRY_CATCH && nt != SWITCH && nt != REF_SET_DEC && nt != OBJ_LAM && nt != SET_STAT && nt != DEC_SET && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			if (n == nullptr)
 				Interpreter::throwError("Error: unbalanced operator!", toString());
@@ -443,6 +443,16 @@ SP_Memory Node::execute(SP_Scope scope) {
 		params[0]->execute(scope);
 		#endif
 		return new_memory();
+	}
+	case TRY_CATCH: {
+		try {
+			return params[0]->execute(scope);
+		} catch (std::runtime_error &e){
+			if (params.size() > 1){
+				return params[1]->execute(scope);
+			}else
+				return new_memory();
+		}
 	}
 	case SOFT_LIST:
 		if (executed.size() == 1)

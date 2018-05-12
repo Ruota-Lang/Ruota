@@ -23,6 +23,13 @@ static Math :: {
 	sqrt(x) => { x ** 0.5 };
 	max(a, b) => { a > b then a else b };
 	min(a, b) => { a < b then a else b };
+	abs(a) => { a < 0 then -a else a };
+	round(a, d) => r from {
+  		m := 10 ** (d != null then d else 0);
+  		r = floor(a * m + 0.5) / m;
+	};
+	ceil(a) => { floor(a) == a then a else floor(a) + 1 };
+
 	sum(a) => s from {
 		s = 0;
 		i in a do {
@@ -47,6 +54,11 @@ static Random :: {
 		};
 		i = Math.floor(double() * (max - min) + min);
 	};
+};
+
+static Regex :: {
+	search(s, e) => { _OUTER_CALL_("regex.search", s, e) };
+	replace(s, r, e) => { _OUTER_CALL_("regex.replace", s, r, e) };
 };
 
 )RU0"

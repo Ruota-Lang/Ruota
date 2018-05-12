@@ -17,6 +17,7 @@
 #endif
 #include<chrono>
 #include<cmath>
+#include<regex>
 #ifdef THREADING
 	#include<thread>
 #endif

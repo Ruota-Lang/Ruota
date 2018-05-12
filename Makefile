@@ -12,10 +12,10 @@ bin/ruota.exe: Compiled/Main.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Comp
 bin/ruota.out: Compiled/Main.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
 	$(CC) $(CFLAGS) -o bin/ruota.out Compiled/Main.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
 
-Compiled/Main.o: Main.cpp
+Compiled/Main.o: Main.cpp Console.ruo
 	$(CC) $(CFLAGS) Main.cpp -o Compiled/Main.o -c
 	
-Compiled/RuotaWrapper.o: Ruota/RuotaWrapper.cpp
+Compiled/RuotaWrapper.o: Ruota/RuotaWrapper.cpp Ruota/compiled/System.ruo
 	$(CC) $(CFLAGS) Ruota/RuotaWrapper.cpp -o Compiled/RuotaWrapper.o -c
 
 Compiled/Interpreter.o: Ruota/Interpreter.cpp

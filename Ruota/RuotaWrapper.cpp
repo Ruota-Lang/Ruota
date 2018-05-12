@@ -42,6 +42,31 @@ std::vector<SP_Memory> __milli(std::vector<SP_Memory> args) {
 	return { new_memory(NUM, timeMillis) };
 }
 
+std::vector<SP_Memory> __regex_search(std::vector<SP_Memory> args) {
+	String s = args[0]->toString();
+	std::regex e(args[1]->toString());
+	std::smatch m;
+	VEC_Memory ret;
+	while (std::regex_search(s,m,e)){
+		VEC_Memory curr;
+		for (auto x : m) {
+			curr.push_back(new_memory(x.str()));
+		}
+		ret.push_back(new_memory(curr));
+		s = m.suffix().str();
+	}
+	return ret;
+}
+
+std::vector<SP_Memory> __regex_replace(std::vector<SP_Memory> args) {
+	String s = args[0]->toString();
+	String r = args[1]->toString();
+	std::regex e(args[2]->toString());
+	std::string result;
+	std::regex_replace(std::back_inserter(result), s.begin(), s.end(), e, r);
+	return {new_memory(result)};
+}
+
 RuotaWrapper::RuotaWrapper(String current_dir){
 	Interpreter::addEmbed("console.system", &__system);
 	Interpreter::addEmbed("console.exit", &__exit);
@@ -49,6 +74,8 @@ RuotaWrapper::RuotaWrapper(String current_dir){
 	Interpreter::addEmbed("console.floor", &__floor);
 	Interpreter::addEmbed("console.raw_file", &__raw_file);
 	Interpreter::addEmbed("console.milli", &__milli);
+	Interpreter::addEmbed("regex.search", &__regex_search);
+	Interpreter::addEmbed("regex.replace", &__regex_replace);
 	this->current_dir = current_dir;
 	while (this->current_dir.back() != '\\') {
 		this->current_dir.pop_back();

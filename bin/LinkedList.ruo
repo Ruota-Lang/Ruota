@@ -1,7 +1,7 @@
 # LinkedList Example
 
 dynamic LinkedList :: {
-	head := null;
+	var head;
 
 	# Adds element to list
 	add(&e) => v from {

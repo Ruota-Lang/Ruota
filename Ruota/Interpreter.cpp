@@ -163,6 +163,8 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				stack.push_back(new_node(0));
 			}
 		}
+		else if (token == "inf")
+			stack.push_back(new_node((double)INFINITY));
 		else if (token == "true")
 			stack.push_back(new_node(1));
 		else if (token == "false")

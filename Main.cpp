@@ -72,30 +72,43 @@ int checkClosed(String s) {
 	int p_count = 0;
 	int b_count = 0;
 	int c_count = 0;
+	char in_p = 0;
 	for (auto &c : s) {
-		switch(c){
-		case '(':
-			p_count++;
-			break;
-		case '[':
-			b_count++;
-			break;
-		case '{':
-			c_count++;
-			break;
-		case ')':
-			p_count--;
-			break;
-		case ']':
-			b_count--;
-			break;
-		case '}':
-			c_count--;
-			break;
+		if (in_p == 0) {
+			switch(c){
+			case '(':
+				p_count++;
+				break;
+			case '[':
+				b_count++;
+				break;
+			case '{':
+				c_count++;
+				break;
+			case ')':
+				p_count--;
+				break;
+			case ']':
+				b_count--;
+				break;
+			case '}':
+				c_count--;
+				break;
+			case '\"':
+			case '\'':
+				in_p = c;
+				break;
+			}
+			if (p_count < 0 || b_count < 0 || c_count < 0)
+				return -1;
+		} else {
+			if (c == in_p){
+				in_p = 0;
+			}
 		}
-		if (p_count < 0 || b_count < 0 || c_count < 0)
-			return -1;
 	}
+	if (in_p != 0)
+		return 0;
 	if (p_count == 0 && b_count == 0 && c_count == 0)
 		return 1;
 	return 0;
@@ -151,8 +164,8 @@ int console(){
 		setColor(12);
 		std::cout << "Quit (y/N) ?> ";
 		setColor(7);
-		std::getline(std::cin, line);
-		if (line == "y" || line == "Y")
+		char c = getchar();
+		if (c == 'y' || c == 'Y')
 			break;
 	}
 

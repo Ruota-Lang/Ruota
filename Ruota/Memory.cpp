@@ -116,14 +116,17 @@ SP_Memory Memory::unshift(SP_Memory &m) {
 long double Memory::getValue() {
 	if (mt == REF)	return reference->getValue();
 	switch(mt){
+		case NUL:
+		return 0;
 		case CHA:
 		return this->char_data;
 		case NUM:
 		return this->data;
 		case STR:
 		return std::stold(this->toString());
+		default:
+		Interpreter::throwError("Error: cannot get numerical value from expression!", toString());
 	}
-	return 0;
 }
 
 SP_Lambda Memory::getLambda() {

@@ -653,11 +653,15 @@ String Node::toString() {
 		case EMORE:		return "(" + params[0]->toString() + " >= " + params[1]->toString() + ")";
 		case NEQUAL:	return "(" + params[0]->toString() + " != " + params[1]->toString() + ")";
 		case OBJ_SET:	return "(" + params[0]->toString() + " :: " + params[1]->toString() + ")";
+		case AND:		return "(" + params[0]->toString() + " && " + params[1]->toString() + ")";
+		case OR:		return "(" + params[0]->toString() + " || " + params[1]->toString() + ")";
 		case EXEC:		{
 			auto args = params[1]->toString().substr(1);
 			args = args.substr(0, args.size() - 1);
 			return params[0]->toString() + "(" + args + ")";
 		}
+		case SWITCH:	return "(switch " + params[0]->toString() + ")";
+		case CASE:		return "(" + params[0]->toString() + " >> " + params[1]->toString() + ")";
 		case DES:		return "(" + params[0]->toString() + " -> " + params[1]->toString() + ")";
 		case LDES:		return "(" + params[0]->toString() + " => " + params[1]->toString() + ")";
 		case ADD_ARR:	return "(" + params[0]->toString() + " ++ " + params[1]->toString() + ")";

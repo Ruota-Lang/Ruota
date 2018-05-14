@@ -102,7 +102,7 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 	for (auto t : tokens) {
 		if (t == "[" && ((isalnum(last[0]) || last[0] == '_' || last[0] == '\"' || last[0] == '`') || last == ")" || last == "]" || last == "}") && operators.find(last) == operators.end())
 			new_tokens.push_back(".index");
-		if (t == "(" && ((isalnum(last[0]) || last[0] == '_') || last == ")" || last == "]" || last == "}") && operators.find(last) == operators.end())
+		if (t == "(" && ((isalnum(last[0]) || last[0] == '_' || last[0] == '`') || last == ")" || last == "]" || last == "}") && operators.find(last) == operators.end())
 			new_tokens.push_back(".exec");
 		if (t == "-" && (operators.find(last) != operators.end() || last == "(" || last == "[" || last == "{")) {
 			new_tokens.push_back(".negate");

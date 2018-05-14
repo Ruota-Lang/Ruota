@@ -68,7 +68,7 @@ VEC_Memory __key_down(VEC_Memory args) {
 
 RuotaWrapper * rw;
 
-bool checkClosed(String s) {
+int checkClosed(String s) {
 	int p_count = 0;
 	int b_count = 0;
 	int c_count = 0;
@@ -94,11 +94,11 @@ bool checkClosed(String s) {
 			break;
 		}
 		if (p_count < 0 || b_count < 0 || c_count < 0)
-			return false;
+			return -1;
 	}
 	if (p_count == 0 && b_count == 0 && c_count == 0)
-		return true;
-	return false;
+		return 1;
+	return 0;
 }
 
 int console(){
@@ -114,7 +114,7 @@ int console(){
 			std::getline(std::cin, line);
 
 			String curr_line = "";
-			while (!checkClosed(line)) {
+			while (checkClosed(line) == 0) {
 				setColor(12);
 				std::cout << ">> ";
 				setColor(7);

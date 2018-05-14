@@ -117,7 +117,7 @@ int checkClosed(String s) {
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.9.4 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.9.5 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -156,10 +156,20 @@ int console(){
 				std::cout << "SCO:\t" << Scope::reference_count << std::endl;
 				#endif
 			}
-			catch (std::runtime_error &e) {
+			catch (const std::runtime_error &e) {
 				setColor(12);
 				std::cout << "\t" << e.what() << std::endl;
+			} catch (const std::exception& e) {
+				setColor(12);
+				std::cout << "\t" << e.what() << std::endl;				
+			} catch (const std::string& e) {
+				setColor(12);
+				std::cout << "\t" << e << std::endl;	
+			} catch (...){
+				setColor(12);
+				std::cout << "\tAn undefined error has occured" << std::endl;
 			}
+    // ...
 		} while (line != "");
 		setColor(12);
 		std::cout << "Quit (y/N) ?> ";

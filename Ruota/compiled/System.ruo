@@ -20,7 +20,7 @@ pairs(&a, &b) => p from {
 };
 
 static Math :: {
-	PI := 3.14159265359;
+	PI := 3.141593;
 	floor(x) => { _OUTER_CALL_("console.floor", num x)[0] };
 	sqrt(x) => { x ** 0.5 };
 	max(&a, &b) => { a > b then a else b };
@@ -44,7 +44,7 @@ static Math :: {
 			p = p * i;
 		};
 	};
-	fact(x) => prod([1:>x]);
+	fact(x) => { x >= 2 then x * idem(x - 1) else x };
 
 	# TRIG
 	cos(x, t) => s from {

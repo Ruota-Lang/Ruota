@@ -702,11 +702,12 @@ String Node::toString() {
 
 void Node::weakListCheck() {
 	VEC_Node new_params;
-	for (auto &p : params){
+	for (auto &p : params){\
+		if (p == nullptr)
+			Interpreter::throwError("Error: unbalanced operator!", "NA");
 		SP_Node nn = p;
-		while (nn->nt == SOFT_LIST && nn->params.size() == 1){
+		while (nn->nt == SOFT_LIST && nn->params.size() == 1)
 			nn = nn->params[0];
-		}
 		nn->weakListCheck();
 		new_params.push_back(nn);
 	}

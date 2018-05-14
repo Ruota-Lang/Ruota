@@ -190,7 +190,9 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			stack.push_back(new_node(new_memory(token.substr(1))));
 		}
 		else if (operators.find(token) != operators.end()) {
-			auto b = stack.back(); 
+			if (stack.empty())
+				throwError("Error: unbalanced operator!", token);
+			auto b = stack.back();
 			stack.pop_back();
 			SP_Node a = nullptr;
 			if (!stack.empty()){
@@ -626,6 +628,8 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			while (stack.back()->nt != M_B) {
 				new_list.push_back(stack.back());
 				stack.pop_back();
+				if (stack.empty())
+					throwError("Error: unmatched bracket!", token);
 			}
 			std::reverse(new_list.begin(), new_list.end());
 			stack.pop_back();
@@ -636,6 +640,8 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			while (stack.back()->nt != M_P) {
 				new_list.push_back(stack.back());
 				stack.pop_back();
+				if (stack.empty())
+					throwError("Error: unmatched parenthesis!", token);
 			}
 			std::reverse(new_list.begin(), new_list.end());
 			stack.pop_back();
@@ -646,6 +652,8 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			while (stack.back()->nt != M_S) {
 				new_list.push_back(stack.back());
 				stack.pop_back();
+				if (stack.empty())
+					throwError("Error: unmatched bracket!", token);
 			}
 			std::reverse(new_list.begin(), new_list.end());
 			stack.pop_back();

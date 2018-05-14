@@ -68,43 +68,93 @@ VEC_Memory __key_down(VEC_Memory args) {
 
 RuotaWrapper * rw;
 
+bool checkClosed(String s) {
+	int p_count = 0;
+	int b_count = 0;
+	int c_count = 0;
+	for (auto &c : s) {
+		switch(c){
+		case '(':
+			p_count++;
+			break;
+		case '[':
+			b_count++;
+			break;
+		case '{':
+			c_count++;
+			break;
+		case ')':
+			p_count--;
+			break;
+		case ']':
+			b_count--;
+			break;
+		case '}':
+			c_count--;
+			break;
+		}
+		if (p_count < 0 || b_count < 0 || c_count < 0)
+			return false;
+	}
+	if (p_count == 0 && b_count == 0 && c_count == 0)
+		return true;
+	return false;
+}
+
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.9.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.9.4 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
-	do {
+	while (true) {
+		do {
+			setColor(12);
+			std::cout << "\n> ";
+			setColor(7);
+			std::getline(std::cin, line);
+
+			String curr_line = "";
+			while (!checkClosed(line)) {
+				setColor(12);
+				std::cout << ">> ";
+				setColor(7);
+				std::getline(std::cin, curr_line);
+				line += "\n" + curr_line;
+			}
+
+			try {
+				SP_Memory res = rw->runLine(line);
+				
+				setColor(8);
+				if (res->getArray().size() > 1) {
+					int n = 1;
+					for (auto &r : res->getArray()) {
+						std::cout << "\t(" << n << ")\t" << r->toString() << std::endl;
+						n++;
+					}
+				}
+				else if(!res->getArray().empty()) {
+					std::cout << "\t" << res->getArray()[0]->toString() << std::endl;
+				}
+				#ifdef DEBUG
+				std::cout << "MEM:\t" << Memory::reference_count << std::endl;
+				std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
+				std::cout << "NOD:\t" << Node::reference_count << std::endl;
+				std::cout << "SCO:\t" << Scope::reference_count << std::endl;
+				#endif
+			}
+			catch (std::runtime_error &e) {
+				setColor(12);
+				std::cout << "\t" << e.what() << std::endl;
+			}
+		} while (line != "");
 		setColor(12);
-		std::cout << "\n> ";
+		std::cout << "Quit (y/N) ?> ";
 		setColor(7);
 		std::getline(std::cin, line);
-
-		try {
-			SP_Memory res = rw->runLine(line);
-			
-			setColor(8);
-			if (res->getArray().size() > 1) {
-				int n = 1;
-				for (auto &r : res->getArray()) {
-					std::cout << "\t(" << n << ")\t" << r->toString() << std::endl;
-					n++;
-				}
-			}
-			else if(!res->getArray().empty()) {
-				std::cout << "\t" << res->getArray()[0]->toString() << std::endl;
-			}
-			#ifdef DEBUG
-			std::cout << "MEM:\t" << Memory::reference_count << std::endl;
-			std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
-			std::cout << "NOD:\t" << Node::reference_count << std::endl;
-			std::cout << "SCO:\t" << Scope::reference_count << std::endl;
-			#endif
-		}
-		catch (std::runtime_error &e) {
-			setColor(12);
-			std::cout << "\t" << e.what() << std::endl;
-		}
-	} while (line != "");
+		if (line == "y" || line == "Y")
+			break;
+	}
 
 
 	setColor(7);

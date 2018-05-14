@@ -94,6 +94,9 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 		last_c = c;
 	}
 
+	if (pChar != 0)
+		throw std::runtime_error("Error: unclosed string or char literal!");
+
 	std::vector<std::string> new_tokens;
 	std::string last = "+";
 	for (auto t : tokens) {
@@ -103,6 +106,11 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 			new_tokens.push_back(".exec");
 		if (t == "-" && (operators.find(last) != operators.end() || last == "(" || last == "[" || last == "{")) {
 			new_tokens.push_back(".negate");
+			last = t;
+			continue;
+		}
+		if (t == "+" && (operators.find(last) != operators.end() || last == "(" || last == "[" || last == "{")) {
+			new_tokens.push_back(".positive");
 			last = t;
 			continue;
 		}

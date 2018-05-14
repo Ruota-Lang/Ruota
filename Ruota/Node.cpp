@@ -300,7 +300,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case LAST_ARR:	return executed[0]->getArray().back();
 	case VALUE:		{
 		try {
-			if (executed[0]->getType() == CHA)
+			if (executed[0]->getType() == CHA || executed[0]->getType() == NUL)
 				return new_memory(NUM, executed[0]->getValue());
 			return new_memory(NUM,std::stold(executed[0]->toString()));
 		} catch (...){
@@ -638,6 +638,7 @@ String Node::toString() {
 	switch(nt){
 		case VAR:		return key;
 		case MEM: 		return mem_data->toString();
+		case DECLARE:	return "(var " + params[0]->toString() + ")";
 		case ADD: 		return "(" + params[0]->toString() + " + " + params[1]->toString() + ")";
 		case SUB: 		return "(" + params[0]->toString() + " - " + params[1]->toString() + ")";
 		case MUL: 		return "(" + params[0]->toString() + " * " + params[1]->toString() + ")";

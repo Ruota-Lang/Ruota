@@ -7,26 +7,27 @@ static os :: {
 };
 
 # Returns a paired object array built from the contents of two equally sized arrays
-pairs(a, b) => p from {
+pairs(&a, &b) => p from {
 	len a != len b then return;
 	p = [];
 	i in [0 : len a] do {
 		p push struct {
-			first := a[i], 
-			second := b[i]
+			first :&= a[i]; 
+			second :&= b[i];
+			string() => { first .. "=" .. second };
 		};
 	};
 };
 
 static Math :: {
-	floor(x) => { _OUTER_CALL_("console.floor", x)[0] };
+	floor(x) => { _OUTER_CALL_("console.floor", num x)[0] };
 	sqrt(x) => { x ** 0.5 };
-	max(a, b) => { a > b then a else b };
-	min(a, b) => { a < b then a else b };
+	max(&a, &b) => { a > b then a else b };
+	min(&a, &b) => { a < b then a else b };
 	abs(a) => { a < 0 then -a else a };
 	round(a, d) => r from {
   		m := 10 ** (d != null then d else 0);
-  		r = floor(a * m + 0.5) / m;
+  		r = floor(num a * m + 0.5) / m;
 	};
 	ceil(a) => { floor(a) == a then a else floor(a) + 1 };
 

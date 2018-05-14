@@ -19,7 +19,7 @@ static Color :: {
 	BRIGHT_YELLOW := 14;
 	BRIGHT_WHITE := 15;
 	
-	set(k, k2) => { _OUTER_CALL_("console.color", k + 16 * k2) };
+	set(k, k2) => { _OUTER_CALL_("console.color", num k + 16 * num k2) };
 
 	map() => {
 		i in [0 : 16] do {
@@ -40,7 +40,7 @@ static Color :: {
 };
 
 print(x) => { _OUTER_CALL_("console.print", x) };
-printat(x, y, s) => { _OUTER_CALL_("console.printat", y, x, s) };
+printat(x, y, s) => { _OUTER_CALL_("console.printat", num y, num x, s) };
 printl(x) => { print(x .. "\n") };
 newl() => { printl("") };
 
@@ -48,7 +48,7 @@ static Input :: {
 	number() => { num string() };
 	string() => { _OUTER_CALL_("console.input_str")[0] };
 	line() => { _OUTER_CALL_("console.input_line")[0] };
-	keyDown(c) => { _OUTER_CALL_("console.key_down", c)[0] };
+	keyDown(c) => { _OUTER_CALL_("console.key_down", chr c)[0] };
 	prompt(q) => v from {
 		print(q);
 		v = string();

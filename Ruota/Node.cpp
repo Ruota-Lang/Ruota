@@ -309,7 +309,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case LAST_ARR:	return executed[0]->getArray().back();
 	case VALUE:		{
 		try {
-			if (executed[0]->getType() == CHA || executed[0]->getType() == NUL)
+			if (executed[0]->getType() == CHA || executed[0]->getType() == NUL || executed[0]->getType() == OBJ)
 				return new_memory(NUM, executed[0]->getValue());
 			return new_memory(NUM,std::stold(executed[0]->toString()));
 		} catch (...){

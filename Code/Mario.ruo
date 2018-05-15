@@ -1,7 +1,7 @@
 os.system("cls");
 
-map_x := 49;
-map_y := 19;
+(map_x, map_y) := (49, 19);
+(pos_x, pos_y, vel_y) := (5, 5, 0);
 
 map := alloc map_x;
 buffer := alloc map_x;
@@ -18,10 +18,6 @@ i in [0 : len map] do {
 		i == map_x - 1 then map[i][j] = 1;
 	};
 };
-
-pos_x := 5;
-pos_y := 5;
-vel_y := 0;
 
 drawBlock(x, y, s) => {
 	buffer[x][y] != s then {

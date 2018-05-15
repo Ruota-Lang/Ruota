@@ -86,7 +86,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		return executed[0]->set(executed[1]);
 	}
 	case DECLARE:	{
-		if (params[0]->nt == LIST){
+		if (params[0]->nt == LIST || params[0]->nt == SOFT_LIST){
 			for (auto &v : params[0]->params)
 				scope->declareVariable(v->key);
 			return params[0]->execute(scope);
@@ -178,7 +178,16 @@ SP_Memory Node::execute(SP_Scope scope) {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
-	case NOT:		return new_memory(NUM, !executed[0]->equals(new_memory(NUM, 1)));
+	case NOT:		switch(flag) {
+		case 0: return new_memory(NUM, !executed[0]->equals(new_memory(NUM, 1)));
+		case 1: {
+			VEC_Memory new_list;
+			for (int i = 0; i < executed[0]->getArray().size(); i++)
+				new_list.push_back(new_memory(NUM, !executed[0]->getArray()[i]->equals(new_memory(NUM, 1))));
+			return new_memory(new_list);
+		}
+		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
+	}
 	case NEQUAL:	switch(flag) {
 		case 0: return new_memory(NUM, !executed[0]->equals(executed[1]));
 		case 1: {

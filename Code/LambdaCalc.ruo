@@ -18,8 +18,7 @@ ADDER(a, b) => r from {
 	r = [];
 	carry := F;
 	i in [0 : bits] do {
-		na := F;
-		nb := F;
+		(na, nb) := (F, F);
 		len a >= i then na = a[i];
 		len b >= i then nb = b[i];
 		res := FADD(na,nb,carry);

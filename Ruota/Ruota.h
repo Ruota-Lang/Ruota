@@ -198,6 +198,7 @@ public:
 	SP_Memory	unshift(SP_Memory&);
 	VEC_Memory	getArray();
 	MemType		getType();
+	void		clear();
 };
 
 struct Node : std::enable_shared_from_this<Node> {

@@ -340,6 +340,13 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				params = { b };
 				stack.push_back(new_node(NOT, params));
 			}
+			else if (token == ".!") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(NOT, params));
+				stack.back()->flag = 1;
+			}
 			else if (token == "::")
 				stack.push_back(new_node(OBJ_SET, params));
 

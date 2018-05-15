@@ -14,9 +14,7 @@
 spiral(n, m) => a from {
 	a = alloc [n, m];
 	v := [n * m :> 1 : -1];
-	x := 0;
-	y := 0;
-	dir := 0;
+	(x, y, dir) := (0, 0, 0);
 	len v != 0 do {
 		a[x][y] == null then {
 			a[x][y] = end v;

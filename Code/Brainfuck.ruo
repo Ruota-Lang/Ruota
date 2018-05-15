@@ -1,0 +1,29 @@
+brainfuck(s, n) => {
+	n == null then n = 2 ** 16;
+	ptr := 0;
+	stack := alloc n * 0;
+	i := 0;
+	i < len s do {
+		s[i] switch {
+			'>' >> ptr += 1;
+			'<' >> ptr -= 1;
+			'+' >> stack[ptr] += 1;
+			'-' >> stack[ptr] -= 1;
+			'.' >> print(stack[ptr]);
+			',' >> stack[ptr] = Input.number();
+			'[' >> {
+				stack[ptr] == 0 then {
+					s[i] != ']' do i += 1;
+					i -= 1;
+				};
+			};
+			']' >> {
+				stack[ptr] != 0 then {
+					s[i] != '[' do i -= 1;
+					i -= 1;
+				};
+			};
+		};
+		i += 1;
+	};
+};

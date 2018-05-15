@@ -19,6 +19,15 @@ Memory::Memory(MemType mt, const long double &data) {
 	}
 }
 
+void Memory::clear() {
+	obj_data = nullptr;
+	reference = nullptr;
+	lambda = nullptr;
+	data = 0;
+	char_data = 0;
+	arr_data.clear();
+}
+
 Memory::Memory(SP_Scope scope) {
 	reference_count++;
 	obj_data = scope;
@@ -75,6 +84,7 @@ SP_Memory Memory::makeScope(const SP_Scope &parent) {
 		reference->makeScope(parent);
 		return to_this_ptr;
 	}
+	this->clear();
 	this->obj_data = new_scope(parent);
 	this->mt = OBJ;
 	return to_this_ptr;
@@ -125,7 +135,7 @@ long double Memory::getValue() {
 		case STR:
 		return std::stold(this->toString());
 		default:
-		Interpreter::throwError("Error: cannot get numerical value from expression!", toString());
+		Interpreter::throwError("Error: value is not scalar!", toString());
 	}
 }
 
@@ -139,6 +149,7 @@ VEC_Memory Memory::getArray() {
 }
 
 SP_Memory Memory::setArray(VEC_Memory arr_data) {
+	this->clear();
 	this->mt = ARR;
 	this->arr_data = arr_data;
 	return to_this_ptr;
@@ -152,6 +163,7 @@ SP_Memory Memory::refer(const SP_Memory &m) {
 		while (rp->mt == REF) rp = rp->reference;
 		if (rp == to_this_ptr)
 			throw std::runtime_error("Error: cannot set a variable's reference to itself!");
+		this->clear();
 		this->reference = rp;
 		this->mt = REF;
 	}
@@ -172,8 +184,9 @@ SP_Memory Memory::index(const SP_Memory &m) {
 			if (l != nullptr)
 				return l->execute({m});
 		}
+	} else {
+		Interpreter::throwError("Error: value type is not indexable!", toString());
 	}
-	return new_memory();
 }
 
 SP_Memory Memory::clone(const SP_Scope &parent) {
@@ -655,7 +668,15 @@ String Memory::toString() {
 		return s + "]";
 	}
 	case LAM: {
-		return "LAM(" + lambda->base->toString() + ")";
+		String s = "(";
+		for (int i = 0; i < lambda->param_keys.size(); i++){
+			s += " ";
+			if (lambda->param_types[i] == 1) 
+				s += "&";
+			s += lambda->param_keys[i];
+		}
+		s += " ) -> " + lambda->base->toString();
+		return s;
 	}
 	case OBJ: {
 		if (obj_data->variables.find("string") != obj_data->variables.end()) {

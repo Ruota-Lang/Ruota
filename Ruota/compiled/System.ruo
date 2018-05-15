@@ -13,7 +13,7 @@ pairs(&a, &b) => p from {
 	i in [0 : len a] do {
 		p push struct {
 			first :&= a[i]; 
-			second :&= b[i];
+			second :&= b[i];	
 			string() => { first .. "=" .. second };
 		};
 	};

@@ -134,6 +134,14 @@ long double Memory::getValue() {
 		return this->data;
 		case STR:
 		return std::stold(this->toString());
+		case OBJ: {
+			if (obj_data->variables.find("value") != obj_data->variables.end()) {
+				auto l = obj_data->variables["value"]->getLambda();
+				if (l != nullptr) {
+					return l->execute({})->getValue();
+				}
+			}
+		}
 		default:
 		Interpreter::throwError("Error: value is not scalar!", toString());
 	}
@@ -234,10 +242,17 @@ bool Memory::equals(const SP_Memory &a) {
 	}
 	case LAM:	if (lambda != a->lambda)	return false;
 	case NUL:	return true;
+	case OBJ:	{
+		if (obj_data->variables.find("equals") != obj_data->variables.end()) {
+			auto l = obj_data->variables["equals"]->getLambda();
+			if (l != nullptr)
+				return l->execute({a})->getValue();
+		} else {
+			return obj_data == a->obj_data;
+		}
+	}
 	default:	return false;
 	}
-
-	return true;
 }
 
 SP_Memory Memory::setValue(const long double &data){

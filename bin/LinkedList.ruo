@@ -26,6 +26,20 @@ dynamic LinkedList :: {
 		};
 	};
 
+	equals(l) => b from {
+		b = true;
+		len l != size() then {
+			b = false;
+			return;
+		};
+		i in [0 : size()] do {
+			l[i] != index(i) then {
+				b = false;
+				break;
+			};
+		};
+	};
+
 	# Retrieves mutable element from list
 	index(pos) => e from {
 		e = null;
@@ -38,7 +52,7 @@ dynamic LinkedList :: {
 	remove(pos) => {
 		curr := head;
 		prev := null;
-		i in [1 : pos] do {
+		i in [0 : pos] do {
 			prev = curr;
 			curr = curr.next;
 		};

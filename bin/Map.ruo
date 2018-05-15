@@ -51,6 +51,24 @@ dynamic Map :: {
 		};
 	};
 
+	equals(m) => b from {
+		b = true;
+		len m != size() then {
+			b = false;
+			return;
+		};
+		i in m do {
+			!containsKey(i.key) then {
+				b = false;
+				break;
+			};
+			index(i.key) != i.value then {
+				b = false;
+				break;
+			};
+		};
+	};
+
 	dynamic Link :: {
 		key := null;
 		value := null;

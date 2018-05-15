@@ -40,4 +40,8 @@ dynamic Vector3 :: {
 	string() => {
 		"<" .. str x .. ", " .. str y .. ", " .. str z .. ">";
 	};
+
+	equals(v) => {
+		v.x == x && v.y == y && v.z == z;
+	};
 };

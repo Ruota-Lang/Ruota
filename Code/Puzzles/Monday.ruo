@@ -11,8 +11,8 @@ monday(n) => b from {
 	b = true;
 	s_n := str n;
 	len Regex.search(s_n, 0) > 0 then b = false;
-	c in s_n do { Math.floor(n / num str c) != (n / num str c) then b = false; };
-	i in [0 : len s_n] do {
+	c in s_n ->> { Math.floor(n / num str c) != (n / num str c) then b = false; };
+	i in [0 : len s_n] ->> {
 		j in [0 : i, i + 1 : len s_n] do {
 			s_n[i] == s_n[j] then b = false;
 		};
@@ -25,7 +25,7 @@ genList(min, max) => a from {
 		max = min;
 		min = 1;
 	};
-	i in [min :> max] do {
+	i in [min :> max] ->> {
 		monday(i) then a push i;
 	};
 };

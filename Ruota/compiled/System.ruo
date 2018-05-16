@@ -9,14 +9,24 @@ static os :: {
 # Returns a paired object array built from the contents of two equally sized arrays
 pairs(&a, &b) => p from {
 	len a != len b then return;
-	p = [];
-	i in [0 : len a] do {
-		p push struct {
+	p = (i in [0 : len a] ->> {
+		struct {
 			first :&= a[i]; 
 			second :&= b[i];	
 			string() => { first .. "=" .. second };
 		};
-	};
+	});
+};
+
+# Returns every combination of arrays a and b
+lace(&a, &b) => t from {
+	t = (i in a ->> j in b ->> {
+		struct {
+			first :&= i;
+			second :&= j;
+			string() => { "(" .. first .. ", " .. second .. ")" };
+		};
+	});
 };
 
 static Math :: {
@@ -34,13 +44,13 @@ static Math :: {
 
 	sum(a) => s from {
 		s = 0;
-		i in a do {
+		i in a ->> {
 			s = s + i;
 		};
 	};
 	prod(a) => p from {
 		p = 1;
-		i in a do {
+		i in a ->> {
 			p = p * i;
 		};
 	};
@@ -52,7 +62,7 @@ static Math :: {
 		x <= -2 * PI do x += 2 * PI;
 		t == null then t = 10;
 		s = 0;
-		i in [0 : t] do {
+		i in [0 : t] ->> {
 			s += (-1 ** i) * (x ** (2 * i)) / fact(2 * i);
 		};
 	};
@@ -62,7 +72,7 @@ static Math :: {
 		x <= -2 * PI do x += 2 * PI;
 		t == null then t = 10;
 		s = 0;
-		i in [0 : t] do {
+		i in [0 : t] ->> {
 			s += (-1 ** i) * (x ** (2 * i + 1)) / fact(2 * i + 1);
 		};
 	};
@@ -72,7 +82,7 @@ static Math :: {
 	exp(x, t) => s from {
 		t == null then t = 10;
 		s = 0;
-		i in [0 : t] do {
+		i in [0 : t] ->> {
 			s += (x ** i) / fact(i);
 		};
 	};

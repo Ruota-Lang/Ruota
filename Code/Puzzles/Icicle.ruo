@@ -16,8 +16,13 @@ load "Arrays";
 load "Strings";
 
 icicle(s) => {
-	Arrays.sort(Strings.remove(s, ' ')) ->> ((curr) -> {
+	curr in Arrays.sort(Strings.remove(s, ' ')) ->> {
 		printl(s);
-		c in s do { c == curr then { c = ' '; break; }; };
-	});
+		c in s ->> { 
+			c == curr then {
+				c = ' ';
+				break;
+			};
+		};
+	};
 };

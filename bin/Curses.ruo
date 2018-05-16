@@ -10,13 +10,13 @@ dynamic Curses :: {
 		self.width = width;
 		buffer = alloc width;
 		screen = alloc width;
-		i in buffer do i = alloc height;
-		i in screen do i = alloc height;
+		i in buffer ->> i = alloc height;
+		i in screen ->> i = alloc height;
 		clear();
 	};
 
 	setString(x, y, s, v) => {
-		i in [0 : len s] do {
+		i in [0 : len s] ->> {
 			setChar(x + i, y, s[i], v); 
 		};
 	};
@@ -29,8 +29,8 @@ dynamic Curses :: {
 	};
 
 	clear() => {
-		i in [0 : width] do {
-			j in [0 : height] do {
+		i in [0 : width] ->> {
+			j in [0 : height] ->> {
 				buffer[i][j] = ' ';
 				printat(i + 1, j + 1, ' ');
 			};
@@ -43,8 +43,8 @@ dynamic Curses :: {
 
 	render() => {
 		detach run do {
-			i in [0 : width] do {
-				j in [0 : height] do {
+			i in [0 : width] ->> {
+				j in [0 : height] ->> {
 					screen[i][j] != buffer[i][j] then {
 						printat(i + 1, j + 1, buffer[i][j]);
 						screen[i][j] = buffer[i][j];

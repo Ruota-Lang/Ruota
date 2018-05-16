@@ -13,9 +13,9 @@ score := 0;
 map := alloc size_x;
 curses := new Curses((size_x + 2) * 2, size_y + 2);
 
-i in map do {
+i in map ->> {
 	i = alloc size_y;
-	j in i do {
+	j in i ->> {
 		j = 0;
 	};
 };
@@ -23,8 +23,8 @@ i in map do {
 map[Math.floor(size_x / 4 * 3)][Math.floor(size_y / 4 * 3)] = -1;
 
 drawBorder() => {
-	i in [0 : size_x + 2] do {
-		j in [0 : size_y + 2] do {
+	i in [0 : size_x + 2] ->> {
+		j in [0 : size_y + 2] ->> {
 			i == 0 || i == size_x + 1 then curses.setString(i * 2, j, "[]");
 			j == 0 || j == size_y + 1 then curses.setString(i * 2, j, "[]");
 		};
@@ -32,8 +32,8 @@ drawBorder() => {
 };
 
 drawMap() => {
-	i in [0 : len map] do {
-		j in [0 : len map[i]] do {
+	i in [0 : len map] ->> {
+		j in [0 : len map[i]] ->> {
 			map[i][j] == 0 then curses.setString(i * 2 + 2, j + 1, "  ");
 			map[i][j] == -1 then curses.setString(i * 2 + 2, j + 1, "{}");
 		};
@@ -53,8 +53,8 @@ timer_fps := 0;
 frames := 0;
 control() => q from {
 	dir = new_dir;
-	i in [0 : len map] do {
-		j in [0 : len map[i]] do {
+	i in [0 : len map] ->> {
+		j in [0 : len map[i]] ->> {
 			map[i][j] > 0 then {
 				map[i][j] = map[i][j] - 1;
 			};

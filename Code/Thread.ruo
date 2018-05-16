@@ -1,6 +1,6 @@
 threadTest() => {
 	func(t) => { 
-		i in [0 : 5] do {
+		i in [0 : 5] ->> {
 			printl("Thread " .. t .. ":\t" .. i); 
 		}; 
 	};

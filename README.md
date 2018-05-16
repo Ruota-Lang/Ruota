@@ -105,16 +105,12 @@ If one wished to specify an _inclusive_ range, the operator `:>` is available:
 
 	a := [ 0 :> 10 ];		# [0,1,2,3,4,5,6,7,8,9,10]
 
-Lists can be further specifed using the `->>` operator. It follows the syntax `a ->> b`, where `a` is a list of input values, and `b` is a lambda with a single input, denoting how the input values are transformed.
-
-	a := [ 1 :> 10 ] ->> ( (x) -> { x ** 2 } );	# [1,4,9,16,25,36,49,64,81,100]
-
 Putting this all together, we can use the Foreach loop, with the `in` operator:
 
-	i in [ 0 : 10 ] do {
+	i in [ 0 : 10 ] ->> {
 		...
 	};
-	iterator in list do {
+	iterator in list ->> {
 		...
 	};
 

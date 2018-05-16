@@ -22,8 +22,8 @@ static Color :: {
 	set(k, k2) => { _OUTER_CALL_("console.color", num k + 16 * num k2) };
 
 	map() => {
-		i in [0 : 16] do {
-			j in [0 : 16] do {
+		i in [0 : 16] ->> {
+			j in [0 : 16] ->> {
 				k := i + 16 * j;
 				set(k);
 				print(" ");

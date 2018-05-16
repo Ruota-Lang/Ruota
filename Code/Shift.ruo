@@ -1,6 +1,6 @@
 # Caeserian Shift
 shift(s, o) => n_s from {
-	i in s do { 
+	i in s ->> { 
 		i >= 'a' then i = i - 'a';
 		i >= 'A' then i = i - 'A';
 		i < 26 then i = ((num i + o) % 26) + 'A';

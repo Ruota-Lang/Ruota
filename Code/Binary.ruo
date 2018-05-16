@@ -1,7 +1,7 @@
 binToDec(b) => d from {
 	d = 0;
 	c := 0;
-	i in b do {
+	i in b ->> {
 		d += (2 ** c) * i;
 		c += 1;
 	};

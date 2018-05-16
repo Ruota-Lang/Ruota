@@ -46,7 +46,7 @@ dynamic Huffman :: {
 		};
 
 		print(t) => {
-			i in [1:t] do os.print("~\t");
+			[1:t] ->> os.print("~\t");
 			printl(value .. " | " .. weight);
 			a != null then a.print(t + 1);
 			b != null then b.print(t + 1);
@@ -55,14 +55,14 @@ dynamic Huffman :: {
 
 	init(text) => {
 		char_table := new Map;
-		c in text do {
+		c in text ->> {
 			!char_table.containsKey(c) then {
 				char_table[c] = 0;
 			};
 			char_table[c] += 1;
 		};
 		nodes := [];
-		e in char_table do {
+		e in char_table ->> {
 			nodes push new Node(e.key, e.value);
 		};
 		len nodes > 1 do {
@@ -82,9 +82,9 @@ dynamic Huffman :: {
 
 		encoded = alloc(len text * 127);
 		i := 0;
-		c in text do {
+		c in text ->> {
 			val := dict[c];
-			c2 in val do {
+			c2 in val ->> {
 				encoded[i] = c2;
 				i += 1;
 			};
@@ -99,7 +99,7 @@ dynamic Huffman :: {
 		decoded := alloc(len s);
 		curr := [];
 		i := 0;
-		c in s do {
+		c in s ->> {
 			curr push c;
 			undict.containsKey(curr) then {
 				decoded[i] = undict[curr];
@@ -116,12 +116,12 @@ dynamic Huffman :: {
 	binToArr() => a from {
 		btod(a) => d from { 
 			d = 0; 
-			i in [0 : len a] do { 
+			i in [0 : len a] ->> { 
 				d += (2 ** i) * a[i]; 
 			}; 
 		};
 		a = [];
-		b in [0 : len encoded : 7] do {
+		b in [0 : len encoded : 7] ->> {
 			a push btod(self[b : Math.min(b + 7, len encoded)]);
 		};
 	};
@@ -129,4 +129,5 @@ dynamic Huffman :: {
 	index(pos) => { num str encoded[pos] };
 	string() => { encoded };
 	size() => { len encoded };
+	equals(h) => { encoded == h.encoded };
 };

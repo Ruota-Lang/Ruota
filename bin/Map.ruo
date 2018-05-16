@@ -2,7 +2,7 @@ dynamic Map :: {
 	contents := [];
 
 	index(key) => v from {
-		i in contents do {
+		i in contents ->> {
 			i.key == key then {
 				v &= i.value;
 				return;
@@ -13,7 +13,7 @@ dynamic Map :: {
 	};
 
 	containsKey(key) => b from {
-		i in contents do {
+		i in contents ->> {
 			i.key == key then {
 				b = true;
 				return;
@@ -23,7 +23,7 @@ dynamic Map :: {
 	};
 
 	containsValue(value) => b from {
-		i in contents do {
+		i in contents ->> {
 			i.value == value then {
 				b = true;
 				return;
@@ -38,7 +38,7 @@ dynamic Map :: {
 
 	string() => s from {
 		s = "[ ";
-		e in contents do {
+		e in contents ->> {
 			s ..= e .. " ";
 		};
 		s ..= "]";
@@ -46,7 +46,7 @@ dynamic Map :: {
 
 	invert() => nm from {
 		nm = new Map;
-		e in contents do {
+		e in contents ->> {
 			nm[e.value] = e.key;
 		};
 	};
@@ -57,7 +57,7 @@ dynamic Map :: {
 			b = false;
 			return;
 		};
-		i in m do {
+		i in m ->> {
 			!containsKey(i.key) then {
 				b = false;
 				break;

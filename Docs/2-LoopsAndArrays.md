@@ -16,14 +16,14 @@ Arrays, of course, can also be declared with `:>`, which includes the last index
 
 The above code generates an exclusive array from 0 to 5, which can then be used in for-loops like so:
 
-	i in [0 : 5] do {
+	i in [0 : 5] ->> {
 		...
 	};
 
 The for-loop will assign each value in the array to `i`, then execute the inner code. `i` will always refer to the exact data point within the array, so if the array happened to be a variable:
 
 	a := [0 : 5];
-	i in a do {
+	i in a ->> {
 		...
 	};
 
@@ -57,7 +57,7 @@ Next we can begin writing the _actual_ meat of the function:
 
 	sum(array) => s from {
 		s = 0;
-		i in array do {
+		i in array ->> {
 			s = s + i;
 		};
 	};

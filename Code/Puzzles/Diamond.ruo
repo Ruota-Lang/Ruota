@@ -1,0 +1,24 @@
+# Challenge:
+# 	You are given an integer n as input. Your job 
+# 	is to create a diamond that is 2x the given 
+# 	number n.
+# 
+# Input:
+# 	Input is integer n and 2 < n <= 3000.
+# 
+# Output:
+# 	Output will be a string and it will be in form 
+# 	of a diamond consisting of +
+
+diamond(n) => {
+	i in [1 :> n, n :> 1 : -1] ->> {
+		[i : n] ->> print(' ');
+		[1 : i * 2] ->> print('+');
+		newl();
+	};
+};
+
+len args switch {
+0 >> diamond(10);
+1 >> diamond(num args[0]);
+} >> printl("Invalid arguments!");

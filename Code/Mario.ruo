@@ -5,10 +5,10 @@ os.system("cls");
 
 map := alloc map_x;
 buffer := alloc map_x;
-i in [0 : len map] do {
+i in [0 : len map] ->> {
 	map[i] = alloc map_y;
 	buffer[i] = alloc map_y;
-	j in [0 : len map[i]] do {
+	j in [0 : len map[i]] ->> {
 		map[i][j] = 0;
 		j > 15 then map[i][j] = 1;
 		j == 12 && i < 10 then map[i][j] = 1;
@@ -41,8 +41,8 @@ keypress() => {
 };
 
 drawMap() => {
-	i in [pos_x - 10 :> pos_x + 10] do {
-		j in [pos_y - 10 :> pos_y + 10] do {
+	i in [pos_x - 10 :> pos_x + 10] ->> {
+		j in [pos_y - 10 :> pos_y + 10] ->> {
 			i >= 0 && i < map_x && j >= 0 && j < map_y then {
 				i == pos_x && j == pos_y then {
 					drawBlock(i, j, "@");

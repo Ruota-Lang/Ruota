@@ -1,6 +1,6 @@
 static Strings :: {
 	replace(s, a, b) => n_s from {
-		i in s do {
+		i in s ->> {
 			i == a then {
 				i = b;
 			};
@@ -11,7 +11,7 @@ static Strings :: {
 	split(s, a) => array from {
 		a == null then a = ' ';
 		array = [""];
-		i in s do {
+		i in s ->> {
 			i == a then {
 				array push "";
 			} else {
@@ -22,7 +22,7 @@ static Strings :: {
 
 	remove(s, a) => n_s from {
 		n_s = "";
-		c in s do {
+		c in s ->> {
 			c != a then n_s push c;
 		};
 	};
@@ -30,7 +30,7 @@ static Strings :: {
 	join(array, a) => s from {
 		a == null then a = "";
 		s = array[0];
-		i in [1 : len array] do {
+		i in [1 : len array] ->> {
 			s ..= a .. array[i];
 		};
 	};

@@ -10,14 +10,14 @@ primes(min, max) => a from {
 			prime = false
 		else
 			prime = true;
-		i in [2 : x ** 0.5] do {
+		i in [2 : x ** 0.5] ->> {
 			x % i == 0 then {
 				prime = false;
 				break;
 			};
 		};
 	};
-	i in [min :> max] do {
+	i in [min :> max] ->> {
 		isPrime(i) then a push i;
 	};
 };

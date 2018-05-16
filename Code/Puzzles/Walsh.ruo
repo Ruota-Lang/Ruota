@@ -1,1 +1,1 @@
-w(n)=>m from{m=[[1]];n then{v:=w(n-1);k:=len v;m=alloc(2**n,2**n);i in[0:k]do{j in[0:k]do{m[i][j,j+k]=v[i][j,j];m[i+k][j]=v[i][j];m[i+k][j+k]=-v[i][j]}}}}
+w(n)=>m from{m=[[1]];n then{v:=w(n-1);k:=len v;m=alloc(2**n,2**n);i in[0:k]->>{j in[0:k]->>{m[i][j,j+k]=v[i][j,j];m[i+k][j]=v[i][j];m[i+k][j+k]=-v[i][j]}}}}

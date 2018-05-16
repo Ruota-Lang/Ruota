@@ -17,7 +17,7 @@ ADDER(a, b) => r from {
 	bits := (len a > len b then len a else len b);
 	r = [];
 	carry := F;
-	i in [0 : bits] do {
+	i in [0 : bits] ->> {
 		(na, nb) := (F, F);
 		len a >= i then na = a[i];
 		len b >= i then nb = b[i];
@@ -30,7 +30,7 @@ ADDER(a, b) => r from {
 
 binToDec(b) => d from {
 	d = 0;
-	i in [ 0 : len b ] do {
+	i in [ 0 : len b ] ->> {
 		b[i](1,0) == 1 then {
 			d += 2 ** (i - 1);
 		};

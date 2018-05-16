@@ -2,8 +2,8 @@ conway(size_x, size_y) => {
 	os.system("cls");
 	map := alloc [size_x, size_y] * 0;
 	buffer := alloc [size_x, size_y] * 0 + 2;
-	i in map do {
-		j in i do {
+	i in map ->> {
+		j in i ->> {
 			j = Random.int(0,2);
 		};
 	};
@@ -13,8 +13,8 @@ conway(size_x, size_y) => {
 	};
 
 	drawMap() => {
-		i in [0 : size_x] do {
-			j in [0 : size_y] do {
+		i in [0 : size_x] ->> {
+			j in [0 : size_y] ->> {
 				buffer[i][j] != map[i][j] then {
 					map[i][j] switch {
 					0 >> drawBlock(i + 2, j + 2, "  ");
@@ -40,8 +40,8 @@ conway(size_x, size_y) => {
 	control() => {
 		new_map := alloc [size_x, size_y] * 0;
 
-		i in [0:size_x] do {
-			j in [0:size_y] do {
+		i in [0:size_x] ->> {
+			j in [0:size_y] ->> {
 				n := getNeighbors(i, j);
 				new_map[i][j] = (map[i][j] switch {
 					0 >> (n switch {3 >> 1});

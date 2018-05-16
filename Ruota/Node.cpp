@@ -49,7 +49,7 @@ Node::~Node(){
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
 		for (auto &n : params) {
 			if (n == nullptr)
 				Interpreter::throwError("Error: unbalanced operator!", toString());
@@ -458,17 +458,8 @@ SP_Memory Node::execute(SP_Scope scope) {
 			return scope->variables[varname];
 		}
 	}
-	case EXEC_ITER: {
-		auto arg_arr = executed[0]->getArray();
-		auto lambda = executed[1]->getLambda();
-		VEC_Memory new_arr;
-
-		for (auto &a : arg_arr)
-			new_arr.push_back(lambda->execute({ a, new_memory(new_arr) }));
-
-		return new_memory(new_arr);
-	}
-	case DOL: {
+	case EXEC_ITER: {	
+		VEC_Memory list;	
 		if (params[0]->nt == ITER) {
 			SP_Memory var = params[0]->params[1]->execute(scope);
 			SP_Memory iter_arr;
@@ -484,22 +475,40 @@ SP_Memory Node::execute(SP_Scope scope) {
 				inner_scope->main = params[1]->clone(inner_scope);
 				inner_scope->variables[iter_key] = m;
 				SP_Memory v = inner_scope->execute();
-				if (v->getType() == BREAK_M) break;
 				if (v->getType() == RETURN_M) return v;
+				list.push_back(v);
+				if (v->getType() == BREAK_M) break;
 			}
-			return new_memory();
-		}
-		else {
-			auto dec = params[0];
+		} else {
+			SP_Memory var = params[0]->execute(scope);
+			SP_Memory iter_arr;
 			SP_Scope inner_scope = new_scope(scope);
-			while(dec->execute(scope)->getValue() != 0) {
+			if (var->getType() == ARR || var->getType() == STR)
+				iter_arr = var;
+			else if (var->getType() == OBJ)
+				iter_arr = var->getScope()->variables["iterator"]->getLambda()->execute({});
+			else
+				Interpreter::throwError("Error: Cannot iterate over non-iterable value!", toString());
+			for (auto &m : iter_arr->getArray()) {
 				inner_scope->main = params[1]->clone(inner_scope);
-				auto v = inner_scope->execute();
-				if (v->getType() == BREAK_M)
-					break;
+				SP_Memory v = inner_scope->execute();
+				if (v->getType() == RETURN_M) return v;
+				list.push_back(v);
+				if (v->getType() == BREAK_M) break;
 			}
-			return new_memory();
 		}
+		return new_memory(list);
+	}
+	case DOL: {
+		auto dec = params[0];
+		SP_Scope inner_scope = new_scope(scope);
+		while(dec->execute(scope)->getValue() != 0) {
+			inner_scope->main = params[1]->clone(inner_scope);
+			auto v = inner_scope->execute();
+			if (v->getType() == BREAK_M)
+				break;
+		}
+		return new_memory();
 	}
 	case THEN: {
 		auto dec = params[0]->execute(scope);

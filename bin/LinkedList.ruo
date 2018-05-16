@@ -32,7 +32,7 @@ dynamic LinkedList :: {
 			b = false;
 			return;
 		};
-		i in [0 : size()] do {
+		i in [0 : size()] ->> {
 			l[i] != index(i) then {
 				b = false;
 				break;
@@ -44,7 +44,7 @@ dynamic LinkedList :: {
 	index(pos) => e from {
 		e = null;
 		curr := head;
-		i in [1 :> pos] do {curr = curr.next};
+		[1 :> pos] ->> {curr = curr.next};
 		e &= curr.value;
 	};
 
@@ -52,7 +52,7 @@ dynamic LinkedList :: {
 	remove(pos) => {
 		curr := head;
 		prev := null;
-		i in [0 : pos] do {
+		[0 : pos] ->> {
 			prev = curr;
 			curr = curr.next;
 		};

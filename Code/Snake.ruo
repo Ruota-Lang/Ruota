@@ -25,8 +25,8 @@ snake(size_x, size_y) => {
 	};
 
 	drawMap() => {
-		i in [0 : len map] do {
-			j in [0 : len map[i]] do {
+		i in [0 : size_x] ->> {
+			j in [0 : size_y] ->> {
 				buffer[i][j] != map[i][j] then {
 					map[i][j] == 0 then drawBlock(i + 2, j + 2, "  ");
 					map[i][j] == -1 then drawBlock(i + 2, j + 2, "{}");
@@ -53,12 +53,8 @@ snake(size_x, size_y) => {
 
 	control() => q from {
 		dir = new_dir;
-		i in [0 : len map] do {
-			j in [0 : len map[i]] do {
-				map[i][j] > 0 then {
-					map[i][j] -= 1;
-				};
-			};
+		i in [0 : size_x] ->> j in [0 : size_y] ->> {
+			map[i][j] > 0 then map[i][j] -= 1;
 		};
 
 		q = false;
@@ -92,10 +88,10 @@ snake(size_x, size_y) => {
 	};
 
 	# Draw Border
-	i in [0 : size_y + 2] do drawBlock(1, i + 1, "[]");
-	i in [0 : size_y + 2] do drawBlock(size_x + 2, i + 1, "[]");
-	i in [0 : size_x + 2] do drawBlock(i + 1, 1, "[]");
-	i in [0 : size_x + 2] do drawBlock(i + 1, size_y + 2, "[]");
+	i in [0 : size_y + 2] ->> drawBlock(1, i + 1, "[]");
+	i in [0 : size_y + 2] ->> drawBlock(size_x + 2, i + 1, "[]");
+	i in [0 : size_x + 2] ->> drawBlock(i + 1, 1, "[]");
+	i in [0 : size_x + 2] ->> drawBlock(i + 1, size_y + 2, "[]");
 
 	# Game Loop
 	timer := 0;
@@ -125,6 +121,7 @@ snake(size_x, size_y) => {
 };
 
 len args switch {
+0 >> snake(15, 15);
 1 >> snake(args[0], args[0]);
 2 >> snake(args[0], args[1]);
-} >> snake(20, 10);
+} >> printl("Invalid arguments!");

@@ -44,8 +44,8 @@ spiral(n, m) => a from {
 printSpiral(n, m) => {
 	m == null then m = n;
 	s := spiral(n, m);
-	i in s do {
-		j in i do print(j .. "\t");
+	i in s ->> {
+		j in i ->> print(j .. "\t");
 		newl();
 	};
 };

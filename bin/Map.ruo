@@ -12,6 +12,16 @@ dynamic Map :: {
 		v &= (end contents).value;
 	};
 
+	getKeys() => keys from {
+		keys = [];
+		i in contents ->> { keys push i.key };
+	};
+
+	getValues() => values from {
+		values = [];
+		i in contents ->> { values push i.value };
+	};
+
 	containsKey(key) => b from {
 		i in contents ->> {
 			i.key == key then {

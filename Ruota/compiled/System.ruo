@@ -6,27 +6,31 @@ static os :: {
 	milli() => { _OUTER_CALL_("console.milli")[0] };
 };
 
+# DEPRECATED - use new for loop syntax:
+# DO:		(first, second) in (a, b) ->> { ... };
+# DO NOT:	k in pairs(a, b) ->> { ... };
 # Returns a paired object array built from the contents of two equally sized arrays
-pairs(&a, &b) => p from {
-	len a != len b then return;
-	p = (i in [0 : len a] ->> {
-		struct {
-			first :&= a[i]; 
-			second :&= b[i];	
-			string() => { first .. "=" .. second };
-		};
-	});
-};
+# pairs(&a, &b) => p from {
+# 	len a != len b then return;
+# 	p = (i in [0 : len a] ->> {
+# 		struct {
+# 			first :&= a[i]; 
+# 			second :&= b[i];	
+# 			string() => { first .. "=" .. second };
+# 		};
+# 	});
+# };
 
 # Returns every combination of arrays a and b
 lace(&a, &b) => t from {
-	t = (i in a ->> j in b ->> {
-		struct {
+	t = [];
+	i in a ->> j in b ->> {
+		t push struct {
 			first :&= i;
 			second :&= j;
 			string() => { "(" .. first .. ", " .. second .. ")" };
 		};
-	});
+	};
 };
 
 static Math :: {
@@ -103,6 +107,30 @@ static Random :: {
 static Regex :: {
 	search(s, e) => { _OUTER_CALL_("regex.search", s, e) };
 	replace(s, r, e) => { _OUTER_CALL_("regex.replace", s, r, e)[0] };
+};
+
+static Winsock :: {
+	start() => { _OUTER_CALL_("winsock.start") };
+	createSocket() => socket from {
+		id := _OUTER_CALL_("winsock.create_socket")[0];
+		socket = new Socket(id);
+	};
+
+	dynamic Socket :: {
+		id := null;
+		init(id) => {
+			self.id = id;
+		};
+		connect(addr, port) => {
+			_OUTER_CALL_("winsock.connect", num id, str addr, num port);
+		};
+		send(value) => {
+			_OUTER_CALL_("winsock.send", id, value);
+		};
+		receive(callback) => {
+			detach _OUTER_CALL_("winsock.receive", id, callback);
+		};
+	};
 };
 
 )RU0"

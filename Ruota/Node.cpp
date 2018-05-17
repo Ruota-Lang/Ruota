@@ -463,21 +463,40 @@ SP_Memory Node::execute(SP_Scope scope) {
 		if (params[0]->nt == ITER) {
 			SP_Memory var = params[0]->params[1]->execute(scope);
 			SP_Memory iter_arr;
-			String iter_key = params[0]->params[0]->key;
-			SP_Scope inner_scope = new_scope(scope);
+			
 			if (var->getType() == ARR || var->getType() == STR)
 				iter_arr = var;
 			else if (var->getType() == OBJ)
 				iter_arr = var->getScope()->variables["iterator"]->getLambda()->execute({});
 			else
 				Interpreter::throwError("Error: Cannot iterate over non-iterable value!", toString());
-			for (auto &m : iter_arr->getArray()) {
-				inner_scope->main = params[1]->clone(inner_scope);
-				inner_scope->variables[iter_key] = m;
-				SP_Memory v = inner_scope->execute();
-				if (v->getType() == RETURN_M) return v;
-				list.push_back(v);
-				if (v->getType() == BREAK_M) break;
+
+			if (params[0]->params[0]->nt == VAR){
+				String iter_key = params[0]->params[0]->key;
+				SP_Scope inner_scope = new_scope(scope);
+				for (auto &m : iter_arr->getArray()) {
+					inner_scope->main = params[1]->clone(inner_scope);
+					inner_scope->variables[iter_key] = m;
+					SP_Memory v = inner_scope->execute();
+					if (v->getType() == RETURN_M) return v;
+					list.push_back(v);
+					if (v->getType() == BREAK_M) break;
+				}
+			}else {
+				std::vector<String> iter_keys;
+				for (auto &v : params[0]->params[0]->params)
+					iter_keys.push_back(v->key);
+				VEC_Memory iter_values = iter_arr->getArray();
+				SP_Scope inner_scope = new_scope(scope);
+				for (int i = 0; i < iter_values[0]->getArray().size(); i++) {
+					inner_scope->main = params[1]->clone(inner_scope);
+					for (int j = 0; j < iter_keys.size(); j++)
+						inner_scope->variables[iter_keys[j]] = iter_values[j]->getArray()[i];
+					SP_Memory v = inner_scope->execute();
+					if (v->getType() == RETURN_M) return v;
+					list.push_back(v);
+					if (v->getType() == BREAK_M) break;
+				}				
 			}
 		} else {
 			SP_Memory var = params[0]->execute(scope);
@@ -664,6 +683,7 @@ String Node::toString() {
 		case POW: 		return "(" + params[0]->toString() + " ** " + params[1]->toString() + ")";
 		case MOD: 		return "(" + params[0]->toString() + " % " + params[1]->toString() + ")";
 		case SET: 		return "(" + params[0]->toString() + " = " + params[1]->toString() + ")";
+		case REF_SET:	return "(" + params[0]->toString() + " &= " + params[1]->toString() + ")";
 		case EQUAL:		return "(" + params[0]->toString() + " == " + params[1]->toString() + ")";
 		case LESS:		return "(" + params[0]->toString() + " < " + params[1]->toString() + ")";
 		case ELESS:		return "(" + params[0]->toString() + " <= " + params[1]->toString() + ")";
@@ -687,11 +707,14 @@ String Node::toString() {
 		case INDEX_OBJ:	return "(" + params[0]->toString() + " . " + params[1]->toString() + ")";
 		case INDEX:		return "(" + params[0]->toString() + params[1]->toString() + ")";
 		case DOL:		return "(" + params[0]->toString() + " do " + params[1]->toString() + ")";
+		case EXEC_ITER:	return "(" + params[0]->toString() + " ->> " + params[1]->toString() + ")";
 		case FROM:		return "(" + params[0]->toString() + " from " + params[1]->toString() + ")";
 		case ITER:		return "(" + params[0]->toString() + " in " + params[1]->toString() + ")";
 		case RANGE:		return "(" + params[0]->toString() + " : " + params[1]->toString() + (params.size() > 2 ? " : " + params[2]->toString() : "") + ")";
 		case THEN:		return "(" + params[0]->toString() + " then " + params[1]->toString() + (params.size() > 2 ? " else " + params[2]->toString() : "") + ")";
 		case SCOPE:		return scope_ref->toString();
+		case PUSH_ARR:	return "(" + params[0]->toString() + " push " + params[1]->toString() + ")";
+		case UNSHIFT_ARR:	return "(" + params[0]->toString() + " post " + params[1]->toString() + ")";
 		case TYPE:		return "(type " + params[0]->toString() + ")";
 		case SIZE_O:	return "(len " + params[0]->toString() + ")";
 		case VALUE:		return "(num " + params[0]->toString() + ")";

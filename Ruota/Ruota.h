@@ -13,7 +13,9 @@
 #include<memory>
 #include<time.h>
 #ifdef _WIN32
-	#include<windows.h>
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#pragma comment(lib, "Ws2_32.lib")
 #else
 	#include <dlfcn.h>
 #endif
@@ -283,6 +285,9 @@ private:
 public:
 	RuotaWrapper(String);
 	SP_Memory runLine(String);
+#ifdef _WIN32
+	static std::vector<SOCKET> sockets;
+#endif
 };
 
 #endif // !INTERPRETER_H

@@ -8,6 +8,10 @@ const char * os_compiled = {
 	#include "compiled/System.ruo"
 };
 
+std::vector<SP_Memory> __error(std::vector<SP_Memory> args) {
+	throw std::runtime_error(args[0]->toString());
+}
+
 std::vector<SP_Memory> __system(std::vector<SP_Memory> args) {
 	return { new_memory(NUM, system(args[0]->toString().c_str())) };
 }
@@ -88,7 +92,7 @@ std::vector<SP_Memory> __winsock_create_socket(std::vector<SP_Memory> args) {
         return {new_memory("Error at socket(): " + std::to_string(WSAGetLastError()) )};
     }
 	RuotaWrapper::sockets.push_back(ConnectSocket);
-	return {new_memory(NUM, RuotaWrapper::sockets.size() - 1)};
+	return {new_memory(), new_memory(NUM, RuotaWrapper::sockets.size() - 1)};
 }
 std::vector<SP_Memory> __winsock_connect(std::vector<SP_Memory> args) {
     struct sockaddr_in clientService; 
@@ -146,7 +150,7 @@ std::vector<SP_Memory> __winsock_shutdown(std::vector<SP_Memory> args) {
 #endif
 
 RuotaWrapper::RuotaWrapper(String current_dir){
-
+	Interpreter::addEmbed("error", &__error);
 	Interpreter::addEmbed("console.system", &__system);
 	Interpreter::addEmbed("console.exit", &__exit);
 	Interpreter::addEmbed("console.random", &__random);

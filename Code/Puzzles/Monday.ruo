@@ -13,7 +13,7 @@ monday(n) => b from {
 	len Regex.search(s_n, 0) > 0 then b = false;
 	c in s_n ->> { Math.floor(n / num str c) != (n / num str c) then b = false; };
 	i in [0 : len s_n] ->> {
-		j in [0 : i, i + 1 : len s_n] do {
+		j in [0 : i, i + 1 : len s_n] ->> {
 			s_n[i] == s_n[j] then b = false;
 		};
 	};

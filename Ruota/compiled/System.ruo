@@ -66,20 +66,18 @@ static Math :: {
 	fact(x) => { x >= 2 then x * idem(x - 1) else x };
 
 	# TRIG
-	cos(x, t) => s from {
+	cos(x, t = 10) => s from {
 		x >= 2 * PI do x -= 2 * PI;
 		x <= -2 * PI do x += 2 * PI;
-		t == null then t = 10;
 		s = 0;
 		i in [0 : t] ->> {
 			s += (-1 ** i) * (x ** (2 * i)) / fact(2 * i);
 		};
 	};
 
-	sin(x, t) => s from {
+	sin(x, t = 10) => s from {
 		x >= 2 * PI do x -= 2 * PI;
 		x <= -2 * PI do x += 2 * PI;
-		t == null then t = 10;
 		s = 0;
 		i in [0 : t] ->> {
 			s += (-1 ** i) * (x ** (2 * i + 1)) / fact(2 * i + 1);
@@ -88,8 +86,7 @@ static Math :: {
 
 	tan(x, t) => { sin(x, t) / cos(x, t) };
 
-	exp(x, t) => s from {
-		t == null then t = 10;
+	exp(x, t = 10) => s from {
 		s = 0;
 		i in [0 : t] ->> {
 			s += (x ** i) / fact(i);
@@ -115,15 +112,18 @@ static Regex :: {
 };
 
 static Winsock :: {
+	# Activates the Winsock API
 	start() => { 
 		r := _OUTER_CALL_("winsock.start")[0];
 		r != null then throw(r);
 	};
+	# Returns a newly created Socket
 	createSocket() => socket from {
 		r := _OUTER_CALL_("winsock.create_socket");
 		r[0] != null then throw(r[0]);
 		socket = new Socket(r[1]);
 	};
+	# Returns a list of addresses from a given url
 	getAddresses(url) => { _OUTER_CALL_("winsock.get_addresses", url) };
 
 	dynamic Socket :: {
@@ -131,6 +131,7 @@ static Winsock :: {
 		init(id) => {
 			self.id = id;
 		};
+		# Connects to an address (url or IP) on a given port
 		connect(addr, port) => {
 			c in addr ->> { 
 				!(c == '.' && c > '0' && c < '9') then {
@@ -141,21 +142,27 @@ static Winsock :: {
 			r := _OUTER_CALL_("winsock.connect", num id, str addr, num port)[0];
 			r != null then throw(r);
 		};
+		# Sends data to the connected server
 		send(value) => {
 			r := _OUTER_CALL_("winsock.send", id, value)[0];
 			r != null then throw(r);
 		};
-		receive(bytes, callback) => r from {
-			bytes == null then bytes = 512;
+		# Receives data up to a given amount of bytes from server
+		# If no callback is given, the function waits until it recieves
+		# a response and then returns the function. If a callback is given,
+		# it detaches the receiving function from the main thread and calls
+		# the callback when it receives the answer, passing the value to
+		# the callback.
+		receive(bytes = 512, callback = null) => r from {
 			callback != null then {
 				detach callback(_OUTER_CALL_("winsock.receive", id, bytes)[0]);
 			} else {
 				r = _OUTER_CALL_("winsock.receive", id, bytes)[0];
 			};
 		};
-		listen(callback, bytes, blocking) => {
-			bytes == null then bytes = 512;
-			blocking == null then { blocking = false };
+		# Listens continuously, requires a callback
+		# Blocking can be specified, defaults to 'false'
+		listen(callback, bytes = 512, blocking = false) => {
 			blocking then {
 				_OUTER_CALL_("winsock.listen", id, bytes, callback);
 			} else {

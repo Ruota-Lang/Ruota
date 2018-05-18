@@ -8,8 +8,7 @@ static Strings :: {
 		n_s = s;
 	};
 
-	split(s, a) => array from {
-		a == null then a = ' ';
+	split(s, a = ' ') => array from {
 		array = [""];
 		i in s ->> {
 			i == a then {
@@ -27,8 +26,7 @@ static Strings :: {
 		};
 	};
 
-	join(array, a) => s from {
-		a == null then a = "";
+	join(array, a = "") => s from {
 		s = array[0];
 		i in [1 : len array] ->> {
 			s ..= a .. array[i];

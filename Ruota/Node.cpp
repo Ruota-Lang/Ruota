@@ -433,20 +433,36 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case DES: {
 		VEC_String param_keys;
 		std::vector<int> param_types;
+		VEC_Memory default_params;
 		for (auto &n : params[0]->params){
-			param_keys.push_back(n->key);
-			param_types.push_back(n->flag);
+			if (n->nt == SET) {
+				param_keys.push_back(n->params[0]->key);
+				param_types.push_back(n->params[0]->flag);
+				default_params.push_back(n->params[1]->execute(scope));
+			} else {
+				param_keys.push_back(n->key);
+				param_types.push_back(n->flag);
+				default_params.push_back(new_memory());
+			}
 		}
-		return new_memory(new_lambda(scope, params[1], param_keys, param_types));
+		return new_memory(new_lambda(scope, params[1], param_keys, param_types, default_params));
 	}
 	case LDES: {
 		VEC_String param_keys;
 		std::vector<int> param_types;
+		VEC_Memory default_params;
 		for (auto &n : params[0]->params[1]->params){
-			param_keys.push_back(n->key);
-			param_types.push_back(n->flag);
+			if (n->nt == SET) {
+				param_keys.push_back(n->params[0]->key);
+				param_types.push_back(n->params[0]->flag);
+				default_params.push_back(n->params[1]->execute(scope));
+			} else {
+				param_keys.push_back(n->key);
+				param_types.push_back(n->flag);
+				default_params.push_back(new_memory());
+			}
 		}
-		auto lambda = new_memory(new_lambda(scope, params[1], param_keys, param_types));
+		auto lambda = new_memory(new_lambda(scope, params[1], param_keys, param_types, default_params));
 		if (params[0]->params[0]->nt != VAR) {
 			auto e = params[0]->params[0]->execute(scope);
 			e->set(lambda);

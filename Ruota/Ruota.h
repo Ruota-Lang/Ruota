@@ -234,8 +234,9 @@ struct Lambda : std::enable_shared_from_this<Lambda> {
 	SP_Scope	parent = nullptr;
 	VEC_String	param_keys;
 	std::vector<int> param_types;
+	VEC_Memory	default_params;
 
-	Lambda(SP_Scope, SP_Node, VEC_String, std::vector<int>);
+	Lambda(SP_Scope, SP_Node, VEC_String, std::vector<int>, VEC_Memory);
 	~Lambda();
 	SP_Memory	execute(VEC_Memory);
 	SP_Lambda	clone(SP_Scope);

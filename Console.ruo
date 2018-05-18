@@ -19,7 +19,7 @@ static Color :: {
 	BRIGHT_YELLOW := 14;
 	BRIGHT_WHITE := 15;
 	
-	set(k, k2) => { _OUTER_CALL_("console.color", num k + 16 * num k2) };
+	set(k = 7, k2 = 0) => { _OUTER_CALL_("console.color", num k + 16 * num k2) };
 
 	map() => {
 		i in [0 : 16] ->> {

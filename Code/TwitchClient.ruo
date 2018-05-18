@@ -7,7 +7,7 @@ s := Winsock.createSocket();
 s.connect("52.89.200.36", 6667);
 
 printChat(recv) => {
-	printl(recv);
+	printl(Regex.replace(recv, "^(.*)\r\n", "$1"));
 };
 
 s.listen(printChat);

@@ -1,5 +1,4 @@
-brainfuck(s, n) => {
-	n == null then n = 2 ** 16;
+brainfuck(s, n = 2 ** 16) => {
 	ptr := 0;
 	stack := alloc n * 0;
 	i := 0;

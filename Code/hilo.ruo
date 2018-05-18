@@ -1,13 +1,6 @@
 # Basic Game of HiLo
 
-hilo(min, max) => {
-	min == null then {
-		max = 10;
-		min = 0;
-	} else max == null then {
-		max = min;
-		min = 0;
-	};
+hilo(min = 0, max = 10) => {
 	Color.set(Color.MAGENTA + 8);
 	printl("~~Welcome to HiLo!~~");
 	a := Random.int(min, max);
@@ -33,7 +26,7 @@ hilo(min, max) => {
 };
 
 len args switch {
-0 >> hilo(10);
-1 >> hilo(num args[0]);
+0 >> hilo();
+1 >> hilo(0, num args[0]);
 2 >> hilo(num args[0], num args[1]);
 } >> throw("Improper Arguments");

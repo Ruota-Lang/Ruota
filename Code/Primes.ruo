@@ -1,10 +1,6 @@
 # Returns array of prime numbers
-primes(min, max) => a from {
+primes(min = 2, max = 10) => a from {
 	a = [];
-	max == null then { 
-		max = min; 
-		min = 2;
-	};
 	isPrime(x) => prime from {
 		x < 2 then 
 			prime = false
@@ -23,7 +19,7 @@ primes(min, max) => a from {
 };
 
 len args switch {
-0 >> printl(primes(10));
-1 >> printl(primes(num args[0]));
+0 >> printl(primes());
+1 >> printl(primes(2, num args[0]));
 2 >> printl(primes(num args[0], num args[1]));
 } >> throw("Improper Arguments");

@@ -1,6 +1,6 @@
 ﻿# The Greatest Game in the World
 
-snake(size_x, size_y) => {
+snake(size_x = 15, size_y = 15) => {
 	# Clear the console and set color
 	os.system("cls");
 	Color.set(Color.BRIGHT_GREEN);
@@ -121,7 +121,7 @@ snake(size_x, size_y) => {
 };
 
 len args switch {
-0 >> snake(15, 15);
+0 >> snake();
 1 >> snake(args[0], args[0]);
 2 >> snake(args[0], args[1]);
 } >> throw("Invalid arguments!");

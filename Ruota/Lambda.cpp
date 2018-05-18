@@ -15,6 +15,8 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 				temp->set(params[i]);
 			else
 				temp->refer(params[i]);
+		} else {
+			temp->set(default_params[i]);
 		}
 	}
 
@@ -26,20 +28,22 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 }
 
 SP_Lambda Lambda::clone(SP_Scope parent) {
-	SP_Lambda nl = new_lambda(parent, base->clone(parent), param_keys, param_types);
+	SP_Lambda nl = new_lambda(parent, base->clone(parent), param_keys, param_types, default_params);
 	return nl;
 }
 
-Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_keys, std::vector<int> param_types) {
+Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_keys, std::vector<int> param_types, VEC_Memory default_params) {
 	this->reference_count++;
 	this->param_keys = param_keys;
 	this->param_types = param_types;
 	this->parent = parent;
 	this->base = base;
+	this->default_params = default_params;
 }
 
 Lambda::~Lambda(){
 	this->reference_count--;
 	this->parent = nullptr;
 	this->base = nullptr;
+	this->default_params.clear();
 }

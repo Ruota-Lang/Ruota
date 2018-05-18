@@ -185,7 +185,6 @@ int console(){
 }
 
 int main(int argc, char * argv[]) {
-	//getPath();
 	rw = new RuotaWrapper(argv[0]);
 	Interpreter::addEmbed("console.print", &__print);
 	Interpreter::addEmbed("console.printat", &__printat);

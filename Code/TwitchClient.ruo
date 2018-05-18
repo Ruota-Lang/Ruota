@@ -15,6 +15,6 @@ s.send("PASS oauth:[red]\r\n");
 s.send("NICK Agilulfulus\r\n");
 s.send("JOIN #agilulfulus\r\n");
 s.send("PRIVMSG #agilulfulus :I can even do this message instead!\r\n");
-s.receive(printChat, true);
+s.receive();
 
 s.shutdown();

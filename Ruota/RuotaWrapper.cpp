@@ -104,7 +104,6 @@ std::vector<SP_Memory> __winsock_get_addresses(std::vector<SP_Memory> args) {
 	{
 		addr.s_addr = *(u_long *) remoteHost->h_addr_list[i++];
 		ret.push_back(new_memory(std::string(inet_ntoa(addr))));
-		printf("\tIP Address #%d: %s\n", i, inet_ntoa(addr));
 	}
 	return ret;
 }
@@ -128,8 +127,8 @@ std::vector<SP_Memory> __winsock_send(std::vector<SP_Memory> args) {
 	int iResult = send( ConnectSocket, sendbuf, (int)strlen(sendbuf), 0 );
     if (iResult == SOCKET_ERROR) {
         WSACleanup();
-        return {new_memory("Send failed: " + std::to_string(WSAGetLastError()) )};
         closesocket(ConnectSocket);
+        return {new_memory("Send failed: " + std::to_string(WSAGetLastError()) )};
     }
 	return {new_memory()};
 }

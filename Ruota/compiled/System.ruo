@@ -132,6 +132,12 @@ static Winsock :: {
 			self.id = id;
 		};
 		connect(addr, port) => {
+			c in addr ->> { 
+				!(c == '.' && c > '0' && c < '9') then {
+					addr = Winsock.getAddresses(addr)[0]; 
+					break; 
+				};
+			};
 			r := _OUTER_CALL_("winsock.connect", num id, str addr, num port)[0];
 			r != null then throw(r);
 		};

@@ -133,15 +133,15 @@ std::vector<SP_Memory> __winsock_send(std::vector<SP_Memory> args) {
 	return {new_memory()};
 }
 std::vector<SP_Memory> __winsock_listen(std::vector<SP_Memory> args) {
-	SP_Lambda callback = args[1]->getLambda();
+	SP_Lambda callback = args[2]->getLambda();
 	SOCKET ConnectSocket = RuotaWrapper::sockets[args[0]->getValue()];
 	int iResult;
+	int recvbuflen = args[1]->getValue();
 	do {	
-		char recvbuf[512];
-		int recvbuflen = 512;
+		char * recvbuf = new char[args[1]->getValue()];
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if ( iResult > 0 )
-			callback->execute({new_memory(std::string(recvbuf, recvbuflen))});
+			callback->execute({new_memory(std::string(recvbuf))});
         else if ( iResult == 0 )
             throw std::runtime_error("Connection closed");
         else
@@ -152,12 +152,12 @@ std::vector<SP_Memory> __winsock_listen(std::vector<SP_Memory> args) {
 
 std::vector<SP_Memory> __winsock_receive(std::vector<SP_Memory> args) {
 	SOCKET ConnectSocket = RuotaWrapper::sockets[args[0]->getValue()];
-	char recvbuf[512];
-	int recvbuflen = 512;
+	char * recvbuf = new char[args[1]->getValue()];
+	int recvbuflen = args[1]->getValue();
 	int iResult;
 	iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 	if ( iResult > 0 )
-		return {new_memory(std::string(recvbuf, recvbuflen))};
+		return {new_memory(std::string(recvbuf))};
 	else if ( iResult == 0 )
 		throw std::runtime_error("Connection closed");
 	else

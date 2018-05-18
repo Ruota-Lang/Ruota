@@ -7,14 +7,20 @@ s := Winsock.createSocket();
 s.connect("52.89.200.36", 6667);
 
 printChat(recv) => {
-	a := Strings.split(recv, ':');
-	printl(end a);
+	printl(recv);
 };
 
-s.send("PASS oauth:[red]\r\n");
+s.listen(printChat);
+
+s.send("PASS oauth:[]\r\n");
 s.send("NICK Agilulfulus\r\n");
 s.send("JOIN #agilulfulus\r\n");
-s.send("PRIVMSG #agilulfulus :I can even do this message instead!\r\n");
-s.receive();
+sendMessage(m) => {
+	s.send("PRIVMSG #agilulfulus :I can even do this message instead!\r\n");
+};
+
+true do {
+
+};
 
 s.shutdown();

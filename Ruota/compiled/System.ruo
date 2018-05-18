@@ -124,6 +124,7 @@ static Winsock :: {
 		r[0] != null then throw(r[0]);
 		socket = new Socket(r[1]);
 	};
+	getAddresses(url) => { _OUTER_CALL_("winsock.get_addresses", url) };
 
 	dynamic Socket :: {
 		id := null;

@@ -94,6 +94,20 @@ std::vector<SP_Memory> __winsock_create_socket(std::vector<SP_Memory> args) {
 	RuotaWrapper::sockets.push_back(ConnectSocket);
 	return {new_memory(), new_memory(NUM, RuotaWrapper::sockets.size() - 1)};
 }
+std::vector<SP_Memory> __winsock_get_addresses(std::vector<SP_Memory> args) {	
+	VEC_Memory ret;
+	struct hostent *remoteHost;
+	remoteHost = gethostbyname(args[0]->toString().c_str());
+	struct in_addr addr;
+	int i = 0;
+	while (remoteHost->h_addr_list[i] != 0)
+	{
+		addr.s_addr = *(u_long *) remoteHost->h_addr_list[i++];
+		ret.push_back(new_memory(std::string(inet_ntoa(addr))));
+		printf("\tIP Address #%d: %s\n", i, inet_ntoa(addr));
+	}
+	return ret;
+}
 std::vector<SP_Memory> __winsock_connect(std::vector<SP_Memory> args) {
     struct sockaddr_in clientService; 
 	clientService.sin_family = AF_INET;
@@ -124,15 +138,15 @@ std::vector<SP_Memory> __winsock_receive(std::vector<SP_Memory> args) {
 	SOCKET ConnectSocket = RuotaWrapper::sockets[args[0]->getValue()];
 	char recvbuf[512];
 	int recvbuflen = 512;
-	int iResult = -1;
+	int iResult;
 	do {
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if ( iResult > 0 )
 			callback->execute({new_memory(std::string(recvbuf, recvbuflen))});
-        /*else if ( iResult == 0 )
-            return {new_memory("Connection closed")};
+        else if ( iResult == 0 )
+            throw std::runtime_error("Connection closed");
         else
-            return {new_memory("Receive Failure: " + std::to_string(WSAGetLastError()))};*/
+            throw std::runtime_error("Receive Failure: " + std::to_string(WSAGetLastError()));
     } while( iResult > 0 );
 	return {new_memory()};
 }
@@ -165,6 +179,7 @@ RuotaWrapper::RuotaWrapper(String current_dir){
 		Interpreter::addEmbed("winsock.connect", &__winsock_connect);
 		Interpreter::addEmbed("winsock.send", &__winsock_send);
 		Interpreter::addEmbed("winsock.receive", &__winsock_receive);
+		Interpreter::addEmbed("winsock.get_addresses", &__winsock_get_addresses);
 		Interpreter::addEmbed("winsock.shutdown", &__winsock_shutdown);
 	#endif
 	this->current_dir = current_dir;

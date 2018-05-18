@@ -117,7 +117,7 @@ int checkClosed(String s) {
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.1.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.1.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -185,7 +185,8 @@ int console(){
 }
 
 int main(int argc, char * argv[]) {
-	rw = new RuotaWrapper(argv[0]);	
+	//getPath();
+	rw = new RuotaWrapper(argv[0]);
 	Interpreter::addEmbed("console.print", &__print);
 	Interpreter::addEmbed("console.printat", &__printat);
 	Interpreter::addEmbed("console.input_str", &__input_str);

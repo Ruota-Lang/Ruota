@@ -610,7 +610,9 @@ SP_Memory Node::execute(SP_Scope scope) {
 			return params[0]->execute(scope);
 		} catch (std::runtime_error &e){
 			if (params.size() > 1){
-				return params[1]->execute(scope);
+				SP_Scope ns = new_scope(scope);
+				ns->declareVariable("_err")->set(new_memory(std::string(e.what())));
+				return params[1]->execute(ns);
 			}else
 				return new_memory();
 		}

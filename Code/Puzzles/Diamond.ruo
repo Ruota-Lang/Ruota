@@ -21,4 +21,4 @@ diamond(n) => {
 len args switch {
 0 >> diamond(10);
 1 >> diamond(num args[0]);
-} >> printl("Invalid arguments!");
+} >> throw("Invalid arguments!");

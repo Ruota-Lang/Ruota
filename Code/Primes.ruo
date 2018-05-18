@@ -26,4 +26,4 @@ len args switch {
 0 >> printl(primes(10));
 1 >> printl(primes(num args[0]));
 2 >> printl(primes(num args[0], num args[1]));
-} >> printl("Improper Arguments");
+} >> throw("Improper Arguments");

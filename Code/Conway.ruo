@@ -69,4 +69,4 @@ len args switch {
 0 >> conway(20, 20);
 1 >> conway(num args[0], num args[0]);
 2 >> conway(num args[0], num args[1]);
-} >> printl("Invalid Arguments!");
+} >> throw("Invalid Arguments!");

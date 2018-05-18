@@ -49,4 +49,4 @@ len args switch {
 0 >> printSpiral(3,5); # original problem
 1 >> printSpiral(num args[0]);
 2 >> printSpiral(num args[0], num args[1]);
-} >> printl("Invalid arguments");
+} >> throw("Invalid arguments");

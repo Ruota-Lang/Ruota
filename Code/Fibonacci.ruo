@@ -8,4 +8,4 @@ Fibonacci(x) => a from {
 len args switch {
 0 >> printl(Fibonacci(10));
 1 >> printl(Fibonacci(num args[0]));
-} >> printl("Improper Arguments");
+} >> throw("Improper Arguments");

@@ -34,4 +34,4 @@ len args switch {
 0 >> printl(genList(100));
 1 >> printl(genList(num args[0]));
 2 >> printl(genList(num args[0], num args[1]));
-} >> printl("Invalid arguments!");
+} >> throw("Invalid arguments!");

@@ -1,7 +1,5 @@
 # Basic Game of HiLo
 
-load "Random";
-
 hilo(min, max) => {
 	min == null then {
 		max = 10;
@@ -38,4 +36,4 @@ len args switch {
 0 >> hilo(10);
 1 >> hilo(num args[0]);
 2 >> hilo(num args[0], num args[1]);
-} >> printl("Improper Arguments");
+} >> throw("Improper Arguments");

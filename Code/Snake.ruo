@@ -124,4 +124,4 @@ len args switch {
 0 >> snake(15, 15);
 1 >> snake(args[0], args[0]);
 2 >> snake(args[0], args[1]);
-} >> printl("Invalid arguments!");
+} >> throw("Invalid arguments!");

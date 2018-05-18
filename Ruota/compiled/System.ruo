@@ -145,8 +145,13 @@ static Winsock :: {
 			r := _OUTER_CALL_("winsock.send", id, value)[0];
 			r != null then throw(r);
 		};
-		receive(callback) => {
-			detach _OUTER_CALL_("winsock.receive", id, callback);
+		receive(callback, blocking) => {
+			blocking == null then { blocking = false };
+			blocking then {
+				_OUTER_CALL_("winsock.receive", id, callback);
+			} else {
+				detach _OUTER_CALL_("winsock.receive", id, callback);
+			};
 		};
 		shutdown() => {
 			r := _OUTER_CALL_("winsock.shutdown", id)[0];

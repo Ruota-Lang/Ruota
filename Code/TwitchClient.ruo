@@ -1,0 +1,20 @@
+load "Strings";
+
+Winsock.start();
+
+s := Winsock.createSocket();
+
+s.connect("52.89.200.36", 6667);
+
+printChat(recv) => {
+	a := Strings.split(recv, ':');
+	printl(end a);
+};
+
+s.send("PASS oauth:[red]\r\n");
+s.send("NICK Agilulfulus\r\n");
+s.send("JOIN #agilulfulus\r\n");
+s.send("PRIVMSG #agilulfulus :I can even do this message instead!\r\n");
+s.receive(printChat, true);
+
+s.shutdown();

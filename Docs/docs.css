@@ -76,17 +76,33 @@ h3 {
 .navbar {
 	background: #db4343;
 	margin: 0;
-	padding: 10px;
+	padding: 0;
+	height: 25px;
+	padding: 5px;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	box-shadow: 0px 0px 10px #612323;
 }
 
 .navbar > a {
 	text-decoration: none;
-	padding-right: 10px;
-	padding-left: 10px;
 	color: #fff;
+	float: left;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
 p {
 	padding: 0;
 	margin: 0;
+}
+
+.logo {
+	float: left;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	margin-left: 10px;
+	margin-right: 10px;
 }

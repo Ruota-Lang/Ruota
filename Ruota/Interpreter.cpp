@@ -160,7 +160,6 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 				}
 				LOADED.push_back(filename);
 				Interpreter::path = path;
-				std::cout << "PATH\t" << Interpreter::path << std::endl;
 				auto gen = new_node(generate(content, current, path)->execute());
 				Interpreter::path = local_file;
 				stack.push_back(gen);

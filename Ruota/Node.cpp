@@ -687,6 +687,7 @@ SP_Node Node::clone(SP_Scope scope) {
 		nn->mem_data = this->mem_data->clone(scope);
 	if (this->scope_ref != nullptr)
 		nn->scope_ref = this->scope_ref->clone(scope);
+	nn->path = this->path;
 	return nn;
 }
 

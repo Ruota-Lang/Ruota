@@ -1,5 +1,7 @@
 #include "Ruota.h"
 
+String Interpreter::path = "\\";
+
 std::unordered_map<String, int> Interpreter::operators = {
 	{ "load", 999 },
 	{ ".index", 13 },
@@ -157,8 +159,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					}
 				}
 				LOADED.push_back(filename);
-				auto gen = generate(content, current, path);
-				stack.push_back(gen->main);
+				Interpreter::path = path;
+				std::cout << "PATH\t" << Interpreter::path << std::endl;
+				auto gen = new_node(generate(content, current, path)->execute());
+				Interpreter::path = local_file;
+				stack.push_back(gen);
 			}
 			else {
 				stack.push_back(new_node(0));

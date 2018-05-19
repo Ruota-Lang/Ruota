@@ -117,7 +117,7 @@ int checkClosed(String s) {
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.3.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.3.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -200,7 +200,8 @@ int main(int argc, char * argv[]) {
 			var += "\"" + String(argv[i]) + "\" ";
 		var += "]";
 		try {
-			rw->runLine("args := " + var + "; load \"" + String(argv[1]) + "\";");
+			rw->runLine("args := " + var + ";");
+			rw->runLine("load \"" + String(argv[1]) + "\";");
 		} catch (std::runtime_error &e) {
 			setColor(12);
 			std::cout << "\t" << e.what() << std::endl;

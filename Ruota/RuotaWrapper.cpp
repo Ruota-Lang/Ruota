@@ -26,17 +26,21 @@ std::vector<SP_Memory> __floor(std::vector<SP_Memory> args) {
 }
 
 std::vector<SP_Memory> __file_open(std::vector<SP_Memory> args) {
-	std::ifstream *file = new std::ifstream(args[0]->toString());
+	String fname = Interpreter::path.substr(1) + args[0]->toString();
+	while (fname[0] == '\\') fname = fname.substr(1);
+	std::ifstream *file = new std::ifstream(fname);
 	if (!file->is_open()){
-		throw std::runtime_error("Error: cannot open file " + args[0]->toString() + "!");
+		throw std::runtime_error("Error: cannot open file " + fname + "!");
 	}
 	return { new_memory((void*)file) };
 }
 
 std::vector<SP_Memory> __filew_open(std::vector<SP_Memory> args) {
-	std::ofstream *file = new std::ofstream(args[0]->toString());
+	String fname = Interpreter::path.substr(1) + args[0]->toString();
+	while (fname[0] == '\\') fname = fname.substr(1);
+	std::ofstream *file = new std::ofstream(fname);
 	if (!file->is_open()){
-		throw std::runtime_error("Error: cannot open file " + args[0]->toString() + "!");
+		throw std::runtime_error("Error: cannot open file " + fname + "!");
 	}
 	return { new_memory((void*)file) };
 }

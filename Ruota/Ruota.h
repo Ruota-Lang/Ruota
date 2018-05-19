@@ -215,6 +215,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
 	String		key;
+	String		path;
 	std::unordered_map<long double, SP_Node> switch_values;
 	int			flag = 0;
 
@@ -264,7 +265,7 @@ struct Scope : std::enable_shared_from_this<Scope> {
 	String		toString();
 };
 
-class Interpreter {	
+class Interpreter {
 	friend Node;
 	friend Lambda;
 	friend Scope;
@@ -280,6 +281,7 @@ private:
 	SP_Memory execute(SP_Scope);
 	static void throwError(String errorMessage, String errorLine);
 public:	
+	static String path;
 	static void addEmbed(String, VEC_Memory(*e)(VEC_Memory));
 };
 

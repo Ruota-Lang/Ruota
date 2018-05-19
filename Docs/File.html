@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="docs.css">
+<title>RuotaDocs - File</title>
+</head>
+<body>
+	<div class="navbar">
+		<a href="index.html"><b>HOME</b></a>
+		<a href="#overview">OVERVIEW</a>
+		<a href="#variables">VARIABLES</a>
+		<a href="#methods">METHODS</a>
+	</div>
+	<div class="overview">
+			<a name="overview"></a>
+		<h3>Overview</h3>
+		<div class="con">
+			<h1>
+				File
+			</h1>
+			<h2 class="code">
+				dynamic <b>File</b> :: {}
+			</h2>
+			<p>
+				The File object can be used to open and manipulate files. This is a default object that does not need to be loaded.
+			</p>
+		</div>
+	</div>
+	<div class="variables">
+		<a name="variables"></a>
+		<h3>Variables</h3>
+		<div class="con">
+			<table>
+				<tr>
+					<th>Type</th>
+					<th>Name</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td class="code">Pointer</td>
+					<td class="code"><b>ptr</b></td>
+					<td class="desc">
+						<p>
+							The pointer object referencing the file stream.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">Char</td>
+					<td class="code"><b>mode</b></td>
+					<td class="desc">
+						<p>
+							The mode in which the file has been openned, either read or write.
+						</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="methods">
+		<a name="methods"></a>
+		<h3>Methods</h3>
+		<div class="con">
+			<table>
+				<tr>
+					<th>Return</th>
+					<th>Params</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td class="code">Constructor</td>
+					<td class="code"><b>init</b>(String <b>filename</b>, Char <b>mode</b> <i>= 'r'</i>)</td>
+					<td class="desc">
+						<p>
+							Opens up a file in either read ('r') or write ('w') mode.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">Void</td>
+					<td class="code"><b>write</b>(String <b>s</b>)</td>
+					<td class="desc">
+						<p>
+							Writes a line of text to an openned file.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">String</td>
+					<td class="code"><b>readLine</b>()</td>
+					<td class="desc">
+						<p>
+							Reads the subsequent line of text from the file, returns 'null' if the file has reached its end.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">String</td>
+					<td class="code"><b>read</b>(Number <b>length</b> <i>= 1</i>)</td>
+					<td class="desc">
+						<p>
+							Reads the next chars of a given length.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">Void</td>
+					<td class="code"><b>close</b>()</td>
+					<td class="desc">
+						<p>
+							Closes the file, deallocating the pointer's memory.
+						</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html> 

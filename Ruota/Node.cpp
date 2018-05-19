@@ -374,9 +374,24 @@ SP_Memory Node::execute(SP_Scope scope) {
 		return params[1]->execute(temp1->getScope());
 	case OBJ_SET:
 		temp1 = params[0]->execute(scope);
-		temp1->setScope(params[1]->scope_ref);
-		temp1->getScope()->execute();
+		if (params[1]->nt != INHERIT){
+			temp1->setScope(params[1]->scope_ref);
+			temp1->getScope()->execute();
+		}else{
+			temp1->setScope(params[1]->execute(scope)->getScope());
+		}
 		return temp1;
+	case INHERIT:{
+		auto par = params[0]->execute(scope)->getScope();
+		auto chi = params[1]->scope_ref;
+		auto new_s = new_scope(scope);
+		for (auto &v : par->variables)
+			new_s->declareVariable(v.first)->set(v.second);
+		for (auto &v : chi->variables)
+			new_s->declareVariable(v.first)->set(v.second);
+		temp1->setScope(new_s);
+		return temp1;
+	}
 	case OBJ_LAM:{
 		temp1 = new_memory();
 		temp1->setScope(params[0]->scope_ref);

@@ -107,6 +107,7 @@ enum NodeType {
 	TOARR,		// arr
 	TRY_CATCH,	// try .. catch
 	DECLARE,	// var
+	INHERIT,	// +>
 
 	BREAK,		// break
 	RETURN		// return

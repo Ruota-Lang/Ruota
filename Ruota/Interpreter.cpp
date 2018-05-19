@@ -7,6 +7,7 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ ".index", 13 },
 	{ ".exec", 13 },
 	{ "from", 12 },
+	{ "+>", 13 },
 	{ "::", 12 },
 	{ "new", 12 },
 	{ "struct", 12 },
@@ -353,6 +354,8 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			}
 			else if (token == "::")
 				stack.push_back(new_node(OBJ_SET, params));
+			else if (token == "+>")
+				stack.push_back(new_node(INHERIT, params));
 
 		// ADDITION RELATED OPERATORS
 			else if (token == "+")

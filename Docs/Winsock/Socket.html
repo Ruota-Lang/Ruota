@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="../docs.css">
+<title>RuotaDocs - Winsock.Socket</title>
+</head>
+<body>
+	<div class="navbar">
+			<img class="logo" src="../../LogoIdeas/logowhite.png">
+		<a href="../index.html"><b>HOME</b></a>
+		<a href="#parent">PARENT</a>
+		<a href="#overview">OVERVIEW</a>
+		<a href="#variables">VARIABLES</a>
+		<a href="#methods">METHODS</a>
+	</div>
+	<div style="height:35px"></div>
+	<div class="parent">
+		<a name="parent"></a>
+		<h3>Parent</h3>
+		<div class="con">
+			<a class="child" href="../Winsock.html">static <b>Winsock</b></a>
+		</div>
+	</div>
+	<div class="overview">
+			<a name="overview"></a>
+		<h3>Overview</h3>
+		<div class="con">
+			<h1>
+				Winsock
+			</h1>
+			<h2 class="code">
+				dynamic <b>Winsock</b> :: {}
+			</h2>
+			<p>
+				
+			</p>
+		</div>
+	</div>
+	<div class="variables">
+			<a name="variables"></a>
+			<h3>Variables</h3>
+			<div class="con">
+				<table>
+					<tr>
+						<th>Type</th>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td class="code">Pointer</td>
+						<td class="code"><b>ptr</b></td>
+						<td class="desc">
+							<p>
+								Pointer towards the Winsock object.
+							</p>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	<div class="methods">
+		<a name="methods"></a>
+		<h3>Methods</h3>
+		<div class="con">
+			<table>
+				<tr>
+					<th>Return</th>
+					<th>Params</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td class="code">Constructor</td>
+					<td class="code"><b>init</b>(Pointer <b>ptr</b>)</td>
+					<td class="desc">
+						<p>
+							Constructor for the Socket object.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">Void</td>
+					<td class="code"><b>connect</b>(String <b>addr</b>, Number <b>port</b>)</td>
+					<td class="desc">
+						<p>
+							Connects the socket to a given address through a given port. If the address is a URL, it selects the URL's corresponding IP address.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">Void</td>
+					<td class="code"><b>send</b>(Any <b>value</b>)</td>
+					<td class="desc">
+						<p>
+							Sends data through the socket, automatically converted into a string.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">String</td>
+					<td class="code"><b>receive</b>(Number <b>bytes</b> <i>= 512</i>, Lambda <b>callback</b> <i>= null</i>)</td>
+					<td class="desc">
+						<p>
+							Receives data up to a given amount of bytes from server.
+							If no callback is given, the function waits until it recieves
+							a response and then returns the function. If a callback is given,
+							it detaches the receiving function from the main thread and calls
+							the callback when it receives the answer, passing the value to
+							the callback.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">Void</td>
+					<td class="code"><b>listen</b>(Lambda <b>callback</b>, Number <b>bytes</b> <i>= 512</i>, Number <b>blocking</b> <i>= false</i>)</td>
+					<td class="desc">
+						<p>
+							Listens continuously through the socket, referring to a callback function whenever it receives data. By default it operates on a separate thread, but can be specified to block the main thread while it receives. Only ends when the connection breaks.
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="code">Void</td>
+					<td class="code"><b>shutdown</b>()</td>
+					<td class="desc">
+						<p>
+							Shutsdown a Socket's connection.
+						</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html> 

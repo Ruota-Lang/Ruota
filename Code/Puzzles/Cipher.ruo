@@ -20,13 +20,11 @@
 cipher(s) => ns from {
 	ns := s;
 	r := Regex.search(Regex.replace(s, "", "[^a-zA-Z]"), "[a-zA-Z]{5}");
-	letters := [];
-	i in r ->> {
-		k := 0;
+	letters := (i in r ->> k from {
+		k := 'a';
 		v := Regex.replace(Regex.replace(i[0], "0", "[a-z]"), "1", "[A-Z]");
 		j in [0 : len v] ->> k += (2 ** j) * str v[len v - j - 1];
-		letters push (k + 'a');
-	};
+	});
 	i := -1;
 	c in ns ->> {
 		c == '_' then c = letters[i += 1];

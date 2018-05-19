@@ -21,6 +21,16 @@ static Arrays :: {
 		n_a = idem(lower, comp) ++ [ a[pivot] ] ++ idem(upper, comp);
 	};
 
+	contains(a, v) => b from {
+		b = false;
+		e in a ->> { 
+			e == v then {
+				b = true;
+				return;
+			};
+		};
+	};
+
 	# Removes element from array 'a' at position 'pos'
 	remove(a, pos) => n_a from {
 		n_a = a;

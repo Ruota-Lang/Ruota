@@ -38,7 +38,7 @@ std::vector<SP_Memory> __file_open(std::vector<SP_Memory> args) {
 std::vector<SP_Memory> __filew_open(std::vector<SP_Memory> args) {
 	String fname = Interpreter::path.substr(1) + args[0]->toString();
 	while (fname[0] == '\\') fname = fname.substr(1);
-	std::ofstream *file = new std::ofstream(fname);
+	std::ofstream *file = new std::ofstream(fname, args[1]->getValue() == 'a' ? std::ofstream::app : std::ofstream::out);
 	if (!file->is_open()){
 		throw std::runtime_error("Error: cannot open file " + fname + "!");
 	}

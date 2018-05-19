@@ -120,7 +120,8 @@ dynamic File :: {
 		self.mode = mode;
 		mode switch {
 		'r' >> { ptr = _OUTER_CALL_("file.open", filename)[0] };
-		'w' >> { ptr = _OUTER_CALL_("filew.open", filename)[0] };
+		'w' >> { ptr = _OUTER_CALL_("filew.open", filename, 'w')[0] };
+		'a' >> { ptr = _OUTER_CALL_("filew.open", filename, 'a')[0]; self.mode = 'w' };
 		};
 	};
 

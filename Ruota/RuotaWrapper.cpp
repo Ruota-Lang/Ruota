@@ -114,6 +114,21 @@ std::vector<SP_Memory> __regex_replace(std::vector<SP_Memory> args) {
 	return {new_memory(result)};
 }
 
+std::vector<SP_Memory> __filesystem_listdir(std::vector<SP_Memory> args) {
+	VEC_Memory list;
+	String path = args[0]->toString();
+	for (auto &p : std::filesystem::directory_iterator(path)){
+		String file = p.path().string();
+		list.push_back(new_memory(file));
+	}
+	return list;
+}
+
+std::vector<SP_Memory> __filesystem_mkdir(std::vector<SP_Memory> args) {
+	std::filesystem::create_directory(args[0]->toString());
+	return {new_memory()};
+}
+
 #ifdef _WIN32
 std::vector<SP_Memory> __winsock_start(std::vector<SP_Memory> args) {
 		WSADATA wsaData;
@@ -223,6 +238,8 @@ RuotaWrapper::RuotaWrapper(String current_dir){
 	Interpreter::addEmbed("console.milli", &__milli);
 	Interpreter::addEmbed("regex.search", &__regex_search);
 	Interpreter::addEmbed("regex.replace", &__regex_replace);
+	Interpreter::addEmbed("filesystem.listdir", &__filesystem_listdir);
+	Interpreter::addEmbed("filesystem.mkdir", &__filesystem_mkdir);
 	#ifdef _WIN32
 		Interpreter::addEmbed("winsock.start", &__winsock_start);
 		Interpreter::addEmbed("winsock.create_socket", &__winsock_create_socket);

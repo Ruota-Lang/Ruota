@@ -10,6 +10,8 @@ static os :: {
 	exit() => { _OUTER_CALL_("console.exit") };
 	rawFile(filename) => { _OUTER_CALL_("console.raw_file", filename)[0] };
 	milli() => { _OUTER_CALL_("console.milli")[0] };
+	dir(path) => { _OUTER_CALL_("filesystem.listdir", path) };
+	mkdir(name) => { _OUTER_CALL_("filesystem.mkdir", name) };
 };
 
 # DEPRECATED - use new for loop syntax:

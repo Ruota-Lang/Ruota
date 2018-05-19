@@ -354,6 +354,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 	case TYPE:
 		switch (executed[0]->getType())
 		{
+		case PTR:	return new_memory("pointer");
 		case NUM:	return new_memory("number");
 		case ARR:	return new_memory("array");
 		case STR:	return new_memory("string");

@@ -19,6 +19,11 @@ Memory::Memory(MemType mt, const long double &data) {
 	}
 }
 
+Memory::Memory(void * ptr_data) {
+	this->ptr_data = ptr_data;
+	this->mt = PTR;
+}
+
 void Memory::clear() {
 	obj_data = nullptr;
 	reference = nullptr;
@@ -200,6 +205,7 @@ SP_Memory Memory::index(const SP_Memory &m) {
 SP_Memory Memory::clone(const SP_Scope &parent) {
 	switch (mt)
 	{
+	case PTR:	return new_memory((void*)ptr_data);
 	case REF:	return reference->clone(parent);
 	case CHA:	return new_memory(CHA, char_data);
 	case NUM:	return new_memory(NUM, data);
@@ -230,6 +236,7 @@ bool Memory::equals(const SP_Memory &a) {
 
 	switch (a->mt)
 	{
+	case PTR:	return (ptr_data == a->ptr_data);
 	case CHA:
 	case NUM:	if (getValue() != a->getValue())	return false;
 	case STR:
@@ -289,6 +296,9 @@ SP_Memory Memory::set(const SP_Memory &m) {
 	this->char_data = 0;
 	switch (m->mt)
 	{
+	case PTR:
+		this->ptr_data = m->ptr_data;
+		break;
 	case CHA:
 		this->char_data = m->getValue();
 		break;
@@ -648,9 +658,15 @@ SP_Memory Memory::emore(const SP_Memory &a) {
 	return nullptr;
 }
 
+void * Memory::getPointer() {
+	return this->ptr_data;
+}
+
 String Memory::toString() {
 	switch (this->mt)
 	{
+	case PTR:
+		return "PTR";
 	case REF:
 		return reference->toString();
 	case CHA:

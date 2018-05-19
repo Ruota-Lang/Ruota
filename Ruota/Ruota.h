@@ -2,6 +2,7 @@
 #define RUOTA_H
 
 #define THREADING
+#define FILE_IO
 
 #include "Tokenizer.h"
 #include<string>
@@ -123,7 +124,8 @@ enum MemType {
 	REF,
 	CHA,
 	STR,
-	UND
+	UND,
+	PTR
 };
 
 
@@ -155,6 +157,7 @@ private:
 	SP_Memory	reference = nullptr;
 	bool		static_object = false;
 	bool		struct_object = false;
+	void *		ptr_data;
 public:	
 	static long	reference_count;
 	Memory();
@@ -164,6 +167,7 @@ public:
 	Memory(SP_Scope);
 	Memory(SP_Lambda);
 	Memory(VEC_Memory);
+	Memory(void*);
 
 	SP_Memory 	add(const SP_Memory&);
 	SP_Memory 	sub(const SP_Memory&);
@@ -201,6 +205,7 @@ public:
 	VEC_Memory	getArray();
 	MemType		getType();
 	void		clear();
+	void *		getPointer();
 };
 
 struct Node : std::enable_shared_from_this<Node> {
@@ -286,9 +291,6 @@ private:
 public:
 	RuotaWrapper(String);
 	SP_Memory runLine(String);
-#ifdef _WIN32
-	static std::vector<SOCKET> sockets;
-#endif
 };
 
 #endif // !INTERPRETER_H

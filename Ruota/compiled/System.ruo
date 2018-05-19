@@ -112,6 +112,46 @@ static Regex :: {
 	replace(s, r, e) => { _OUTER_CALL_("regex.replace", s, r, e)[0] };
 };
 
+dynamic File :: {
+	var ptr;
+	var mode;
+	
+	init(filename, mode='r') => {
+		self.mode = mode;
+		mode switch {
+		'r' >> { ptr = _OUTER_CALL_("file.open", filename)[0] };
+		'w' >> { ptr = _OUTER_CALL_("filew.open", filename)[0] };
+		};
+	};
+
+	write(s) => {
+		ptr == null then throw("Error: file closed!");
+		mode == 'r' then throw("Error: file openned in read mode!");
+		_OUTER_CALL_("filew.write", ptr, s);
+	};
+
+	readLine() => t from {
+		ptr == null then throw("Error: file closed!");
+		mode == 'w' then throw("Error: file openned in write mode!");
+		t = _OUTER_CALL_("file.read_line", ptr)[0];
+	};
+
+	read(length = 1) => t from {
+		ptr == null then throw("Error: file closed!");
+		mode == 'w' then throw("Error: file openned in write mode!");
+		t = _OUTER_CALL_("file.read", ptr, length)[0];
+	};
+
+	close() => {
+		ptr == null then throw("Error: file closed!");
+		mode switch {
+		'r' >> _OUTER_CALL_("file.close", ptr);
+		'w' >> _OUTER_CALL_("filew.close", ptr);
+		};
+		ptr = null;
+	};
+};
+
 static Winsock :: {
 	# Activates the Winsock API
 	start() => { 
@@ -128,9 +168,9 @@ static Winsock :: {
 	getAddresses(url) => { _OUTER_CALL_("winsock.get_addresses", url) };
 
 	dynamic Socket :: {
-		id := null;
-		init(id) => {
-			self.id = id;
+		ptr := null;
+		init(ptr) => {
+			self.ptr = ptr;
 		};
 		# Connects to an address (url or IP) on a given port
 		connect(addr, port) => {
@@ -140,12 +180,12 @@ static Winsock :: {
 					break; 
 				};
 			};
-			r := _OUTER_CALL_("winsock.connect", num id, str addr, num port)[0];
+			r := _OUTER_CALL_("winsock.connect", ptr, str addr, num port)[0];
 			r != null then throw(r);
 		};
 		# Sends data to the connected server
 		send(value) => {
-			r := _OUTER_CALL_("winsock.send", id, value)[0];
+			r := _OUTER_CALL_("winsock.send", ptr, value)[0];
 			r != null then throw(r);
 		};
 		# Receives data up to a given amount of bytes from server
@@ -156,22 +196,22 @@ static Winsock :: {
 		# the callback.
 		receive(bytes = 512, callback = null) => r from {
 			callback != null then {
-				detach callback(_OUTER_CALL_("winsock.receive", id, bytes)[0]);
+				detach callback(_OUTER_CALL_("winsock.receive", ptr, bytes)[0]);
 			} else {
-				r = _OUTER_CALL_("winsock.receive", id, bytes)[0];
+				r = _OUTER_CALL_("winsock.receive", ptr, bytes)[0];
 			};
 		};
 		# Listens continuously, requires a callback
 		# Blocking can be specified, defaults to 'false'
 		listen(callback, bytes = 512, blocking = false) => {
 			blocking then {
-				_OUTER_CALL_("winsock.listen", id, bytes, callback);
+				_OUTER_CALL_("winsock.listen", ptr, bytes, callback);
 			} else {
-				detach _OUTER_CALL_("winsock.listen", id, bytes, callback);
+				detach _OUTER_CALL_("winsock.listen", ptr, bytes, callback);
 			};
 		};
 		shutdown() => {
-			r := _OUTER_CALL_("winsock.shutdown", id)[0];
+			r := _OUTER_CALL_("winsock.shutdown", ptr)[0];
 			r != null then throw(r);
 		};
 	};

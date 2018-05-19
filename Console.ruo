@@ -51,7 +51,7 @@ static Input :: {
 	keyDown(c) => { _OUTER_CALL_("console.key_down", chr c)[0] };
 	prompt(q) => v from {
 		print(q);
-		v = string();
+		v = line();
 	};
 };
 

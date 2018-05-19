@@ -136,6 +136,16 @@ dynamic File :: {
 		t = _OUTER_CALL_("file.read_line", ptr)[0];
 	};
 
+	readAll() => t from {
+		ptr == null then throw("Error: file closed!");
+		mode == 'w' then throw("Error: file openned in write mode!");
+		line := "";
+		t = "";
+		(line = readLine()) != null do {
+			t ..= line .. "\n";
+		};
+	};
+
 	read(length = 1) => t from {
 		ptr == null then throw("Error: file closed!");
 		mode == 'w' then throw("Error: file openned in write mode!");

@@ -1,6 +1,4 @@
 f := new File("FileIO.ruo");
 line := "";
-(line = f.readLine()) != null do {
-	printl(line);
-};
+printl(f.readAll());
 f.close();

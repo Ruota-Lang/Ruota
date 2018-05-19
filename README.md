@@ -10,6 +10,10 @@ The language is designed to give a lot of freedom to the programmer in regards t
 
 At the moment, the language has no implementations outside of the command line.
 
+# Library Documentation
+
+https://agilulfulus.github.io/Ruota/Docs/
+
 # Contact
 
 Pop in here: https://discord.gg/UCWbyb9

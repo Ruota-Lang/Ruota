@@ -8,13 +8,17 @@ static Strings :: {
 		n_s = s;
 	};
 
-	split(s, a = ' ') => array from {
+	split(s, a = ' ', max = -1) => array from {
 		array = [""];
-		i in s ->> {
-			i == a then {
+		i in [0 : len s] ->> {
+			s[i] == a then {
+				len array == max && max != -1 then {
+					array push str s[i + 1 : len s];
+					return;
+				};
 				array push "";
 			} else {
-				end array push i;
+				end array push s[i];
 			};
 		};
 	};

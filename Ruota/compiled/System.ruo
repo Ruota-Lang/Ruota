@@ -1,5 +1,6 @@
 R"RU0(
 
+# Throws an error caught by a try-catch loop
 throw(e) => {
 	_OUTER_CALL_("error", e);
 };

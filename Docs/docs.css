@@ -1,0 +1,92 @@
+body {
+	font-family: "Open Sans";
+	padding: 0;
+	margin: 0;
+	background: #612323;
+}
+
+h1 {
+	color: #612323;
+	margin: 0;
+}
+
+.code {
+	font-family: monospace;
+}
+
+.child {
+	font-family: monospace;
+	font-size: 16px;
+	text-decoration: none;
+	color: #db4343;
+}
+
+table {
+	width: 100%;
+	text-align: left;
+	border-spacing: 0;
+    border: 1px solid #db4343;
+}
+
+td, th {
+	padding: 5px;
+}
+
+tr {
+	padding: 0;
+}
+
+table tr:nth-child(even) {
+    background-color: #eee;
+}
+table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+p {
+	font-style: normal !important;
+}
+
+.overview, .methods, .children, .parent, .variables {
+	padding: 0px;
+	margin: 15px;
+	background: #f9f9f9;
+    border: 1px solid #444;
+}
+
+th {
+	background: #db4343;
+	color: #fff;
+}
+
+h3 {
+	font-size: 12px;
+	color: #fff;
+	font-style: italic;
+	font-weight: 400;
+	margin: 0;
+	background: #444;
+	padding: 4px;
+}
+
+.con {
+	padding: 15px;
+}
+
+.navbar {
+	background: #db4343;
+	margin: 0;
+	padding: 10px;
+}
+
+.navbar > a {
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 10px;
+	color: #fff;
+}
+
+p {
+	padding: 0;
+	margin: 0;
+}

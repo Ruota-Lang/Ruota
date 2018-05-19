@@ -22,7 +22,7 @@ static Strings :: {
 	remove(s, a) => n_s from {
 		n_s = "";
 		c in s ->> {
-			c != a then n_s push c;
+			c != a then n_s ..= c;
 		};
 	};
 

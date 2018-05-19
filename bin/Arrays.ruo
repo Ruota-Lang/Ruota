@@ -1,10 +1,9 @@
 static Arrays :: {
 	# Sorts an array using quicksort algorithm
 	# A comparator lambda may be specified as the second argument
-	sort(a, comp) => n_a from {
+	sort(a, comp = (x, y) -> { x < y }) => n_a from {
 		n_a = a;
 		len a < 2 then return;
-		comp == null then comp = (x, y) -> { x < y };
 		lower := [];
 		upper := [];
 		pivot := Random.int(len a - 1);

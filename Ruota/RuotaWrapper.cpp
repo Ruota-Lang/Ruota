@@ -116,16 +116,18 @@ std::vector<SP_Memory> __regex_replace(std::vector<SP_Memory> args) {
 
 std::vector<SP_Memory> __filesystem_listdir(std::vector<SP_Memory> args) {
 	VEC_Memory list;
-	String path = args[0]->toString();
+	String path = Interpreter::path.substr(1) + args[0]->toString();
 	for (auto &p : std::filesystem::directory_iterator(path)){
-		String file = p.path().string();
+		String file = p.path().string().substr(path.length());
+		while (file[0] == '\\' || file[0] == '/')
+			file = file.substr(1);
 		list.push_back(new_memory(file));
 	}
 	return list;
 }
 
 std::vector<SP_Memory> __filesystem_mkdir(std::vector<SP_Memory> args) {
-	std::filesystem::create_directory(args[0]->toString());
+	std::filesystem::create_directory(Interpreter::path.substr(1) + args[0]->toString());
 	return {new_memory()};
 }
 

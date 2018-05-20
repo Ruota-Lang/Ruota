@@ -1,3 +1,5 @@
+printl(os.dir());
+
 f := new File("FileIO.ruo");
 line := "";
 printl(f.readAll());

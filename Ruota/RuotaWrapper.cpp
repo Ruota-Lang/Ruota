@@ -125,6 +125,9 @@ std::vector<SP_Memory> __filesystem_listdir(std::vector<SP_Memory> args) {
 	}
 	return list;
 }
+std::vector<SP_Memory> __filesystem_path(std::vector<SP_Memory> args) {
+	return {new_memory(std::filesystem::current_path().string() + Interpreter::path)};
+}
 
 std::vector<SP_Memory> __filesystem_mkdir(std::vector<SP_Memory> args) {
 	std::filesystem::create_directory(Interpreter::path.substr(1) + args[0]->toString());
@@ -133,6 +136,29 @@ std::vector<SP_Memory> __filesystem_mkdir(std::vector<SP_Memory> args) {
 
 std::vector<SP_Memory> __filesystem_exists(std::vector<SP_Memory> args) {
 	return { new_memory(NUM, std::filesystem::exists(Interpreter::path.substr(1) + args[0]->toString())) };
+}
+
+std::vector<SP_Memory> __filesystem_copy(std::vector<SP_Memory> args) {
+	String origin = Interpreter::path.substr(1) + args[0]->toString();
+	String path = Interpreter::path.substr(1) + args[1]->toString();
+	std::filesystem::copy(origin, path);
+	return {new_memory()};
+}
+
+std::vector<SP_Memory> __filesystem_rename(std::vector<SP_Memory> args) {
+	String origin = Interpreter::path.substr(1) + args[0]->toString();
+	String path = Interpreter::path.substr(1) + args[1]->toString();
+	std::filesystem::rename(origin, path);
+	return {new_memory()};
+}
+
+std::vector<SP_Memory> __filesystem_size(std::vector<SP_Memory> args) {
+	return { new_memory(NUM, std::filesystem::file_size(Interpreter::path.substr(1) + args[0]->toString())) };
+}
+
+std::vector<SP_Memory> __filesystem_remove(std::vector<SP_Memory> args) {
+	std::filesystem::remove(Interpreter::path.substr(1) + args[0]->toString());
+	return {new_memory()};
 }
 
 #ifdef _WIN32
@@ -247,6 +273,11 @@ RuotaWrapper::RuotaWrapper(String current_dir){
 	Interpreter::addEmbed("filesystem.listdir", &__filesystem_listdir);
 	Interpreter::addEmbed("filesystem.mkdir", &__filesystem_mkdir);
 	Interpreter::addEmbed("filesystem.exists", &__filesystem_exists);
+	Interpreter::addEmbed("filesystem.copy", &__filesystem_copy);
+	Interpreter::addEmbed("filesystem.size", &__filesystem_size);
+	Interpreter::addEmbed("filesystem.path", &__filesystem_path);
+	Interpreter::addEmbed("filesystem.rename", &__filesystem_rename);
+	Interpreter::addEmbed("filesystem.remove", &__filesystem_remove);
 	#ifdef _WIN32
 		Interpreter::addEmbed("winsock.start", &__winsock_start);
 		Interpreter::addEmbed("winsock.create_socket", &__winsock_create_socket);

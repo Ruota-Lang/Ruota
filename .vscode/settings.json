@@ -55,6 +55,9 @@
 		"xlocmon": "cpp",
 		"xloctime": "cpp",
 		"xthread": "cpp",
-		"filesystem": "cpp"
+		"filesystem": "cpp",
+		"codecvt": "cpp",
+		"iomanip": "cpp",
+		"string_view": "cpp"
 	}
 }

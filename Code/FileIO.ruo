@@ -1,4 +1,4 @@
-printl(os.dir());
+printl(System.dir());
 
 f := new File("FileIO.ruo");
 line := "";

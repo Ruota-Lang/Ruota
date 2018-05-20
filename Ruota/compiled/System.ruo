@@ -13,7 +13,7 @@ static os :: {
 };
 
 static System :: {
-	path() => { _OUTER_CALL_("filesystem.path") };
+	path() => { _OUTER_CALL_("filesystem.path")[0] };
 	dir(path = "") => { _OUTER_CALL_("filesystem.listdir", path) };
 	exists(path) => { _OUTER_CALL_("filesystem.exists", path)[0] };
 	mkdir(path) => { _OUTER_CALL_("filesystem.mkdir", path) };

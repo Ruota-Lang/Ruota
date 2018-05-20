@@ -131,6 +131,10 @@ std::vector<SP_Memory> __filesystem_mkdir(std::vector<SP_Memory> args) {
 	return {new_memory()};
 }
 
+std::vector<SP_Memory> __filesystem_exists(std::vector<SP_Memory> args) {
+	return { new_memory(NUM, std::filesystem::exists(Interpreter::path.substr(1) + args[0]->toString())) };
+}
+
 #ifdef _WIN32
 std::vector<SP_Memory> __winsock_start(std::vector<SP_Memory> args) {
 		WSADATA wsaData;
@@ -242,6 +246,7 @@ RuotaWrapper::RuotaWrapper(String current_dir){
 	Interpreter::addEmbed("regex.replace", &__regex_replace);
 	Interpreter::addEmbed("filesystem.listdir", &__filesystem_listdir);
 	Interpreter::addEmbed("filesystem.mkdir", &__filesystem_mkdir);
+	Interpreter::addEmbed("filesystem.exists", &__filesystem_exists);
 	#ifdef _WIN32
 		Interpreter::addEmbed("winsock.start", &__winsock_start);
 		Interpreter::addEmbed("winsock.create_socket", &__winsock_create_socket);

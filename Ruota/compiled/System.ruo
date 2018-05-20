@@ -11,6 +11,7 @@ static os :: {
 	rawFile(filename) => { _OUTER_CALL_("console.raw_file", filename)[0] };
 	milli() => { _OUTER_CALL_("console.milli")[0] };
 	dir(path = "") => { _OUTER_CALL_("filesystem.listdir", path) };
+	exists(path) => { _OUTER_CALL_("filesystem.exists", path)[0] };
 	mkdir(name) => { _OUTER_CALL_("filesystem.mkdir", name) };
 };
 

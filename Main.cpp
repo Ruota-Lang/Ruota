@@ -117,7 +117,7 @@ int checkClosed(String s) {
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.8.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.8.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {

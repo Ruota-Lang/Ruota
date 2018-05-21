@@ -40,7 +40,7 @@ static Strings :: {
 
 	find(s, pat) => index from {
 		index = -1;
-		i in [0 : len s - len pat] ->> {
+		i in [0 :> len s - len pat] ->> {
 			str s[i : i + len pat] == pat then {
 				index = i;
 				return;
@@ -50,7 +50,7 @@ static Strings :: {
 
 	findAll(s, pat) => indices from {
 		indices = [];
-		i in [0 : len s - len pat] ->> {
+		i in [0 :> len s - len pat] ->> {
 			str s[i : i + len pat] == pat then indices push i;
 		};
 	};

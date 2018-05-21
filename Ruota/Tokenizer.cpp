@@ -11,7 +11,8 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 	bool comment = false;
 	std::vector<std::string> tokens;
 
-	for (const char c : str) {
+	for (int i = 0; i < str.length(); i++) {
+		const char c = str[i];
 		if (comment) {
 			if (c == '\n' || c == '\r') {
 				comment = false;
@@ -25,32 +26,61 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 			else {
 				if (last_c == '\\') {
 					tokens.back().pop_back();
-					switch (c)
-					{
-					case '\\':
-						tokens.back().push_back('\\');
-						last_c = 0;
+					if (isdigit(c)){
+						int new_c 
+							= (std::stoi(std::string(1, str[i])) * 100) 
+							+ (std::stoi(std::string(1, str[i+1])) * 10)
+							+ (std::stoi(std::string(1, str[i+2])));
+						i+=2;
+						tokens.back().push_back(new_c);
+						last_c = new_c;
 						continue;
-						break;
-					case 'n':
-						tokens.back().push_back('\n');
-						break;
-					case 't':
-						tokens.back().push_back('\t');
-						break;
-					case 'r':
-						tokens.back().push_back('\r');
-						break;
-					case '\'':
-						tokens.back().push_back('\'');
-						break;
-					case '"':
-						tokens.back().push_back('"');
-						break;
-					default:
-						tokens.back().push_back('\\');
-						tokens.back().push_back(c);
-						break;
+					}else {
+						switch (c)
+						{
+						case '\\':
+							tokens.back().push_back('\\');
+							last_c = 0;
+							continue;
+							break;
+						case 'v':
+							tokens.back().push_back('\v');
+							break;
+						case 'f':
+							tokens.back().push_back('\f');
+							break;
+						case 'e':
+							tokens.back().push_back('\e');
+							break;
+						case 'b':
+							tokens.back().push_back('\b');
+							break;
+						case '?':
+							tokens.back().push_back('\?');
+							break;
+						case 'n':
+							tokens.back().push_back('\n');
+							break;
+						case 't':
+							tokens.back().push_back('\t');
+							break;
+						case 'r':
+							tokens.back().push_back('\r');
+							break;
+						case 'a':
+							tokens.back().push_back('\a');
+							break;
+						case '\'':
+							tokens.back().push_back('\'');
+							break;
+						case '"':
+							tokens.back().push_back('"');
+							break;
+						default:
+							tokens.back().push_back('\\');
+							tokens.back().push_back(c);
+							break;
+						}
 					}
 				}else
 					tokens.back().push_back(c);

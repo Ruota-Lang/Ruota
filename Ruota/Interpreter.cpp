@@ -21,7 +21,6 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ ".", 13 },
 	{ "->", 11 },
 	{ "=>", 11 },
-	{ "end", -10 },
 	{ "type", -10 },
 	{ "len", -10 },
 	{ "&", -10 },
@@ -336,12 +335,6 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(new_node(ALLOC, params));
-			}
-			else if (token == "end") {
-				if (a != nullptr)
-					stack.push_back(a);
-				params = { b };
-				stack.push_back(new_node(LAST_ARR, params));
 			}
 			else if (token == "pop") {
 				if (a != nullptr)

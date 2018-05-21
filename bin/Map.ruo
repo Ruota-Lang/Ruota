@@ -9,7 +9,7 @@ dynamic Map :: {
 			};
 		};
 		contents push new Link(key);
-		v &= (end contents).value;
+		v &= (contents[end]).value;
 	};
 
 	getKeys() => keys from {

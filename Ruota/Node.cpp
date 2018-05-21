@@ -49,7 +49,7 @@ Node::~Node(){
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
+	if (nt != INDEX && nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
 		for (auto &n : params) {
 			if (n == nullptr)
 				Interpreter::throwError("Error: unbalanced operator!", toString());
@@ -304,9 +304,16 @@ SP_Memory Node::execute(SP_Scope scope) {
 			return new_memory(list);
 		}
 	}
-	case PUSH_ARR:	return executed[0]->push(executed[1]);
-	case UNSHIFT_ARR:	return executed[0]->unshift(executed[1]);
-	case LAST_ARR:	return executed[0]->getArray().back();
+	case PUSH_ARR:	{
+		if (executed[0]->getType() != ARR)
+			Interpreter::throwError("Error: cannot push into a non-array value!", toString());
+		return executed[0]->push(executed[1]);
+	}
+	case UNSHIFT_ARR:	{
+		if (executed[0]->getType() != ARR)
+			Interpreter::throwError("Error: cannot post into a non-array value!", toString());
+		return executed[0]->unshift(executed[1]);
+	}
 	case VALUE:		{
 		try {
 			if (executed[0]->getType() == CHA || executed[0]->getType() == NUL || executed[0]->getType() == OBJ)
@@ -656,8 +663,10 @@ SP_Memory Node::execute(SP_Scope scope) {
 		else
 			return new_memory(executed);
 	case INDEX: {
-		auto p1 = executed[0];
-		auto p2 = executed[1];
+		auto p1 = params[0]->execute(scope);
+		SP_Scope s = new_scope(scope);
+		s->declareVariable("end")->set(new_memory(NUM, p1->getArray().size() - 1));
+		auto p2 = params[1]->execute(s);
 		VEC_Memory new_arr;
 		for (auto &i : p2->getArray()){
 			auto temp = p1->index(i);

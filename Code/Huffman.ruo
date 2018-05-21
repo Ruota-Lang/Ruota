@@ -71,8 +71,8 @@ dynamic Huffman :: {
 				then a.value < b.value
 				else a.weight > b.weight;
 			}));
-			b := end nodes; pop nodes;
-			a := end nodes;	pop nodes;
+			b := nodes[end]; pop nodes;
+			a := nodes[end]; pop nodes;
 			nodes push new Node(a,b);
 		};
 

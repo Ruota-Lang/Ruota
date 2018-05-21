@@ -13,7 +13,10 @@ std::vector<SP_Memory> __system(std::vector<SP_Memory> args) {
 }
 
 std::vector<SP_Memory> __getenv(std::vector<SP_Memory> args) {
-	return { new_memory(std::string(getenv(args[0]->toString().c_str()))) };
+	auto env = getenv(args[0]->toString().c_str());
+	if (env == NULL)
+		return { new_memory() };
+	return { new_memory(std::string(env)) };
 }
 
 std::vector<SP_Memory> __exit(std::vector<SP_Memory> args) {

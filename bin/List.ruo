@@ -1,0 +1,24 @@
+dynamic List :: {
+	toArray() => { self[0 : len self] };
+	iterator() => { toArray() };
+	equals(&l) => b from {
+		b = true;
+		len self != len l then {
+			b = false;
+			return;
+		};
+		i in [0 : len self] ->> {
+			l[i] != self[i] then {
+				b = false;
+				break;
+			};
+		};
+	};
+	string() => s from {
+		s = "[ ";
+		i in [0 : len self] ->> {
+			s ..= self[i] .. " ";
+		};
+		s ..= "]";
+	};
+};

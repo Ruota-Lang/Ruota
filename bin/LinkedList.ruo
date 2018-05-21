@@ -1,6 +1,8 @@
 # LinkedList Example
 
-dynamic LinkedList :: {
+load "List";
+
+dynamic LinkedList :: List +> {
 	var head;
 
 	# Adds element to list
@@ -13,31 +15,6 @@ dynamic LinkedList :: {
 			curr.next = new Link(e);
 		};
 		v &= e;
-	};
-
-	iterator() => { toArray() };
-
-	toArray() => a from {
-		a = [];
-		curr := head;
-		curr != null do {
-			a push curr.value;
-			curr = curr.next;
-		};
-	};
-
-	equals(l) => b from {
-		b = true;
-		len l != size() then {
-			b = false;
-			return;
-		};
-		i in [0 : size()] ->> {
-			l[i] != index(i) then {
-				b = false;
-				break;
-			};
-		};
 	};
 
 	# Retrieves mutable element from list
@@ -68,17 +45,6 @@ dynamic LinkedList :: {
 			curr = curr.next;
 			s += 1;
 		};
-	};
-
-	# Returns string version of the list
-	string() => s from {
-		s = "[ ";
-		curr := head;
-		curr != null do {
-			s ..= curr.value .. " ";
-			curr = curr.next;
-		};
-		s ..= "]";
 	};
 
 	dynamic Link :: {

@@ -47,7 +47,7 @@ p {
 	font-style: normal !important;
 }
 
-.overview, .methods, .children, .parent, .variables {
+.overview, .methods, .children, .parent, .variables, .inherits {
 	padding: 0px;
 	margin: 15px;
 	background: #f9f9f9;

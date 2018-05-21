@@ -725,7 +725,7 @@ String Memory::toString() {
 		return s;
 	}
 	case OBJ: {
-		if (obj_data->variables.find("string") != obj_data->variables.end()) {
+		if (!struct_object && obj_data->variables.find("string") != obj_data->variables.end()) {
 			auto l = obj_data->variables["string"]->getLambda();
 			if (l != nullptr) {
 				return l->execute({})->toString();

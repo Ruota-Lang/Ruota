@@ -1,0 +1,24 @@
+load "List";
+
+dynamic ArrayList :: List +> {
+	contents := [];
+
+	add(&e) => v from {
+		contents push e;
+		v &= e;
+	};
+
+	index(pos) => e from {
+		e &= contents[pos];
+	};
+
+	remove(pos) => {
+		new_conents := [];
+		i in [0 : len self] ->> {
+			pos != i then new_conents push contents[i];
+		};
+		contents = new_conents;
+	};
+
+	size() => { len contents };
+};

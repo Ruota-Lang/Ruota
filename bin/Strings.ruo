@@ -54,4 +54,7 @@ static Strings :: {
 			str s[i : i + len pat] == pat then indices push i;
 		};
 	};
+
+	toUpper(s) => {str (c in s ->> { c >= 'a' && c <= 'z' then c = (c - 'a') + 'A'  else c })};
+	toLower(s) => {str (c in s ->> { c >= 'A' && c <= 'Z' then c = (c - 'A') + 'a'  else c })};
 };

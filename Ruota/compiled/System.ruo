@@ -7,6 +7,7 @@ throw(e) => {
 
 static os :: {
 	system(x) => { _OUTER_CALL_("console.system", x)[0] };
+	getenv(v) => { _OUTER_CALL_("console.getenv", v)[0] };
 	exit() => { _OUTER_CALL_("console.exit") };
 	rawFile(filename) => { _OUTER_CALL_("console.raw_file", filename)[0] };
 	milli() => { _OUTER_CALL_("console.milli")[0] };

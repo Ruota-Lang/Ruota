@@ -12,6 +12,10 @@ std::vector<SP_Memory> __system(std::vector<SP_Memory> args) {
 	return { new_memory(NUM, system(args[0]->toString().c_str())) };
 }
 
+std::vector<SP_Memory> __getenv(std::vector<SP_Memory> args) {
+	return { new_memory(std::string(getenv(args[0]->toString().c_str()))) };
+}
+
 std::vector<SP_Memory> __exit(std::vector<SP_Memory> args) {
 	quick_exit(0);
 	return { new_memory() }; //superfluous?
@@ -264,6 +268,7 @@ std::vector<SP_Memory> __winsock_shutdown(std::vector<SP_Memory> args) {
 RuotaWrapper::RuotaWrapper(String current_dir){
 	Interpreter::addEmbed("error", &__error);
 	Interpreter::addEmbed("console.system", &__system);
+	Interpreter::addEmbed("console.getenv", &__getenv);
 	Interpreter::addEmbed("console.exit", &__exit);
 	Interpreter::addEmbed("console.random", &__random);
 	Interpreter::addEmbed("console.floor", &__floor);

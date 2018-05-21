@@ -17,6 +17,7 @@ Scope::~Scope(){
 	this->reference_count--;
 	this->parent = nullptr;
 	this->main = nullptr;
+	this->variables.clear();
 }
 
 SP_Memory Scope::execute() {

@@ -117,7 +117,7 @@ int checkClosed(String s) {
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.6.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.7.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -210,6 +210,14 @@ int main(int argc, char * argv[]) {
 		console();
 	}
 	delete rw;
+
+	#ifdef DEBUG
+	std::cout << "MEM:\t" << Memory::reference_count << std::endl;
+	std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
+	std::cout << "NOD:\t" << Node::reference_count << std::endl;
+	std::cout << "SCO:\t" << Scope::reference_count << std::endl;
+	#endif
+
 	setColor(7);
 	return EXIT_SUCCESS;
 }

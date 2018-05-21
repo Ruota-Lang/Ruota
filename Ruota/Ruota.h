@@ -159,7 +159,7 @@ private:
 	SP_Memory	reference = nullptr;
 	bool		static_object = false;
 	bool		struct_object = false;
-	void *		ptr_data;
+	void *		ptr_data = NULL;
 public:	
 	static long	reference_count;
 	Memory();

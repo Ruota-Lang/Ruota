@@ -127,46 +127,102 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 	for (auto &token : tokens) {
 		if (token == "," || token == ";") continue;
 		if (token == "load") {
-			String filename_raw = stack.back()->execute(current)->toString() + ".ruo";
-			String path = local_file;
-			stack.pop_back();
-			String filename = "";
-
-			//if (local_file == "") {
-				path += filename_raw;
-				while (path.back() != '\\' && path.back() != '/') {
-					filename = String(1, path.back()) + filename;
-					path.pop_back();
-					if (path.empty()) break;
+			String var_string = stack.back()->execute(current)->toString();
+			if (var_string.back() == '*'){
+				VEC_String files;
+				String path = Interpreter::path.substr(1) + var_string;
+				path.pop_back();
+				for (auto &p : std::filesystem::directory_iterator(path)){
+					String file = p.path().string();
+					if (file.length() > 4 && file.compare(file.length() - 4, 4, ".ruo") == 0)
+						files.push_back(file);
 				}
-			//}
 
-			if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
-				String content = "";
-				String line;
-				std::ifstream myfile(path.substr(1) + filename);
-				if (myfile.is_open()){
-					while (getline(myfile, line))
-						content += line + "\n";
-					myfile.close();
-				}else{
-					std::ifstream myfilelocal(this->current_dir + filename_raw);
-					if(myfilelocal.is_open()){
-						while (getline(myfilelocal, line))
-							content += line + "\n";
-						myfilelocal.close();
-					}else {
-						throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename_raw.substr(0, filename_raw.length() - 4) + "\";");
+				for (auto &f : files) {
+					String filename_raw = f;
+					String path = local_file;
+					stack.pop_back();
+					String filename = "";
+
+					//if (local_file == "") {
+						path += filename_raw;
+						while (path.back() != '\\' && path.back() != '/') {
+							filename = String(1, path.back()) + filename;
+							path.pop_back();
+							if (path.empty()) break;
+						}
+					//}
+
+					if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
+						String content = "";
+						String line;
+						std::ifstream myfile(path.substr(1) + filename);
+						if (myfile.is_open()){
+							while (getline(myfile, line))
+								content += line + "\n";
+							myfile.close();
+						}else{
+							std::ifstream myfilelocal(this->current_dir + filename_raw);
+							if(myfilelocal.is_open()){
+								while (getline(myfilelocal, line))
+									content += line + "\n";
+								myfilelocal.close();
+							}else {
+								throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename_raw.substr(0, filename_raw.length() - 4) + "\";");
+							}
+						}
+						LOADED.push_back(filename);
+						Interpreter::path = path;
+						auto gen = new_node(generate(content, current, path)->execute());
+						Interpreter::path = local_file;
+						stack.push_back(gen);
+					}
+					else {
+						stack.push_back(new_node(0));
 					}
 				}
-				LOADED.push_back(filename);
-				Interpreter::path = path;
-				auto gen = new_node(generate(content, current, path)->execute());
-				Interpreter::path = local_file;
-				stack.push_back(gen);
-			}
-			else {
-				stack.push_back(new_node(0));
+			} else{
+				String filename_raw = var_string + ".ruo";
+				String path = local_file;
+				stack.pop_back();
+				String filename = "";
+
+				//if (local_file == "") {
+					path += filename_raw;
+					while (path.back() != '\\' && path.back() != '/') {
+						filename = String(1, path.back()) + filename;
+						path.pop_back();
+						if (path.empty()) break;
+					}
+				//}
+
+				if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
+					String content = "";
+					String line;
+					std::ifstream myfile(path.substr(1) + filename);
+					if (myfile.is_open()){
+						while (getline(myfile, line))
+							content += line + "\n";
+						myfile.close();
+					}else{
+						std::ifstream myfilelocal(this->current_dir + filename_raw);
+						if(myfilelocal.is_open()){
+							while (getline(myfilelocal, line))
+								content += line + "\n";
+							myfilelocal.close();
+						}else {
+							throwError("Error: Cannot Load File: " + filename + "!", "load \"" + filename_raw.substr(0, filename_raw.length() - 4) + "\";");
+						}
+					}
+					LOADED.push_back(filename);
+					Interpreter::path = path;
+					auto gen = new_node(generate(content, current, path)->execute());
+					Interpreter::path = local_file;
+					stack.push_back(gen);
+				}
+				else {
+					stack.push_back(new_node(0));
+				}
 			}
 		}
 		else if (token == "inf")

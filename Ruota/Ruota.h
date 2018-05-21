@@ -159,6 +159,7 @@ private:
 	SP_Memory	reference = nullptr;
 	bool		static_object = false;
 	bool		struct_object = false;
+	bool		local_var = false;
 	void *		ptr_data = NULL;
 public:	
 	static long	reference_count;
@@ -184,11 +185,13 @@ public:
 	bool 		equals(const SP_Memory&);
 	bool 		isStatic();
 	bool 		isStruct();
+	bool 		isLocal();
 	SP_Memory	set(const SP_Memory&);
 	long double	getValue();
 	SP_Memory	index(const SP_Memory&);
 	SP_Memory	index(const String&);
 	SP_Memory	setStatic(const bool&);
+	SP_Memory	setLocal(const bool&);
 	SP_Memory	setStruct(const bool&);
 	SP_Memory	setArray(VEC_Memory);
 	SP_Memory	setValue(const long double&);

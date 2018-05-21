@@ -61,6 +61,11 @@ bool Memory::isStruct() {
 	return this->struct_object;
 }
 
+bool Memory::isLocal() {
+	if (mt == REF) 	return reference->isLocal();
+	return this->local_var;
+}
+
 SP_Scope Memory::getScope() {
 	if (mt == REF)	return reference->getScope();
 	return this->obj_data;
@@ -168,6 +173,11 @@ SP_Memory Memory::setArray(VEC_Memory arr_data) {
 	return to_this_ptr;
 }
 
+SP_Memory Memory::setLocal(const bool &b) {
+	this->local_var = b;
+	return to_this_ptr;
+}
+
 SP_Memory Memory::refer(const SP_Memory &m) {
 	if (m->mt == NUL && m->data == 1) {
 		this->mt = NUL;
@@ -203,30 +213,35 @@ SP_Memory Memory::index(const SP_Memory &m) {
 }
 
 SP_Memory Memory::clone(const SP_Scope &parent) {
+	SP_Memory m;
 	switch (mt)
 	{
-	case PTR:	return new_memory((void*)ptr_data);
-	case REF:	return reference->clone(parent);
-	case CHA:	return new_memory(CHA, char_data);
-	case NUM:	return new_memory(NUM, data);
-	case LAM:	return new_memory(lambda->clone(parent));
-	case NUL:	return new_memory();
-	case STR:	return new_memory(this->toString());
+	case PTR:	m = new_memory((void*)ptr_data); break;
+	case REF:	m = reference->clone(parent); break;
+	case CHA:	m = new_memory(CHA, char_data); break;
+	case NUM:	m = new_memory(NUM, data); break;
+	case LAM:	m = new_memory(lambda->clone(parent)); break;
+	case NUL:	m = new_memory(); break;
+	case STR:	m = new_memory(this->toString()); break;
 	case ARR: {
 		VEC_Memory new_arr;
 		for (auto &v : arr_data)
 			new_arr.push_back(v->clone(parent));
-		return new_memory(new_arr);
+		m = new_memory(new_arr);
+		break;
 	}
 	case OBJ: {
 		auto temp = new_memory();
 		temp->mt = OBJ;
 		temp->obj_data = obj_data->clone(parent);
 		temp->obj_data->variables["self"] = to_this_ptr;
-		return temp;
+		m = temp;
+		break;
 	}
-	default: return nullptr;
+	default: m = nullptr;
 	}
+	m->local_var = this->local_var;
+	return m;
 }
 
 bool Memory::equals(const SP_Memory &a) {

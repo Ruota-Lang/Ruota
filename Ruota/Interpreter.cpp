@@ -13,7 +13,8 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ "struct", 12 },
 	{ "static", 14 },
 	{ "dynamic", 14 },
-	{ "var", -13},
+	{ "var", -13 },
+	{ "local", -1 },
 	{ "!", -13 },
 	{ ".!", -13 },
 	{ ".", 13 },
@@ -274,6 +275,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				params = { b };
 				stack.push_back(new_node(DECLARE, params));
+			}
+			else if (token == "local") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(new_node(LOCAL, params));
 			}
 			else if (token == "len") {
 				if (a != nullptr)

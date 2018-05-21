@@ -49,7 +49,7 @@ Node::~Node(){
 
 SP_Memory Node::execute(SP_Scope scope) {
 	VEC_Memory executed;
-	if (nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != LOCAL && nt != FROM) {
+	if (nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
 		for (auto &n : params) {
 			if (n == nullptr)
 				Interpreter::throwError("Error: unbalanced operator!", toString());
@@ -370,7 +370,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		if (temp1->getScope() == nullptr)
 			temp1->makeScope(scope);
 		if (params[1]->nt == VAR && temp1->getScope()->variables.find(params[1]->key) == temp1->getScope()->variables.end())
-			temp1->getScope()->variables[params[1]->key] = new_memory();
+			temp1->getScope()->declareVariable(params[1]->key);
 		return params[1]->execute(temp1->getScope());
 	case OBJ_SET:
 		temp1 = params[0]->execute(scope);
@@ -385,8 +385,10 @@ SP_Memory Node::execute(SP_Scope scope) {
 		auto par = params[0]->execute(scope)->getScope();
 		auto chi = params[1]->scope_ref;
 		auto new_s = new_scope(scope);
-		for (auto &v : par->variables)
-			new_s->declareVariable(v.first)->set(v.second);
+		for (auto &v : par->variables) {
+			if (!v.second->isLocal())
+				new_s->declareVariable(v.first)->set(v.second);
+		}
 		for (auto &v : chi->variables)
 			new_s->declareVariable(v.first)->set(v.second);
 		temp1->setScope(new_s);
@@ -428,8 +430,7 @@ SP_Memory Node::execute(SP_Scope scope) {
 		}
 	}
 	case LOCAL:
-		scope->variables[params[0]->key] = new_memory();
-		return scope->variables[params[0]->key];
+		return executed[0]->setLocal(true);
 	case SCOPE:
 		scope_ref->parent = scope;
 		temp1 = scope_ref->execute();

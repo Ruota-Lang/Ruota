@@ -1,5 +1,5 @@
 dynamic Map :: {
-	contents := [];
+	local contents := [];
 
 	index(key) => v from {
 		i in contents ->> {

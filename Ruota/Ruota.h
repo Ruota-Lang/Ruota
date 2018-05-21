@@ -287,6 +287,7 @@ private:
 	static void throwError(String errorMessage, String errorLine);
 public:	
 	static String path;
+	static String curr_file;
 	static void addEmbed(String, VEC_Memory(*e)(VEC_Memory));
 };
 

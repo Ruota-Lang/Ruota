@@ -1,6 +1,7 @@
 #include "Ruota.h"
 
 String Interpreter::path = "\\";
+String Interpreter::curr_file = "";
 
 std::unordered_map<String, int> Interpreter::operators = {
 	{ "load", 999 },
@@ -174,8 +175,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 						}
 						LOADED.push_back(filename);
 						Interpreter::path = path;
+						String old_file = Interpreter::curr_file;
+						Interpreter::curr_file = filename;
 						auto gen = new_node(generate(content, current, path)->execute());
 						Interpreter::path = local_file;
+						Interpreter::curr_file = old_file;
 						stack.push_back(gen);
 					}
 					else {
@@ -217,8 +221,11 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					}
 					LOADED.push_back(filename);
 					Interpreter::path = path;
+					String old_file = Interpreter::curr_file;
+					Interpreter::curr_file = filename;
 					auto gen = new_node(generate(content, current, path)->execute());
 					Interpreter::path = local_file;
+					Interpreter::curr_file = old_file;
 					stack.push_back(gen);
 				}
 				else {
@@ -756,5 +763,5 @@ SP_Memory Interpreter::execute(SP_Scope main) {
 void Interpreter::throwError(String errorMessage, String errorLine){
 	while (errorLine[0] == '(' && errorLine.back() == ')')
 		errorLine = errorLine.substr(1, errorLine.size() - 2);
-	throw std::runtime_error(errorMessage + "\n\t" + errorLine);
+	throw std::runtime_error(errorMessage + "\n\t" + errorLine + "\n\tFile: " + Interpreter::curr_file);
 }

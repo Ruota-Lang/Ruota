@@ -52,7 +52,7 @@ SP_Memory Scope::getVariable(String key) {
 	}
 
 	if (current == nullptr) {
-		throw std::runtime_error("Error: variable `" + key + "` undeclared!");
+		Interpreter::throwError("Error: variable `" + key + "` undeclared!", key + " = ?");
 	}
 
 	return current->variables[key];

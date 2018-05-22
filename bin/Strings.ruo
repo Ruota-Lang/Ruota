@@ -19,7 +19,7 @@ static Strings :: {
 				};
 				array push "";
 			} else {
-				array[end] push s[i];
+				array[end] ..= s[i];
 			};
 		};
 	};

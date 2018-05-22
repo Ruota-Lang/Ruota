@@ -6,7 +6,7 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 	SP_Scope scope = new_scope(parent);
 	auto new_base = base->clone(scope);
 	scope->main = new_base;
-	scope->variables["idem"] = new_memory(to_this_ptr);
+	scope->variables[L"idem"] = new_memory(to_this_ptr);
 
 	for (size_t i = 0; i < param_keys.size(); i++) {
 		SP_Memory temp = scope->declareVariable(param_keys[i]);
@@ -32,7 +32,7 @@ SP_Lambda Lambda::clone(SP_Scope parent) {
 	return nl;
 }
 
-Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_keys, std::vector<int> param_types, VEC_Memory default_params) {
+Lambda::Lambda(SP_Scope parent, SP_Node base, VEC_String param_keys, std::vector<int> param_types, VEC_Memory default_params) {
 	this->reference_count++;
 	this->param_keys = param_keys;
 	this->param_types = param_types;

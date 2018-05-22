@@ -1,15 +1,15 @@
 #include "Tokenizer.h"
 
-Tokenizer::Tokenizer(std::unordered_map<std::string, int> operators) {
+Tokenizer::Tokenizer(std::unordered_map<String, int> operators) {
 	this->operators = operators;
 }
 
-std::vector<std::string> Tokenizer::tokenize(const std::string str) {
+std::vector<String> Tokenizer::tokenize(const String str) {
 	char pChar = 0;
 	short mode = 0;
 	char last_c = 0;
 	bool comment = false;
-	std::vector<std::string> tokens;
+	std::vector<String> tokens;
 
 	for (int i = 0; i < str.length(); i++) {
 		const char c = str[i];
@@ -28,9 +28,9 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 					tokens.back().pop_back();
 					if (isdigit(c)){
 						int new_c 
-							= (std::stoi(std::string(1, str[i])) * 100) 
-							+ (std::stoi(std::string(1, str[i+1])) * 10)
-							+ (std::stoi(std::string(1, str[i+2])));
+							= (std::stoi(new_string(1, str[i])) * 100) 
+							+ (std::stoi(new_string(1, str[i+1])) * 10)
+							+ (std::stoi(new_string(1, str[i+2])));
 						i+=2;
 						tokens.back().push_back(new_c);
 						last_c = new_c;
@@ -98,25 +98,25 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 			else if (c == '\"' || c == '\'' || c == '`') {
 				mode = 0;
 				pChar = c;
-				tokens.push_back(std::string(1, c));
+				tokens.push_back(new_string(1, c));
 				continue;
 			}
 			switch (mode)
 			{
 			case 0:
-				tokens.push_back(std::string(1, c));
+				tokens.push_back(new_string(1, c));
 				break;
 			case 1:
 				if ((isalnum(c) || c == '_'))
 					tokens.back().push_back(c);
 				else
-					tokens.push_back(std::string(1, c));
+					tokens.push_back(new_string(1, c));
 				break;
 			case 2:
-				if (!(isalnum(c) || c == '_') && operators.find(tokens.back() + std::string(1,c)) != operators.end())
+				if (!(isalnum(c) || c == '_') && operators.find(tokens.back() + new_string(1,c)) != operators.end())
 					tokens.back().push_back(c);
 				else
-					tokens.push_back(std::string(1, c));
+					tokens.push_back(new_string(1, c));
 				break;
 			}
 			mode = !(isalnum(c) || c == '_') + 1;
@@ -127,24 +127,24 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 	if (pChar != 0)
 		throw std::runtime_error("Error: unclosed string or char literal!");
 
-	std::vector<std::string> new_tokens;
-	std::string last = "+";
+	VEC_String new_tokens;
+	String last = L"+";
 	for (auto t : tokens) {
-		if (t == "[" && ((isalnum(last[0]) || last[0] == '_' || last[0] == '\"' || last[0] == '`') || last == ")" || last == "]" || last == "}") && operators.find(last) == operators.end())
-			new_tokens.push_back(".index");
-		if (t == "(" && ((isalnum(last[0]) || last[0] == '_' || last[0] == '`') || last == ")" || last == "]" || last == "}") && operators.find(last) == operators.end())
-			new_tokens.push_back(".exec");
-		if (t == "-" && (operators.find(last) != operators.end() || last == "(" || last == "[" || last == "{")) {
-			new_tokens.push_back(".negate");
+		if (t == L"[" && ((isalnum(last[0]) || last[0] == '_' || last[0] == '\"' || last[0] == '`') || last == L")" || last == L"]" || last == L"}") && operators.find(last) == operators.end())
+			new_tokens.push_back(L".index");
+		if (t == L"(" && ((isalnum(last[0]) || last[0] == '_' || last[0] == '`') || last == L")" || last == L"]" || last == L"}") && operators.find(last) == operators.end())
+			new_tokens.push_back(L".exec");
+		if (t == L"-" && (operators.find(last) != operators.end() || last == L"(" || last == L"[" || last == L"{")) {
+			new_tokens.push_back(L".negate");
 			last = t;
 			continue;
 		}
-		if (t == "+" && (operators.find(last) != operators.end() || last == "(" || last == "[" || last == "{")) {
-			new_tokens.push_back(".positive");
+		if (t == L"+" && (operators.find(last) != operators.end() || last == L"(" || last == L"[" || last == L"{")) {
+			new_tokens.push_back(L".positive");
 			last = t;
 			continue;
 		}
-		if (isdigit(t[0]) && last == "." && isdigit(new_tokens[new_tokens.size() - 2][0])) {
+		if (isdigit(t[0]) && last == L"." && isdigit(new_tokens[new_tokens.size() - 2][0])) {
 			new_tokens.pop_back();
 			new_tokens.back().push_back('.');
 			new_tokens.back() = new_tokens.back() + t;
@@ -158,9 +158,9 @@ std::vector<std::string> Tokenizer::tokenize(const std::string str) {
 	return new_tokens;
 }
 
-std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> tokens) {
-	std::vector<std::string> stack;
-	std::vector<std::string> output;
+std::vector<String> Tokenizer::infixToPostfix(std::vector<String> tokens) {
+	std::vector<String> stack;
+	std::vector<String> output;
 	int p_count = 0;
 	int b_count = 0;
 	int c_count = 0;
@@ -174,7 +174,7 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 				while ((std::abs(getPrecedence(token)) < std::abs(getPrecedence(sb))
 					|| (getPrecedence(sb) > 0
 						&& std::abs(getPrecedence(token)) == std::abs(getPrecedence(sb))))
-					&& (sb != "(" && sb != "[" && sb != "{")) {
+					&& (sb != L"(" && sb != L"[" && sb != L"{")) {
 					output.push_back(sb);
 					stack.pop_back();
 					if (stack.empty())
@@ -185,7 +185,7 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 			}
 			stack.push_back(token);
 		}
-		else if (token == "(" || token == "[" || token == "{") {
+		else if (token == L"(" || token == L"[" || token == L"{") {
 			stack.push_back(token);
 			output.push_back(token);
 			switch (token[0]) {
@@ -194,13 +194,13 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 				case '{': c_count++; break;
 			}
 		}
-		else if (token == ")" || token == "]" || token == "}") {
+		else if (token == L")" || token == L"]" || token == L"}") {
 			switch (token[0]) {
 			case ')':
 				p_count--;
 				if (stack.empty())
 					throw std::runtime_error("Error: Unmatched paranthesis!");
-				while (stack.back() != "(") {
+				while (stack.back() != L"(") {
 					output.push_back(stack.back());
 					stack.pop_back();
 					if (stack.empty())
@@ -211,7 +211,7 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 				b_count--;
 				if (stack.empty())
 					throw std::runtime_error("Error: Unmatched bracket!");
-				while (stack.back() != "[") {
+				while (stack.back() != L"[") {
 					output.push_back(stack.back());
 					stack.pop_back();
 					if (stack.empty())
@@ -222,7 +222,7 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 				c_count--;
 				if (stack.empty())
 					throw std::runtime_error("Error: Unmatched scoping bracket!");
-				while (stack.back() != "{") {
+				while (stack.back() != L"{") {
 					output.push_back(stack.back());
 					stack.pop_back();
 					if (stack.empty())
@@ -247,7 +247,7 @@ std::vector<std::string> Tokenizer::infixToPostfix(std::vector<std::string> toke
 	return output;
 }
 
-int Tokenizer::getPrecedence(std::string token) {
+int Tokenizer::getPrecedence(String token) {
 	if (operators.find(token) != operators.end())
 		return operators[token];
 

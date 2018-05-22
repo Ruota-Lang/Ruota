@@ -6,12 +6,15 @@ dynamic LinkedList :: List +> {
 	var head;
 
 	# Adds element to list
-	add(&e) => v from {
+	add(&e, pos = null) => v from {
 		head == null then {
 			head = new Link(e);
 		} else {
 			curr := head;
-			curr.next != null do { curr = curr.next };
+			i := 0;
+			curr.next != null && (pos != null then i < pos else true) do { 
+				curr = curr.next
+			};
 			curr.next = new Link(e);
 		};
 		v &= e;

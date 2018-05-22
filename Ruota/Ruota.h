@@ -10,6 +10,8 @@
 #include<vector>
 #include<fstream>
 #include<iostream>
+#include<locale>
+#include<codecvt>
 #include<algorithm>
 #include<memory>
 #include<time.h>
@@ -130,8 +132,7 @@ enum MemType {
 	PTR
 };
 
-
-typedef	std::string				String;
+typedef	std::wstring				String;
 typedef	std::shared_ptr<Memory>	SP_Memory;
 typedef	std::shared_ptr<Node>	SP_Node;
 typedef	std::shared_ptr<Scope>	SP_Scope;
@@ -145,13 +146,14 @@ typedef	std::vector<String>		VEC_String;
 #define	new_node	std::make_shared<Node>
 #define	new_lambda	std::make_shared<Lambda>
 #define	new_scope	std::make_shared<Scope>
+#define new_string	String
 
 #define to_this_ptr	shared_from_this()
 
 struct Memory : std::enable_shared_from_this<Memory> {
 private:
 	long double	data = 0;
-	char		char_data = 0;
+	wchar_t		char_data = 0;
 	MemType		mt;
 	VEC_Memory	arr_data;
 	SP_Scope	obj_data = nullptr;

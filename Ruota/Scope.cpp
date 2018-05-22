@@ -52,12 +52,12 @@ SP_Memory Scope::getVariable(String key) {
 	}
 
 	if (current == nullptr) {
-		Interpreter::throwError("Error: variable `" + key + "` undeclared!", key + " = ?");
+		Interpreter::throwError(L"Error: variable `" + key + L"` undeclared!", key + L" = ?");
 	}
 
 	return current->variables[key];
 }
 
 String Scope::toString(){
-	return "{ " + main->toString() + " }";
+	return L"{ " + main->toString() + L" }";
 }

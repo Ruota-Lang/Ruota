@@ -145,15 +145,15 @@ long double Memory::getValue() {
 		case STR:
 		return std::stold(this->toString());
 		case OBJ: {
-			if (obj_data->variables.find("value") != obj_data->variables.end()) {
-				auto l = obj_data->variables["value"]->getLambda();
+			if (obj_data->variables.find(L"value") != obj_data->variables.end()) {
+				auto l = obj_data->variables[L"value"]->getLambda();
 				if (l != nullptr) {
 					return l->execute({})->getValue();
 				}
 			}
 		}
 		default:
-		Interpreter::throwError("Error: value is not scalar!", toString());
+		Interpreter::throwError(L"Error: value is not scalar!", toString());
 	}
 }
 
@@ -202,13 +202,13 @@ SP_Memory Memory::index(const SP_Memory &m) {
 			return nullptr;
 		return this->arr_data[pos];
 	} else if (mt == OBJ) {
-		if (obj_data->variables.find("index") != obj_data->variables.end()) {
-			auto l = obj_data->variables["index"]->getLambda();
+		if (obj_data->variables.find(L"index") != obj_data->variables.end()) {
+			auto l = obj_data->variables[L"index"]->getLambda();
 			if (l != nullptr)
 				return l->execute({m});
 		}
 	} else {
-		Interpreter::throwError("Error: value type is not indexable!", toString());
+		Interpreter::throwError(L"Error: value type is not indexable!", toString());
 	}
 }
 
@@ -234,7 +234,7 @@ SP_Memory Memory::clone(const SP_Scope &parent) {
 		auto temp = new_memory();
 		temp->mt = OBJ;
 		temp->obj_data = obj_data->clone(parent);
-		temp->obj_data->variables["self"] = to_this_ptr;
+		temp->obj_data->variables[L"self"] = to_this_ptr;
 		m = temp;
 		break;
 	}
@@ -265,8 +265,8 @@ bool Memory::equals(const SP_Memory &a) {
 	case LAM:	if (lambda != a->lambda)	return false;
 	case NUL:	return true;
 	case OBJ:	{
-		if (obj_data->variables.find("equals") != obj_data->variables.end()) {
-			auto l = obj_data->variables["equals"]->getLambda();
+		if (obj_data->variables.find(L"equals") != obj_data->variables.end()) {
+			auto l = obj_data->variables[L"equals"]->getLambda();
 			if (l != nullptr)
 				return l->execute({a})->getValue();
 		} else {
@@ -681,13 +681,13 @@ String Memory::toString() {
 	switch (this->mt)
 	{
 	case PTR:
-		return "PTR";
+		return L"PTR";
 	case REF:
 		return reference->toString();
 	case CHA:
-		return std::string(1, char_data);
+		return new_string(1, char_data);
 	case NUM: {
-		String s = std::to_string(data);
+		String s = std::to_wstring(data);
 		while (s.back() == '0')
 			s.pop_back();
 		if (s.back() == '.')
@@ -695,48 +695,48 @@ String Memory::toString() {
 		return s;
 	}
 	case STR: {
-		String s = "";
+		String s = L"";
 		for (auto &m : arr_data) {
 			s.push_back(m->getValue());
 		}
 		return s;
 	}
 	case ARR:{
-		String s = "[ ";
+		String s = L"[ ";
 		for (auto &m : arr_data) {
 			if (m->getType() == CHA)
-				s += "'" + m->toString() + "' ";
+				s += L"'" + m->toString() + L"' ";
 			else if (m->getType() == STR)
-				s += "\"" + m->toString() + "\" ";
+				s += L"\"" + m->toString() + L"\" ";
 			else
-				s += m->toString() + " ";
+				s += m->toString() + L" ";
 		}
-		return s + "]";
+		return s + L"]";
 	}
 	case LAM: {
-		String s = "(";
+		String s = L"(";
 		for (int i = 0; i < lambda->param_keys.size(); i++){
-			s += " ";
+			s += L" ";
 			if (lambda->param_types[i] == 1) 
-				s += "&";
+				s += L"&";
 			s += lambda->param_keys[i];
 		}
-		s += " ) -> " + lambda->base->toString();
+		s += L" ) -> " + lambda->base->toString();
 		return s;
 	}
 	case OBJ: {
-		if (!struct_object && obj_data->variables.find("string") != obj_data->variables.end()) {
-			auto l = obj_data->variables["string"]->getLambda();
+		if (!struct_object && obj_data->variables.find(L"string") != obj_data->variables.end()) {
+			auto l = obj_data->variables[L"string"]->getLambda();
 			if (l != nullptr) {
 				return l->execute({})->toString();
 			}
 		}
-		return "OBJ";
+		return L"OBJ";
 	}
 	case NUL:
-		return "null";
+		return L"null";
 	default:
-		return "error-type";
+		return L"error-type";
 	}
 }
 

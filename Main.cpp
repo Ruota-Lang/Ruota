@@ -20,19 +20,19 @@ const char * console_compiled = {
 	}
 #endif
 
-void printToCoordinates(int x, int y, const std::string& text){
-	printf("\033[%d;%dH%s\n", x, y, text.c_str());
+void printToCoordinates(int x, int y, const std::wstring& text){
+	printf("\033[%d;%dH%s\n", x, y, ws2s(text).c_str());
 }
 
 VEC_Memory __print(VEC_Memory args) {
-	std::cout << args[0]->toString();
+	std::wcout << args[0]->toString();
 	return { new_memory() };
 }
 
 VEC_Memory __printat(VEC_Memory args) {
 	int pos_x = args[0]->getValue();
 	int pos_y = args[1]->getValue();
-	std::string line = args[2]->toString();
+	String line = args[2]->toString();
 	printToCoordinates(pos_x, pos_y, line);
 	return { new_memory() };
 }
@@ -44,14 +44,14 @@ VEC_Memory __color(VEC_Memory args) {
 
 VEC_Memory __input_str(VEC_Memory args) {
 	String d;
-	std::cin >> d;
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	std::wcin >> d;
+	std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	return { new_memory(d) };
 }
 
 VEC_Memory __input_line(VEC_Memory args) {
 	String d;
-	std::getline(std::cin, d);
+	std::getline(std::wcin, d);
 	return { new_memory(d) };
 }
 
@@ -116,23 +116,23 @@ int checkClosed(String s) {
 
 int console(){
 	String line;
-	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.9.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	rw->runLine(L"args := [];");
+	std::wcout << "Ruota 0.10.10.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
 			setColor(12);
-			std::cout << "\n> ";
+			std::wcout << "\n> ";
 			setColor(7);
-			std::getline(std::cin, line);
+			std::getline(std::wcin, line);
 
-			String curr_line = "";
+			String curr_line = L"";
 			while (checkClosed(line) == 0) {
 				setColor(12);
-				std::cout << ">> ";
+				std::wcout << ">> ";
 				setColor(7);
-				std::getline(std::cin, curr_line);
-				line += "\n" + curr_line;
+				std::getline(std::wcin, curr_line);
+				line += L"\n" + curr_line;
 			}
 
 			try {
@@ -142,18 +142,18 @@ int console(){
 				if (res->getArray().size() > 1) {
 					int n = 1;
 					for (auto &r : res->getArray()) {
-						std::cout << "\t(" << n << ")\t" << r->toString() << std::endl;
+						std::wcout << "\t(" << n << ")\t" << r->toString() << std::endl;
 						n++;
 					}
 				}
 				else if(!res->getArray().empty()) {
-					std::cout << "\t" << res->getArray()[0]->toString() << std::endl;
+					std::wcout << "\t" << res->getArray()[0]->toString() << std::endl;
 				}
 				#ifdef DEBUG
-				std::cout << "MEM:\t" << Memory::reference_count << std::endl;
-				std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
-				std::cout << "NOD:\t" << Node::reference_count << std::endl;
-				std::cout << "SCO:\t" << Scope::reference_count << std::endl;
+				std::wcout << "MEM:\t" << Memory::reference_count << std::endl;
+				std::wcout << "LAM:\t" << Lambda::reference_count << std::endl;
+				std::wcout << "NOD:\t" << Node::reference_count << std::endl;
+				std::wcout << "SCO:\t" << Scope::reference_count << std::endl;
 				#endif
 			}
 			catch (const std::runtime_error &e) {
@@ -170,9 +170,9 @@ int console(){
 				std::cout << "\tAn undefined error has occured" << std::endl;
 			}
     // ...
-		} while (line != "");
+		} while (line != L"");
 		setColor(12);
-		std::cout << "Quit (y/N) ?> ";
+		std::wcout << "Quit (y/N) ?> ";
 		setColor(7);
 		char c = getchar();
 		if (c == 'y' || c == 'Y')
@@ -185,26 +185,26 @@ int console(){
 }
 
 int main(int argc, char * argv[]) {
-	rw = new RuotaWrapper(argv[0]);
-	Interpreter::addEmbed("console.print", &__print);
-	Interpreter::addEmbed("console.printat", &__printat);
-	Interpreter::addEmbed("console.input_str", &__input_str);
-	Interpreter::addEmbed("console.input_line", &__input_line);
-	Interpreter::addEmbed("console.color", &__color);
-	Interpreter::addEmbed("console.key_down", &__key_down);
-	rw->runLine(console_compiled);
+	rw = new RuotaWrapper(s2ws(argv[0]));
+	Interpreter::addEmbed(L"console.print", &__print);
+	Interpreter::addEmbed(L"console.printat", &__printat);
+	Interpreter::addEmbed(L"console.input_str", &__input_str);
+	Interpreter::addEmbed(L"console.input_line", &__input_line);
+	Interpreter::addEmbed(L"console.color", &__color);
+	Interpreter::addEmbed(L"console.key_down", &__key_down);
+	rw->runLine(s2ws(console_compiled));
 
 	if (argc >= 2) {
-		std::string var = "[ ";
+		String var = L"[ ";
 		for (int i = 2; i < argc; i++)
-			var += "\"" + String(argv[i]) + "\" ";
-		var += "]";
+			var += L"\"" + s2ws(argv[i]) + L"\" ";
+		var += L"]";
 		try {
-			rw->runLine("args := " + var + ";");
-			rw->runLine("load \"" + String(argv[1]) + "\";");
+			rw->runLine(L"args := " + var + L";");
+			rw->runLine(L"load \"" + s2ws(argv[1]) + L"\";");
 		} catch (std::runtime_error &e) {
 			setColor(12);
-			std::cout << "\t" << e.what() << std::endl;
+			std::wcout << "\t" << e.what() << std::endl;
 		}
 	}else{
 		console();
@@ -212,10 +212,10 @@ int main(int argc, char * argv[]) {
 	delete rw;
 
 	#ifdef DEBUG
-	std::cout << "MEM:\t" << Memory::reference_count << std::endl;
-	std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
-	std::cout << "NOD:\t" << Node::reference_count << std::endl;
-	std::cout << "SCO:\t" << Scope::reference_count << std::endl;
+	std::wcout << "MEM:\t" << Memory::reference_count << std::endl;
+	std::wcout << "LAM:\t" << Lambda::reference_count << std::endl;
+	std::wcout << "NOD:\t" << Node::reference_count << std::endl;
+	std::wcout << "SCO:\t" << Scope::reference_count << std::endl;
 	#endif
 
 	setColor(7);

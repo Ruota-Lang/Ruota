@@ -154,15 +154,16 @@ private:
 	char		char_data = 0;
 	MemType		mt;
 	VEC_Memory	arr_data;
-	SP_Scope	obj_data = nullptr;
-	SP_Lambda	lambda = nullptr;
-	SP_Memory	reference = nullptr;
+	SP_Scope	obj_data;
+	SP_Lambda	lambda;
+	SP_Memory	reference;
 	bool		static_object = false;
 	bool		struct_object = false;
 	bool		local_var = false;
 	void *		ptr_data = NULL;
 public:	
-	static long	reference_count;
+	static long	reference_add;
+	static long	reference_del;
 	Memory();
 	~Memory();
 	Memory(const String&);
@@ -214,13 +215,13 @@ public:
 };
 
 struct Node : std::enable_shared_from_this<Node> {
-	static long reference_count;
+	static long	reference_add;
+	static long	reference_del;
 	VEC_Node 	params;
 	NodeType 	nt;
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
 	String		key;
-	String		path;
 	std::unordered_map<long double, SP_Node> switch_values;
 	int			flag = 0;
 
@@ -233,28 +234,30 @@ struct Node : std::enable_shared_from_this<Node> {
 	~Node();
 
 	String		toString();
-	SP_Memory	execute(SP_Scope);
-	SP_Node		clone(SP_Scope);
+	SP_Memory	execute(const SP_Scope&);
+	SP_Node		clone(const SP_Scope&);
 	void		weakListCheck();
 	static void	threadWrapper(SP_Node, SP_Scope);
 };
 
 struct Lambda : std::enable_shared_from_this<Lambda> {
-	static long reference_count;
+	static long	reference_add;
+	static long	reference_del;
 	SP_Node		base = nullptr;
 	SP_Scope	parent = nullptr;
 	VEC_String	param_keys;
 	std::vector<int> param_types;
 	VEC_Memory	default_params;
 
-	Lambda(SP_Scope, SP_Node, VEC_String, std::vector<int>, VEC_Memory);
+	Lambda(const SP_Scope&, const SP_Node&, VEC_String, std::vector<int>, VEC_Memory);
 	~Lambda();
 	SP_Memory	execute(VEC_Memory);
-	SP_Lambda	clone(SP_Scope);
+	SP_Lambda	clone(const SP_Scope&);
 };
 
 struct Scope : std::enable_shared_from_this<Scope> {
-	static long reference_count;
+	static long	reference_add;
+	static long	reference_del;
 	SP_Scope	parent = nullptr;
 	SP_Node		main = nullptr;
 	std::unordered_map<String, SP_Memory> variables;
@@ -299,6 +302,7 @@ private:
 public:
 	RuotaWrapper(String);
 	SP_Memory runLine(String);
+	~RuotaWrapper();
 };
 
 #endif // !INTERPRETER_H

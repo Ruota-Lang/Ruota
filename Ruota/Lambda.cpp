@@ -1,6 +1,7 @@
 #include "Ruota.h"
 
-long Lambda::reference_count = 0;
+long Lambda::reference_add = 0;
+long Lambda::reference_del = 0;
 
 SP_Memory Lambda::execute(VEC_Memory params) {
 	SP_Scope scope = new_scope(parent);
@@ -27,13 +28,12 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 		return temp;
 }
 
-SP_Lambda Lambda::clone(SP_Scope parent) {
-	SP_Lambda nl = new_lambda(parent, base->clone(parent), param_keys, param_types, default_params);
-	return nl;
+SP_Lambda Lambda::clone(const SP_Scope &parent) {
+	return new_lambda(parent, base->clone(parent), param_keys, param_types, default_params);
 }
 
-Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_keys, std::vector<int> param_types, VEC_Memory default_params) {
-	this->reference_count++;
+Lambda::Lambda(const SP_Scope &parent, const SP_Node &base, std::vector<std::string> param_keys, std::vector<int> param_types, VEC_Memory default_params) {
+	this->reference_add++;
 	this->param_keys = param_keys;
 	this->param_types = param_types;
 	this->parent = parent;
@@ -42,7 +42,7 @@ Lambda::Lambda(SP_Scope parent, SP_Node base, std::vector<std::string> param_key
 }
 
 Lambda::~Lambda(){
-	this->reference_count--;
+	this->reference_del++;
 	this->parent = nullptr;
 	this->base = nullptr;
 	this->default_params.clear();

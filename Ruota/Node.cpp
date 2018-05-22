@@ -1,58 +1,57 @@
 #include "Ruota.h"
 
-long Node::reference_count = 0;
+long Node::reference_add = 0;
+long Node::reference_del = 0;
 
 Node::Node(long double data) {
-	this->reference_count++;
+	this->reference_add++;
 	this->mem_data = new_memory(NUM, data);
 	this->nt = MEM;
 }
 
 Node::Node(SP_Memory m) {
-	this->reference_count++;
+	this->reference_add++;
 	this->mem_data = m;
 	this->nt = MEM;
 }
 
 Node::Node(NodeType nt, VEC_Node params) {
-	this->reference_count++;
+	this->reference_add++;
 	this->params = params;
 	this->nt = nt;
 }
 
 Node::Node(String key) {
-	this->reference_count++;
+	this->reference_add++;
 	this->key = key;
 	this->nt = VAR;
 }
 
 Node::Node(SP_Node val, std::unordered_map<long double, SP_Node> switch_values){
-	this->reference_count++;
+	this->reference_add++;
 	this->switch_values = switch_values;
 	this->nt = SWITCH;
 	this->params.push_back(val);
 }
 
 Node::Node(SP_Scope scope_ref) {
-	this->reference_count++;
+	this->reference_add++;
 	this->scope_ref = scope_ref;
 	this->nt = SCOPE;
 }
 
 Node::~Node(){
-	this->reference_count--;
-	this->scope_ref = nullptr;
-	this->mem_data = nullptr;
+	this->reference_del++;
+	this->scope_ref.reset();
+	this->mem_data.reset();
 	this->params.clear();
 	this->switch_values.clear();
 }
 
-SP_Memory Node::execute(SP_Scope scope) {
+SP_Memory Node::execute(const SP_Scope &scope) {
 	VEC_Memory executed;
 	if (nt != INDEX && nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
-		for (auto &n : params) {
-			if (n == nullptr)
-				Interpreter::throwError("Error: unbalanced operator!", toString());
+		for (SP_Node &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
 				return e;
@@ -694,7 +693,7 @@ void Node::threadWrapper(SP_Node n, SP_Scope s){
 	n->execute(s);
 }
 
-SP_Node Node::clone(SP_Scope scope) {
+SP_Node Node::clone(const SP_Scope &scope) {
 	VEC_Node new_params;
 	for (auto &n : params)
 		new_params.push_back(n->clone(scope));
@@ -712,7 +711,6 @@ SP_Node Node::clone(SP_Scope scope) {
 		nn->mem_data = this->mem_data->clone(scope);
 	if (this->scope_ref != nullptr)
 		nn->scope_ref = this->scope_ref->clone(scope);
-	nn->path = this->path;
 	return nn;
 }
 

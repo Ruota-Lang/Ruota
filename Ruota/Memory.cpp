@@ -1,13 +1,13 @@
 #include "Ruota.h"
 
 Memory::Memory() {
-	reference_count++;
+	reference_add++;
 	this->data = 0;
 	this->mt = NUL;
 }
 
 Memory::Memory(MemType mt, const long double &data) {
-	reference_count++;
+	reference_add++;
 	this->mt = mt;
 	switch(mt){
 		case NUM:
@@ -25,8 +25,12 @@ Memory::Memory(void * ptr_data) {
 }
 
 void Memory::clear() {
+	if (obj_data != nullptr)
+		obj_data->parent = nullptr;
 	obj_data = nullptr;
 	reference = nullptr;
+	if (lambda != nullptr)
+		lambda->parent = nullptr;
 	lambda = nullptr;
 	data = 0;
 	char_data = 0;
@@ -34,19 +38,19 @@ void Memory::clear() {
 }
 
 Memory::Memory(SP_Scope scope) {
-	reference_count++;
+	reference_add++;
 	obj_data = scope;
 	mt = OBJ;
 }
 
 Memory::Memory(SP_Lambda lambda) {
-	reference_count++;
+	reference_add++;
 	this->lambda = lambda;
 	this->mt = LAM;
 }
 
 Memory::Memory(VEC_Memory arr_data) {
-	reference_count++;
+	reference_add++;
 	this->arr_data = arr_data;
 	this->mt = ARR;
 }
@@ -101,7 +105,7 @@ SP_Memory Memory::makeScope(const SP_Scope &parent) {
 }
 
 Memory::Memory(const String &s) {
-	reference_count++;
+	reference_add++;
 	for (auto &c : s){
 		this->arr_data.push_back(new_memory(CHA, c));
 		this->arr_data.back()->setStatic(true);
@@ -746,12 +750,15 @@ MemType Memory::getType() {
 	return this->mt;
 }
 
-long Memory::reference_count = 0;
+long Memory::reference_add = 0;
+long Memory::reference_del = 0;
 
 Memory::~Memory() {
-	reference_count--;
+	reference_del++;
 	this->arr_data.clear();
 	this->reference = nullptr;
+	if (this->lambda != nullptr)
+		this->lambda->parent = nullptr;
 	this->lambda = nullptr;
 	this->obj_data = nullptr;
 }

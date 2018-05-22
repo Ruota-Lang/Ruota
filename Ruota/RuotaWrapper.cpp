@@ -322,3 +322,8 @@ SP_Memory RuotaWrapper::runLine(String line) {
 	this->interpreter->generate(line , main_scope, "\\");
 	return this->interpreter->execute(main_scope);
 }
+
+RuotaWrapper::~RuotaWrapper() {
+	delete this->interpreter;
+	this->main_scope = nullptr;
+}

@@ -2,6 +2,8 @@
 #include <cmath>
 #include "Ruota/Ruota.h"
 
+#define DEBUG
+
 const char * console_compiled = {
 	#include "Console.ruo"
 };
@@ -117,7 +119,7 @@ int checkClosed(String s) {
 int console(){
 	String line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.9.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.9.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -150,10 +152,10 @@ int console(){
 					std::cout << "\t" << res->getArray()[0]->toString() << std::endl;
 				}
 				#ifdef DEBUG
-				std::cout << "MEM:\t" << Memory::reference_count << std::endl;
-				std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
-				std::cout << "NOD:\t" << Node::reference_count << std::endl;
-				std::cout << "SCO:\t" << Scope::reference_count << std::endl;
+				std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << std::endl;
+				std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << std::endl;
+				std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << std::endl;
+				std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << std::endl;
 				#endif
 			}
 			catch (const std::runtime_error &e) {
@@ -212,10 +214,10 @@ int main(int argc, char * argv[]) {
 	delete rw;
 
 	#ifdef DEBUG
-	std::cout << "MEM:\t" << Memory::reference_count << std::endl;
-	std::cout << "LAM:\t" << Lambda::reference_count << std::endl;
-	std::cout << "NOD:\t" << Node::reference_count << std::endl;
-	std::cout << "SCO:\t" << Scope::reference_count << std::endl;
+	std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << std::endl;
+	std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << std::endl;
+	std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << std::endl;
+	std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << std::endl;
 	#endif
 
 	setColor(7);

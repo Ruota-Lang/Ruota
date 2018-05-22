@@ -737,7 +737,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 			auto mainOfScope = new_node(LIST, new_list);
 			current->main = mainOfScope;
 			stack.push_back(new_node(current));
-			current = current->parent;
+			current = (std::shared_ptr<Scope>)current->parent;
 		}
 		else {
 			stack.push_back(new_node(token));

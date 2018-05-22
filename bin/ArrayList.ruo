@@ -3,10 +3,14 @@ load "List";
 dynamic ArrayList :: List +> {
 	contents := [];
 
-	add(&e) => v from {
-		contents push e;
-		v &= e;
-	};
+	add(&e, pos = null) => v from {
+		pos != null then {
+			contents = contents[0:pos] ++ [ e ] ++ contents[pos:>end];
+		} else {
+			contents push e;
+		};
+ 		v &= e;
+ 	};
 
 	index(pos) => e from {
 		e &= contents[pos];

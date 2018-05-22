@@ -2,8 +2,6 @@
 #include <cmath>
 #include "Ruota/Ruota.h"
 
-#define DEBUG
-
 const char * console_compiled = {
 	#include "Console.ruo"
 };

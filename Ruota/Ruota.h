@@ -93,7 +93,8 @@ enum NodeType {
 	OUT_CALL,	// _OUTER_CALL_
 	NEW,		// new
 	LOCAL,		// local
-	STRUCT,		// struct
+	STRUCT,		// dynamic
+	SET_VIR,	// virtual
 	THREAD,		// thread()
 	DETACH,		// detach
 	VALUE,		// val
@@ -114,6 +115,13 @@ enum NodeType {
 	RETURN		// return
 };
 
+enum ObjectMode {
+	UNDEF,
+	DYNAMIC,
+	STATIC,
+	VIRTUAL
+};
+
 enum MemType {
 	BREAK_M,
 	RETURN_M,
@@ -131,7 +139,6 @@ enum MemType {
 };
 
 
-typedef	std::string				String;
 typedef	std::shared_ptr<Memory>	SP_Memory;
 typedef	std::shared_ptr<Node>	SP_Node;
 typedef	std::shared_ptr<Scope>	SP_Scope;
@@ -139,7 +146,6 @@ typedef	std::shared_ptr<Lambda>	SP_Lambda;
 
 typedef	std::vector<SP_Memory>	VEC_Memory;
 typedef	std::vector<SP_Node>	VEC_Node;
-typedef	std::vector<String>		VEC_String;
 
 #define	new_memory	std::make_shared<Memory>
 #define	new_node	std::make_shared<Node>
@@ -157,8 +163,7 @@ private:
 	SP_Scope	obj_data;
 	SP_Lambda	lambda;
 	SP_Memory	reference;
-	bool		static_object = false;
-	bool		struct_object = false;
+	ObjectMode	om = UNDEF;
 	bool		local_var = false;
 	void *		ptr_data = NULL;
 public:	
@@ -166,7 +171,7 @@ public:
 	static long	reference_del;
 	Memory();
 	~Memory();
-	Memory(const String&);
+	Memory(const std::string&);
 	Memory(MemType, const long double&);
 	Memory(SP_Scope);
 	Memory(SP_Lambda);
@@ -184,19 +189,17 @@ public:
 	SP_Memory 	eless(const SP_Memory&);
 	SP_Memory 	emore(const SP_Memory&);
 	bool 		equals(const SP_Memory&);
-	bool 		isStatic();
-	bool 		isStruct();
+	ObjectMode	getObjectMode();
 	bool 		isLocal();
 	SP_Memory	set(const SP_Memory&);
 	long double	getValue();
 	SP_Memory	index(const SP_Memory&);
-	SP_Memory	index(const String&);
-	SP_Memory	setStatic(const bool&);
+	SP_Memory	index(const std::string&);
+	SP_Memory	setObjectMode(const ObjectMode&);
 	SP_Memory	setLocal(const bool&);
-	SP_Memory	setStruct(const bool&);
 	SP_Memory	setArray(VEC_Memory);
 	SP_Memory	setValue(const long double&);
-	String		toString();
+	std::string		toString();
 	SP_Memory	clone(const SP_Scope&);
 	SP_Lambda	getLambda();
 	SP_Scope	getScope();
@@ -221,19 +224,19 @@ struct Node : std::enable_shared_from_this<Node> {
 	NodeType 	nt;
 	SP_Scope 	scope_ref = nullptr;
 	SP_Memory 	mem_data = nullptr;
-	String		key;
+	std::string		key;
 	std::unordered_map<long double, SP_Node> switch_values;
 	int			flag = 0;
 
 	Node(SP_Scope);
 	Node(long double);
 	Node(SP_Node, std::unordered_map<long double, SP_Node>);
-	Node(String);
+	Node(std::string);
 	Node(NodeType, VEC_Node);
 	Node(SP_Memory);
 	~Node();
 
-	String		toString();
+	std::string		toString();
 	SP_Memory	execute(const SP_Scope&);
 	SP_Node		clone(const SP_Scope&);
 	void		weakListCheck();
@@ -245,11 +248,11 @@ struct Lambda : std::enable_shared_from_this<Lambda> {
 	static long	reference_del;
 	SP_Node		base = nullptr;
 	SP_Scope	parent = nullptr;
-	VEC_String	param_keys;
+	std::vector<std::string>	param_keys;
 	std::vector<int> param_types;
 	VEC_Memory	default_params;
 
-	Lambda(const SP_Scope&, const SP_Node&, VEC_String, std::vector<int>, VEC_Memory);
+	Lambda(const SP_Scope&, const SP_Node&, std::vector<std::string>, std::vector<int>, VEC_Memory);
 	~Lambda();
 	SP_Memory	execute(VEC_Memory);
 	SP_Lambda	clone(const SP_Scope&);
@@ -260,17 +263,17 @@ struct Scope : std::enable_shared_from_this<Scope> {
 	static long	reference_del;
 	SP_Scope	parent = nullptr;
 	SP_Node		main = nullptr;
-	std::unordered_map<String, SP_Memory> variables;
+	std::unordered_map<std::string, SP_Memory> variables;
 
 	Scope(SP_Scope);
 	Scope(SP_Scope, SP_Node);
 	~Scope();
 
 	SP_Memory	execute();
-	SP_Memory	getVariable(String);
-	SP_Memory	declareVariable(String);
+	SP_Memory	getVariable(std::string);
+	SP_Memory	declareVariable(std::string);
 	SP_Scope	clone(SP_Scope);
-	String		toString();
+	std::string		toString();
 };
 
 class Interpreter {
@@ -280,28 +283,28 @@ class Interpreter {
 	friend Memory;
 	friend RuotaWrapper;
 private:
-	String current_dir;
-	static std::unordered_map<String, VEC_Memory(*)(VEC_Memory)> embedded;
-	static std::unordered_map<String, int> operators;
-	std::vector<String> LOADED;
-	Interpreter(String);
-	SP_Scope generate(String, SP_Scope, String);
+	std::string current_dir;
+	static std::unordered_map<std::string, VEC_Memory(*)(VEC_Memory)> embedded;
+	static std::unordered_map<std::string, int> operators;
+	std::vector<std::string> LOADED;
+	Interpreter(std::string);
+	SP_Scope generate(std::string, SP_Scope, std::string);
 	SP_Memory execute(SP_Scope);
-	static void throwError(String errorMessage, String errorLine);
+	static void throwError(std::string errorMessage, std::string errorLine);
 public:	
-	static String path;
-	static String curr_file;
-	static void addEmbed(String, VEC_Memory(*e)(VEC_Memory));
+	static std::string path;
+	static std::string curr_file;
+	static void addEmbed(std::string, VEC_Memory(*e)(VEC_Memory));
 };
 
 class RuotaWrapper {
 private:
 	Interpreter * interpreter;
 	SP_Scope main_scope;
-	String current_dir;
+	std::string current_dir;
 public:
-	RuotaWrapper(String);
-	SP_Memory runLine(String);
+	RuotaWrapper(std::string);
+	SP_Memory runLine(std::string);
 	~RuotaWrapper();
 };
 

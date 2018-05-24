@@ -1,9 +1,9 @@
 #include "Ruota.h"
 
-String Interpreter::path = "\\";
-String Interpreter::curr_file = "";
+std::string Interpreter::path = "\\";
+std::string Interpreter::curr_file = "";
 
-std::unordered_map<String, int> Interpreter::operators = {
+std::unordered_map<std::string, int> Interpreter::operators = {
 	{ "load", 999 },
 	{ ".index", 13 },
 	{ ".exec", 13 },
@@ -14,6 +14,7 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ "struct", 12 },
 	{ "static", 14 },
 	{ "dynamic", 14 },
+	{ "virtual", 14 },
 	{ "var", -13 },
 	{ "local", -1 },
 	{ "!", -13 },
@@ -103,20 +104,20 @@ std::unordered_map<String, int> Interpreter::operators = {
 	{ ";", 0 }
 };
 
-std::unordered_map<String, VEC_Memory(*)(VEC_Memory)> Interpreter::embedded = {};
+std::unordered_map<std::string, VEC_Memory(*)(VEC_Memory)> Interpreter::embedded = {};
 
-void Interpreter::addEmbed(String s, VEC_Memory(*e)(VEC_Memory)) {
+void Interpreter::addEmbed(std::string s, VEC_Memory(*e)(VEC_Memory)) {
 	embedded[s] = e;
 }
 
-Interpreter::Interpreter(String current_dir) {
+Interpreter::Interpreter(std::string current_dir) {
 	auto now = std::chrono::high_resolution_clock::now();
 	auto timeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 	srand(timeMillis);
 	this->current_dir = current_dir;
 }
 
-SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
+SP_Scope Interpreter::generate(std::string code, SP_Scope main, std::string local_file) {
 	Tokenizer * t = new Tokenizer(operators);
 	auto tokenized = t->tokenize(code);
 	auto tokens = t->infixToPostfix(tokenized);
@@ -128,35 +129,35 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 	for (auto &token : tokens) {
 		if (token == "," || token == ";") continue;
 		if (token == "load") {
-			String var_string = stack.back()->execute(current)->toString();
+			std::string var_string = stack.back()->execute(current)->toString();
 			if (var_string.back() == '*'){
-				VEC_String files;
-				String path = Interpreter::path.substr(1) + var_string;
+				std::vector<std::string> files;
+				std::string path = Interpreter::path.substr(1) + var_string;
 				path.pop_back();
 				for (auto &p : std::filesystem::directory_iterator(path)){
-					String file = p.path().string();
+					std::string file = p.path().string();
 					if (file.length() > 4 && file.compare(file.length() - 4, 4, ".ruo") == 0)
 						files.push_back(file);
 				}
 
 				for (auto &f : files) {
-					String filename_raw = f;
-					String path = local_file;
+					std::string filename_raw = f;
+					std::string path = local_file;
 					stack.pop_back();
-					String filename = "";
+					std::string filename = "";
 
 					//if (local_file == "") {
 						path += filename_raw;
 						while (path.back() != '\\' && path.back() != '/') {
-							filename = String(1, path.back()) + filename;
+							filename = std::string(1, path.back()) + filename;
 							path.pop_back();
 							if (path.empty()) break;
 						}
 					//}
 
 					if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
-						String content = "";
-						String line;
+						std::string content = "";
+						std::string line;
 						std::ifstream myfile(path.substr(1) + filename);
 						if (myfile.is_open()){
 							while (getline(myfile, line))
@@ -174,7 +175,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 						}
 						LOADED.push_back(filename);
 						Interpreter::path = path;
-						String old_file = Interpreter::curr_file;
+						std::string old_file = Interpreter::curr_file;
 						Interpreter::curr_file = filename;
 						auto gen = new_node(generate(content, current, path)->execute());
 						Interpreter::path = local_file;
@@ -186,23 +187,23 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					}
 				}
 			} else{
-				String filename_raw = var_string + ".ruo";
-				String path = local_file;
+				std::string filename_raw = var_string + ".ruo";
+				std::string path = local_file;
 				stack.pop_back();
-				String filename = "";
+				std::string filename = "";
 
 				//if (local_file == "") {
 					path += filename_raw;
 					while (path.back() != '\\' && path.back() != '/') {
-						filename = String(1, path.back()) + filename;
+						filename = std::string(1, path.back()) + filename;
 						path.pop_back();
 						if (path.empty()) break;
 					}
 				//}
 
 				if (std::find(LOADED.begin(), LOADED.end(), filename) == LOADED.end()) {
-					String content = "";
-					String line;
+					std::string content = "";
+					std::string line;
 					std::ifstream myfile(path.substr(1) + filename);
 					if (myfile.is_open()){
 						while (getline(myfile, line))
@@ -220,7 +221,7 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					}
 					LOADED.push_back(filename);
 					Interpreter::path = path;
-					String old_file = Interpreter::curr_file;
+					std::string old_file = Interpreter::curr_file;
 					Interpreter::curr_file = filename;
 					auto gen = new_node(generate(content, current, path)->execute());
 					Interpreter::path = local_file;
@@ -371,6 +372,12 @@ SP_Scope Interpreter::generate(String code, SP_Scope main, String local_file) {
 					stack.push_back(a);
 				stack.push_back(new_node(b->key));
 				stack.back()->nt = STRUCT;
+			}
+			else if (token == "virtual") {
+				if (a != nullptr)
+					stack.push_back(a);
+				stack.push_back(new_node(b->key));
+				stack.back()->nt = SET_VIR;
 			}
 			else if (token == "struct") {
 				if (a != nullptr)
@@ -753,7 +760,7 @@ SP_Memory Interpreter::execute(SP_Scope main) {
 	return main->execute();
 }
 
-void Interpreter::throwError(String errorMessage, String errorLine){
+void Interpreter::throwError(std::string errorMessage, std::string errorLine){
 	while (errorLine[0] == '(' && errorLine.back() == ')')
 		errorLine = errorLine.substr(1, errorLine.size() - 2);
 	throw std::runtime_error(errorMessage + "\n\t" + errorLine + "\n\tFile: " + Interpreter::curr_file);

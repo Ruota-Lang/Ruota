@@ -21,7 +21,7 @@ Node::Node(NodeType nt, VEC_Node params) {
 	this->nt = nt;
 }
 
-Node::Node(String key) {
+Node::Node(std::string key) {
 	this->reference_add++;
 	this->key = key;
 	this->nt = VAR;
@@ -72,11 +72,15 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 	case VAR:		return scope->getVariable(key);
 	case SET_STAT:	{
 		temp1 = scope->declareVariable(key);
-		return temp1->setStatic(true);
+		return temp1->setObjectMode(STATIC);
 	}
 	case STRUCT:	{
 		temp1 = scope->declareVariable(key);
-		return temp1->setStruct(true);
+		return temp1->setObjectMode(DYNAMIC);
+	}
+	case SET_VIR:	{
+		temp1 = scope->declareVariable(key);
+		return temp1->setObjectMode(VIRTUAL);
 	}
 	case REF_SET:	return executed[0]->refer(executed[1]);
 	case SET:		{
@@ -251,7 +255,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 	case OR:		return new_memory(NUM, executed[0]->getValue() || executed[1]->getValue());
 	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());
 	case OUT_CALL:	{
-		String fname = executed[0]->toString();
+		std::string fname = executed[0]->toString();
 		std::reverse(executed.begin(), executed.end());
 		executed.pop_back();
 		std::reverse(executed.begin(), executed.end());
@@ -332,11 +336,11 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 		if (executed[0]->getType() != ARR)
 			return new_memory(executed[0]->toString());
 		else {
-			String s = "";
+			std::string s = "";
 			for (auto &v : executed[0]->getArray()){
 				if (v->getType() != CHA && v->getType() != NUM)
 					Interpreter::throwError("Error: Cannot convert multidimensional array to a string!", toString());
-				s += String(1,v->getValue());
+				s += std::string(1,v->getValue());
 			}
 			return new_memory(s);
 		}
@@ -371,7 +375,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 		}
 	case INDEX_OBJ:
 		temp1 = params[0]->execute(scope);
-		if (temp1->isStruct())
+		if (temp1->getObjectMode() == DYNAMIC)
 			Interpreter::throwError("Error: Cannot index properties of template object!", toString());
 		if (temp1->getScope() == nullptr)
 			temp1->makeScope(scope);
@@ -412,7 +416,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 		if (params[0]->nt == EXEC){
 			auto var = new_memory();
 			executed.push_back(params[0]->params[0]->execute(scope));
-			if (executed[0]->isStatic())
+			if (executed[0]->getObjectMode() != DYNAMIC)
 				Interpreter::throwError("Error: cannot instantiate a static object!", toString());
 			if (executed[0]->getScope() == nullptr)
 				Interpreter::throwError("Error: object template does not exist!", toString());
@@ -425,7 +429,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 		}else{
 			executed.push_back(params[0]->execute(scope));
 			auto var = new_memory();
-			if (executed[0]->isStatic())
+			if (executed[0]->getObjectMode() != DYNAMIC)
 				Interpreter::throwError("Error: cannot instantiate a static object!", toString());
 			if (executed[0]->getScope() == nullptr)
 				Interpreter::throwError("Error: object template does not exist!", toString());
@@ -454,7 +458,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 		return new_memory(new_array);
 	}
 	case DES: {
-		VEC_String param_keys;
+		std::vector<std::string> param_keys;
 		std::vector<int> param_types;
 		VEC_Memory default_params;
 		for (auto &n : params[0]->params){
@@ -471,7 +475,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 		return new_memory(new_lambda(scope, params[1], param_keys, param_types, default_params));
 	}
 	case LDES: {
-		VEC_String param_keys;
+		std::vector<std::string> param_keys;
 		std::vector<int> param_types;
 		VEC_Memory default_params;
 		for (auto &n : params[0]->params[1]->params){
@@ -511,7 +515,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 				Interpreter::throwError("Error: Cannot iterate over non-iterable value!", toString());
 
 			if (params[0]->params[0]->nt == VAR){
-				String iter_key = params[0]->params[0]->key;
+				std::string iter_key = params[0]->params[0]->key;
 				SP_Scope inner_scope = new_scope(scope);
 				for (auto &m : iter_arr->getArray()) {
 					inner_scope->main = params[1]->clone(inner_scope);
@@ -522,7 +526,7 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 					if (v->getType() == BREAK_M) break;
 				}
 			}else {
-				std::vector<String> iter_keys;
+				std::vector<std::string> iter_keys;
 				for (auto &v : params[0]->params[0]->params)
 					iter_keys.push_back(v->key);
 				VEC_Memory iter_values = iter_arr->getArray();
@@ -714,7 +718,7 @@ SP_Node Node::clone(const SP_Scope &scope) {
 	return nn;
 }
 
-String Node::toString() {
+std::string Node::toString() {
 	switch(nt){
 		case VAR:		return key;
 		case MEM: 		return mem_data->toString();
@@ -772,13 +776,13 @@ String Node::toString() {
 		case RETURN:	return "return";
 		case BREAK:		return "break";
 		case LIST:{
-			String s = "[ ";
+			std::string s = "[ ";
 			for (auto &p : params)
 				s += p->toString() + " ";
 			return s + "]";
 		}
 		case SOFT_LIST:{
-			String s = "( ";
+			std::string s = "( ";
 			for (auto &p : params)
 				s += p->toString() + " ";
 			return s + ")";

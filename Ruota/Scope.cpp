@@ -36,12 +36,12 @@ SP_Scope Scope::clone(SP_Scope parent) {
 	return scope;
 }
 
-SP_Memory Scope::declareVariable(String key) {
+SP_Memory Scope::declareVariable(std::string key) {
 	this->variables[key] = new_memory();
 	return this->variables[key];
 }
 
-SP_Memory Scope::getVariable(String key) {
+SP_Memory Scope::getVariable(std::string key) {
 	SP_Scope current = to_this_ptr;
 
 	while (current != nullptr) {
@@ -58,6 +58,6 @@ SP_Memory Scope::getVariable(String key) {
 	return current->variables[key];
 }
 
-String Scope::toString(){
+std::string Scope::toString(){
 	return "{ " + main->toString() + " }";
 }

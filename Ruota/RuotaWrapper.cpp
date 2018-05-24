@@ -33,7 +33,7 @@ std::vector<SP_Memory> __floor(std::vector<SP_Memory> args) {
 }
 
 std::vector<SP_Memory> __file_open(std::vector<SP_Memory> args) {
-	String fname = Interpreter::path.substr(1) + args[0]->toString();
+	std::string fname = Interpreter::path.substr(1) + args[0]->toString();
 	while (fname[0] == '\\') fname = fname.substr(1);
 	std::ifstream *file = new std::ifstream(fname);
 	if (!file->is_open()){
@@ -43,7 +43,7 @@ std::vector<SP_Memory> __file_open(std::vector<SP_Memory> args) {
 }
 
 std::vector<SP_Memory> __filew_open(std::vector<SP_Memory> args) {
-	String fname = Interpreter::path.substr(1) + args[0]->toString();
+	std::string fname = Interpreter::path.substr(1) + args[0]->toString();
 	while (fname[0] == '\\') fname = fname.substr(1);
 	std::ofstream *file = new std::ofstream(fname, args[1]->getValue() == 'a' ? std::ofstream::app : std::ofstream::out);
 	if (!file->is_open()){
@@ -97,7 +97,7 @@ std::vector<SP_Memory> __milli(std::vector<SP_Memory> args) {
 }
 
 std::vector<SP_Memory> __regex_search(std::vector<SP_Memory> args) {
-	String s = args[0]->toString();
+	std::string s = args[0]->toString();
 	std::regex e(args[1]->toString());
 	std::smatch m;
 	VEC_Memory ret;
@@ -113,8 +113,8 @@ std::vector<SP_Memory> __regex_search(std::vector<SP_Memory> args) {
 }
 
 std::vector<SP_Memory> __regex_replace(std::vector<SP_Memory> args) {
-	String s = args[0]->toString();
-	String r = args[1]->toString();
+	std::string s = args[0]->toString();
+	std::string r = args[1]->toString();
 	std::regex e(args[2]->toString());
 	std::string result;
 	std::regex_replace(std::back_inserter(result), s.begin(), s.end(), e, r);
@@ -123,9 +123,9 @@ std::vector<SP_Memory> __regex_replace(std::vector<SP_Memory> args) {
 
 std::vector<SP_Memory> __filesystem_listdir(std::vector<SP_Memory> args) {
 	VEC_Memory list;
-	String path = Interpreter::path.substr(1) + args[0]->toString();
+	std::string path = Interpreter::path.substr(1) + args[0]->toString();
 	for (auto &p : std::filesystem::directory_iterator(path)){
-		String file = p.path().string().substr(path.length());
+		std::string file = p.path().string().substr(path.length());
 		while (file[0] == '\\' || file[0] == '/')
 			file = file.substr(1);
 		list.push_back(new_memory(file));
@@ -146,15 +146,15 @@ std::vector<SP_Memory> __filesystem_exists(std::vector<SP_Memory> args) {
 }
 
 std::vector<SP_Memory> __filesystem_copy(std::vector<SP_Memory> args) {
-	String origin = Interpreter::path.substr(1) + args[0]->toString();
-	String path = Interpreter::path.substr(1) + args[1]->toString();
+	std::string origin = Interpreter::path.substr(1) + args[0]->toString();
+	std::string path = Interpreter::path.substr(1) + args[1]->toString();
 	std::filesystem::copy(origin, path);
 	return {new_memory()};
 }
 
 std::vector<SP_Memory> __filesystem_rename(std::vector<SP_Memory> args) {
-	String origin = Interpreter::path.substr(1) + args[0]->toString();
-	String path = Interpreter::path.substr(1) + args[1]->toString();
+	std::string origin = Interpreter::path.substr(1) + args[0]->toString();
+	std::string path = Interpreter::path.substr(1) + args[1]->toString();
 	std::filesystem::rename(origin, path);
 	return {new_memory()};
 }
@@ -268,7 +268,7 @@ std::vector<SP_Memory> __winsock_shutdown(std::vector<SP_Memory> args) {
 }
 #endif
 
-RuotaWrapper::RuotaWrapper(String current_dir){
+RuotaWrapper::RuotaWrapper(std::string current_dir){
 	Interpreter::addEmbed("error", &__error);
 	Interpreter::addEmbed("console.system", &__system);
 	Interpreter::addEmbed("console.getenv", &__getenv);
@@ -318,7 +318,7 @@ RuotaWrapper::RuotaWrapper(String current_dir){
 }
 
 
-SP_Memory RuotaWrapper::runLine(String line) {
+SP_Memory RuotaWrapper::runLine(std::string line) {
 	this->interpreter->generate(line , main_scope, "\\");
 	return this->interpreter->execute(main_scope);
 }

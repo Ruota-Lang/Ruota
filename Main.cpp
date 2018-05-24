@@ -43,14 +43,14 @@ VEC_Memory __color(VEC_Memory args) {
 }
 
 VEC_Memory __input_str(VEC_Memory args) {
-	String d;
+	std::string d;
 	std::cin >> d;
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	return { new_memory(d) };
 }
 
 VEC_Memory __input_line(VEC_Memory args) {
-	String d;
+	std::string d;
 	std::getline(std::cin, d);
 	return { new_memory(d) };
 }
@@ -68,7 +68,7 @@ VEC_Memory __key_down(VEC_Memory args) {
 
 RuotaWrapper * rw;
 
-int checkClosed(String s) {
+int checkClosed(std::string s) {
 	int p_count = 0;
 	int b_count = 0;
 	int c_count = 0;
@@ -115,9 +115,9 @@ int checkClosed(String s) {
 }
 
 int console(){
-	String line;
+	std::string line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.9.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.10.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -126,7 +126,7 @@ int console(){
 			setColor(7);
 			std::getline(std::cin, line);
 
-			String curr_line = "";
+			std::string curr_line = "";
 			while (checkClosed(line) == 0) {
 				setColor(12);
 				std::cout << ">> ";
@@ -197,11 +197,11 @@ int main(int argc, char * argv[]) {
 	if (argc >= 2) {
 		std::string var = "[ ";
 		for (int i = 2; i < argc; i++)
-			var += "\"" + String(argv[i]) + "\" ";
+			var += "\"" + std::string(argv[i]) + "\" ";
 		var += "]";
 		try {
 			rw->runLine("args := " + var + ";");
-			rw->runLine("load \"" + String(argv[1]) + "\";");
+			rw->runLine("load \"" + std::string(argv[1]) + "\";");
 		} catch (std::runtime_error &e) {
 			setColor(12);
 			std::cout << "\t" << e.what() << std::endl;

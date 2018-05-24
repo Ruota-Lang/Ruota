@@ -1,4 +1,4 @@
-dynamic List :: {
+virtual List :: {
 	toArray() => { self[0 : len self] };
 	iterator() => { toArray() };
 	equals(&l) => b from {

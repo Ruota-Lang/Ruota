@@ -55,14 +55,9 @@ Memory::Memory(VEC_Memory arr_data) {
 	this->mt = ARR;
 }
 
-bool Memory::isStatic() {
-	if (mt == REF) 	return reference->isStatic();
-	return this->static_object;
-}
-
-bool Memory::isStruct() {
-	if (mt == REF) 	return reference->isStruct();
-	return this->struct_object;
+ObjectMode Memory::getObjectMode() {
+	if (mt == REF) 	return reference->getObjectMode();
+	return this->om;
 }
 
 bool Memory::isLocal() {
@@ -81,15 +76,9 @@ SP_Memory Memory::setType(const MemType &mt) {
 	return to_this_ptr;
 }
 
-SP_Memory Memory::setStatic(const bool &s) {
-	if (mt == REF)	reference->setStatic(s);
-	else			this->static_object = s;
-	return to_this_ptr;
-}
-
-SP_Memory Memory::setStruct(const bool &s) {
-	if (mt == REF) 	reference->setStruct(s);
-	else			this->struct_object = s;
+SP_Memory Memory::setObjectMode(const ObjectMode &om) {
+	if (mt == REF)	reference->setObjectMode(om);
+	else			this->om = om;
 	return to_this_ptr;
 }
 
@@ -104,11 +93,11 @@ SP_Memory Memory::makeScope(const SP_Scope &parent) {
 	return to_this_ptr;
 }
 
-Memory::Memory(const String &s) {
+Memory::Memory(const std::string &s) {
 	reference_add++;
 	for (auto &c : s){
 		this->arr_data.push_back(new_memory(CHA, c));
-		this->arr_data.back()->setStatic(true);
+		this->arr_data.back()->setObjectMode(STATIC);
 	}
 	this->mt = STR;
 }
@@ -237,6 +226,7 @@ SP_Memory Memory::clone(const SP_Scope &parent) {
 	case OBJ: {
 		auto temp = new_memory();
 		temp->mt = OBJ;
+		temp->om = this->om;
 		temp->obj_data = obj_data->clone(parent);
 		temp->obj_data->variables["self"] = to_this_ptr;
 		m = temp;
@@ -297,7 +287,7 @@ SP_Memory Memory::set(const SP_Memory &m) {
 		return this->set(m->reference);
 	}
 
-	if (isStatic() && mt == CHA){
+	if (om == STATIC && mt == CHA){
 		try {
 		this->char_data = (char)m->getValue();
 		} catch (...){
@@ -332,7 +322,7 @@ SP_Memory Memory::set(const SP_Memory &m) {
 				if (temp->getType() != CHA)
 					this->mt = ARR;
 				else
-					temp->setStatic(true);
+					temp->setObjectMode(STATIC);
 				this->arr_data.push_back(temp);
 			}
 		}else {
@@ -355,6 +345,7 @@ SP_Memory Memory::set(const SP_Memory &m) {
 		}
 		break;
 	case OBJ:
+		this->om = m->om;
 		this->obj_data = m->obj_data;
 		break;
 	case LAM:
@@ -681,7 +672,7 @@ void * Memory::getPointer() {
 	return this->ptr_data;
 }
 
-String Memory::toString() {
+std::string Memory::toString() {
 	switch (this->mt)
 	{
 	case PTR:
@@ -691,7 +682,7 @@ String Memory::toString() {
 	case CHA:
 		return std::string(1, char_data);
 	case NUM: {
-		String s = std::to_string(data);
+		std::string s = std::to_string(data);
 		while (s.back() == '0')
 			s.pop_back();
 		if (s.back() == '.')
@@ -699,14 +690,14 @@ String Memory::toString() {
 		return s;
 	}
 	case STR: {
-		String s = "";
+		std::string s = "";
 		for (auto &m : arr_data) {
 			s.push_back(m->getValue());
 		}
 		return s;
 	}
 	case ARR:{
-		String s = "[ ";
+		std::string s = "[ ";
 		for (auto &m : arr_data) {
 			if (m->getType() == CHA)
 				s += "'" + m->toString() + "' ";
@@ -718,7 +709,7 @@ String Memory::toString() {
 		return s + "]";
 	}
 	case LAM: {
-		String s = "(";
+		std::string s = "(";
 		for (int i = 0; i < lambda->param_keys.size(); i++){
 			s += " ";
 			if (lambda->param_types[i] == 1) 
@@ -729,7 +720,7 @@ String Memory::toString() {
 		return s;
 	}
 	case OBJ: {
-		if (!struct_object && obj_data->variables.find("string") != obj_data->variables.end()) {
+		if (om != VIRTUAL && om != DYNAMIC && obj_data->variables.find("string") != obj_data->variables.end()) {
 			auto l = obj_data->variables["string"]->getLambda();
 			if (l != nullptr) {
 				return l->execute({})->toString();

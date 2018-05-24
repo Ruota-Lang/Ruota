@@ -1,0 +1,7 @@
+ordinal(n) => o from {
+	s := str n;
+	o = s .. (s == "11" ||s == "12" || s == "13" then "th" else
+	s[end] switch {	'1' >> "st", '2' >> "nd", '3' >> "rd" } >> "th");
+};
+
+len args == 1 then printl(ordinal(args[0]));

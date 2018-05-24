@@ -3,7 +3,8 @@
 load "List";
 
 dynamic LinkedList :: List +> {
-	var head;
+	head := null;
+	length := 0;
 
 	# Adds element to list
 	add(&e, pos = null) => v from {
@@ -15,12 +16,15 @@ dynamic LinkedList :: List +> {
 			curr.next != null && (pos != null then i < pos else true) do { 
 				curr = curr.next
 			};
+			curr.next = new Link(e);
 		};
+		length += 1;
 		v &= e;
 	};
 
 	# Retrieves mutable element from list
 	index(pos) => e from {
+		pos < 0 || pos >= length then throw("LinkedList: index out of bounds!");
 		e = null;
 		curr := head;
 		[1 :> pos] ->> {curr = curr.next};
@@ -29,6 +33,7 @@ dynamic LinkedList :: List +> {
 
 	# Removes element from list
 	remove(pos) => {
+		pos < 0 || pos >= length then throw("LinkedList: index out of bounds!");
 		curr := head;
 		prev := null;
 		[0 : pos] ->> {
@@ -37,17 +42,11 @@ dynamic LinkedList :: List +> {
 		};
 		prev == null then head = curr.next;
 		prev.next = curr.next;
+		length -= 1;
 	};
 
 	# Retrieves length of the list
-	size() => s from {
-		s = 0;
-		curr := head;
-		curr != null do {
-			curr = curr.next;
-			s += 1;
-		};
-	};
+	size() => { self.length };
 
 	dynamic Link :: {
 		value := null;

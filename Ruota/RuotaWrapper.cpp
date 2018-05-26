@@ -313,8 +313,10 @@ RuotaWrapper::RuotaWrapper(std::string current_dir){
 	}
 	this->interpreter = new Interpreter(this->current_dir);
 	main_scope = new_scope(nullptr);
+	#ifndef DEBUG
 	this->interpreter->generate(os_compiled, main_scope, "\\");
 	this->interpreter->execute(main_scope);
+	#endif
 }
 
 

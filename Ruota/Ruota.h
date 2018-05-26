@@ -211,6 +211,7 @@ public:
 	SP_Memory	shift();
 	SP_Memory	push(SP_Memory&);
 	SP_Memory	unshift(SP_Memory&);
+	SP_Memory	eraseLambda();
 	VEC_Memory	getArray();
 	MemType		getType();
 	void		clear();

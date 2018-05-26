@@ -7,7 +7,8 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 	SP_Scope scope = new_scope(parent);
 	auto new_base = base->clone(scope);
 	scope->main = new_base;
-	scope->variables["idem"] = new_memory(to_this_ptr);
+	auto idem = scope->declareVariable("idem");
+	idem->set(new_memory(to_this_ptr));
 
 	for (size_t i = 0; i < param_keys.size(); i++) {
 		SP_Memory temp = scope->declareVariable(param_keys[i]);
@@ -22,6 +23,7 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 	}
 
 	auto temp = scope->execute();
+	idem->eraseLambda();
 	if (temp->getType() == RETURN_M)
 		return new_memory();
 	else

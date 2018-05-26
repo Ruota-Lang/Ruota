@@ -25,12 +25,8 @@ Memory::Memory(void * ptr_data) {
 }
 
 void Memory::clear() {
-	if (obj_data != nullptr)
-		obj_data->parent = nullptr;
 	obj_data = nullptr;
 	reference = nullptr;
-	if (lambda != nullptr)
-		lambda->parent = nullptr;
 	lambda = nullptr;
 	data = 0;
 	char_data = 0;
@@ -741,6 +737,13 @@ MemType Memory::getType() {
 	return this->mt;
 }
 
+
+SP_Memory Memory::eraseLambda() {
+	this->clear();
+	this->mt = NUL;
+	return to_this_ptr;
+}
+
 long Memory::reference_add = 0;
 long Memory::reference_del = 0;
 
@@ -748,8 +751,6 @@ Memory::~Memory() {
 	reference_del++;
 	this->arr_data.clear();
 	this->reference = nullptr;
-	if (this->lambda != nullptr)
-		this->lambda->parent = nullptr;
 	this->lambda = nullptr;
 	this->obj_data = nullptr;
 }

@@ -42,8 +42,8 @@ Node::Node(SP_Scope scope_ref) {
 
 Node::~Node(){
 	this->reference_del++;
-	this->scope_ref.reset();
-	this->mem_data.reset();
+	this->scope_ref = nullptr;
+	this->mem_data = nullptr;
 	this->params.clear();
 	this->switch_values.clear();
 }

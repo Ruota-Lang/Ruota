@@ -17,6 +17,7 @@ Scope::Scope(SP_Scope parent, SP_Node main) {
 Scope::~Scope(){
 	this->reference_del++;
 	this->main = nullptr;
+	this->parent = nullptr;
 	this->variables.clear();
 }
 

@@ -43,6 +43,7 @@ print(x) => { _OUTER_CALL_("console.print", x) };
 printat(x, y, s) => { _OUTER_CALL_("console.printat", num y, num x, s) };
 printl(x) => { print(x .. "\n") };
 newl() => { printl("") };
+size() => { _OUTER_CALL_("console.size") };
 
 static Input :: {
 	number() => { num string() };

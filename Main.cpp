@@ -24,6 +24,23 @@ void printToCoordinates(int x, int y, const std::string& text){
 	printf("\033[%d;%dH%s\n", x, y, text.c_str());
 }
 
+std::pair<int, int> getConsoleSize() {
+    int columns, rows;
+#ifdef _WIN32
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+#else
+	struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+	columns = w.ws_col;
+	rows = w.ws_row;
+#endif
+	return { columns, rows };
+}
+
 VEC_Memory __print(VEC_Memory args) {
 	std::cout << args[0]->toString();
 	return { new_memory() };
@@ -64,6 +81,11 @@ VEC_Memory __key_down(VEC_Memory args) {
 	#else
 		return { new_memory(NUM, 0) };
 	#endif
+}
+
+VEC_Memory __console_size(VEC_Memory args) {
+	auto size = getConsoleSize();
+	return { new_memory(NUM, size.first), new_memory(NUM, size.second) };
 }
 
 RuotaWrapper * rw;
@@ -116,8 +138,10 @@ int checkClosed(std::string s) {
 
 int console(){
 	std::string line;
+	#ifndef DEBUG
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.10.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	#endif
+	std::cout << "Ruota 0.10.10.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -150,10 +174,10 @@ int console(){
 					std::cout << "\t" << res->getArray()[0]->toString() << std::endl;
 				}
 				#ifdef DEBUG
-				std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << std::endl;
-				std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << std::endl;
-				std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << std::endl;
-				std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << std::endl;
+				std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << "\t" << Memory::reference_add - Memory::reference_del << std::endl;
+				std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << "\t" << Lambda::reference_add - Lambda::reference_del << std::endl;
+				std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << "\t" << Node::reference_add - Node::reference_del << std::endl;
+				std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << "\t" << Scope::reference_add - Scope::reference_del << std::endl;
 				#endif
 			}
 			catch (const std::runtime_error &e) {
@@ -192,7 +216,10 @@ int main(int argc, char * argv[]) {
 	Interpreter::addEmbed("console.input_line", &__input_line);
 	Interpreter::addEmbed("console.color", &__color);
 	Interpreter::addEmbed("console.key_down", &__key_down);
+	Interpreter::addEmbed("console.size", &__console_size);
+	#ifndef DEBUG
 	rw->runLine(console_compiled);
+	#endif
 
 	if (argc >= 2) {
 		std::string var = "[ ";
@@ -212,10 +239,10 @@ int main(int argc, char * argv[]) {
 	delete rw;
 
 	#ifdef DEBUG
-	std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << std::endl;
-	std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << std::endl;
-	std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << std::endl;
-	std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << std::endl;
+	std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << "\t" << Memory::reference_add - Memory::reference_del << std::endl;
+	std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << "\t" << Lambda::reference_add - Lambda::reference_del << std::endl;
+	std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << "\t" << Node::reference_add - Node::reference_del << std::endl;
+	std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << "\t" << Scope::reference_add - Scope::reference_del << std::endl;
 	#endif
 
 	setColor(7);

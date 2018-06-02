@@ -51,12 +51,12 @@ Memory::Memory(VEC_Memory arr_data) {
 	this->mt = ARR;
 }
 
-ObjectMode Memory::getObjectMode() {
+ObjectMode Memory::getObjectMode() const {
 	if (mt == REF) 	return reference->getObjectMode();
 	return this->om;
 }
 
-bool Memory::isLocal() {
+bool Memory::isLocal() const {
 	if (mt == REF) 	return reference->isLocal();
 	return this->local_var;
 }
@@ -122,7 +122,7 @@ SP_Memory Memory::unshift(SP_Memory &m) {
 	return to_this_ptr;
 }
 
-long double Memory::getValue() {
+long double Memory::getValue() const {
 	if (mt == REF)	return reference->getValue();
 	switch(mt){
 		case NUL:
@@ -201,7 +201,7 @@ SP_Memory Memory::index(const SP_Memory &m) {
 	}
 }
 
-SP_Memory Memory::clone(const SP_Scope &parent) {
+SP_Memory Memory::clone(const SP_Scope &parent) const {
 	SP_Memory m;
 	switch (mt)
 	{
@@ -224,7 +224,7 @@ SP_Memory Memory::clone(const SP_Scope &parent) {
 		temp->mt = OBJ;
 		temp->om = this->om;
 		temp->obj_data = obj_data->clone(parent);
-		temp->obj_data->variables["self"] = to_this_ptr;
+		temp->obj_data->variables["self"] = new_memory(obj_data);
 		m = temp;
 		break;
 	}
@@ -234,9 +234,9 @@ SP_Memory Memory::clone(const SP_Scope &parent) {
 	return m;
 }
 
-bool Memory::equals(const SP_Memory &a) {
+bool Memory::equals(const SP_Memory &a) const {
 	if (mt == REF)		return reference->equals(a);
-	if (a->mt == REF)	return a->reference->equals(to_this_ptr);
+	if (a->mt == REF)	return equals(a->reference);
 	if (mt != a->mt)	return false;
 
 	switch (a->mt)
@@ -363,7 +363,7 @@ SP_Memory Memory::setScope(const SP_Scope &scope) {
 	return to_this_ptr;
 }
 
-SP_Memory Memory::add(const SP_Memory &a) {
+SP_Memory Memory::add(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->add(a);
 
@@ -394,7 +394,7 @@ SP_Memory Memory::add(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::sub(const SP_Memory &a) {
+SP_Memory Memory::sub(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->sub(a);
 	switch (mt)
@@ -424,7 +424,7 @@ SP_Memory Memory::sub(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::mul(const SP_Memory &a) {
+SP_Memory Memory::mul(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->mul(a);
 	switch (mt)
@@ -454,7 +454,7 @@ SP_Memory Memory::mul(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::div(const SP_Memory &a) {
+SP_Memory Memory::div(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->div(a);
 	switch (mt)
@@ -484,7 +484,7 @@ SP_Memory Memory::div(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::mod(const SP_Memory &a) {
+SP_Memory Memory::mod(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->mod(a);
 	switch (mt)
@@ -514,7 +514,7 @@ SP_Memory Memory::mod(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::pow(const SP_Memory &a) {
+SP_Memory Memory::pow(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->pow(a);
 	switch (mt)
@@ -544,7 +544,7 @@ SP_Memory Memory::pow(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::less(const SP_Memory &a) {
+SP_Memory Memory::less(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->less(a);
 	switch (mt)
@@ -574,7 +574,7 @@ SP_Memory Memory::less(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::eless(const SP_Memory &a) {
+SP_Memory Memory::eless(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->eless(a);
 	switch (mt)
@@ -604,7 +604,7 @@ SP_Memory Memory::eless(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::more(const SP_Memory &a) {
+SP_Memory Memory::more(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->more(a);
 	switch (mt)
@@ -634,7 +634,7 @@ SP_Memory Memory::more(const SP_Memory &a) {
 	return nullptr;
 }
 
-SP_Memory Memory::emore(const SP_Memory &a) {
+SP_Memory Memory::emore(const SP_Memory &a) const {
 	if (mt == REF)
 		return reference->emore(a);
 	switch (mt)
@@ -668,7 +668,7 @@ void * Memory::getPointer() {
 	return this->ptr_data;
 }
 
-std::string Memory::toString() {
+const std::string Memory::toString() const {
 	switch (this->mt)
 	{
 	case PTR:
@@ -731,7 +731,7 @@ std::string Memory::toString() {
 	}
 }
 
-MemType Memory::getType() {
+MemType Memory::getType() const {
 	if (mt == REF)
 		return reference->getType();
 	return this->mt;

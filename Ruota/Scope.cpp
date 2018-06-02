@@ -25,7 +25,7 @@ SP_Memory Scope::execute() {
 	return main->execute(to_this_ptr);
 }
 
-SP_Scope Scope::clone(SP_Scope parent) {
+SP_Scope Scope::clone(SP_Scope parent) const {
 	SP_Scope scope;
 	if (main != nullptr)
 		scope = new_scope(parent, main->clone(parent));
@@ -59,6 +59,6 @@ SP_Memory Scope::getVariable(std::string key) {
 	return current->variables[key];
 }
 
-std::string Scope::toString(){
+const std::string Scope::toString() const {
 	return "{ " + main->toString() + " }";
 }

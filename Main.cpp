@@ -141,7 +141,7 @@ int console(){
 	#ifndef DEBUG
 	rw->runLine("args := [];");
 	#endif
-	std::cout << "Ruota 0.10.10.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.10.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {

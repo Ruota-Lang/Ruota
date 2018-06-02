@@ -30,7 +30,7 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 		return temp;
 }
 
-SP_Lambda Lambda::clone(const SP_Scope &parent) {
+SP_Lambda Lambda::clone(const SP_Scope &parent) const {
 	return new_lambda(parent, base->clone(parent), param_keys, param_types, default_params);
 }
 

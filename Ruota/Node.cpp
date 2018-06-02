@@ -48,10 +48,10 @@ Node::~Node(){
 	this->switch_values.clear();
 }
 
-SP_Memory Node::execute(const SP_Scope &scope) {
+SP_Memory Node::execute(const SP_Scope &scope) const {
 	VEC_Memory executed;
 	if (nt != INDEX && nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
-		for (SP_Node &n : params) {
+		for (const SP_Node &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
 				return e;
@@ -266,9 +266,9 @@ SP_Memory Node::execute(const SP_Scope &scope) {
 	case SWITCH:	{
 		executed.push_back(params[0]->execute(scope));
 		if (switch_values.find(executed[0]->getValue()) != switch_values.end())
-			temp1 = switch_values[executed[0]->getValue()]->execute(scope);
+			return switch_values.at(executed[0]->getValue())->execute(scope);
 		else if (params.size() > 1)
-			temp1 = params[1]->execute(scope);
+			return params[1]->execute(scope);
 		return temp1;
 	}
 	case POP_ARR:	{
@@ -697,7 +697,7 @@ void Node::threadWrapper(SP_Node n, SP_Scope s){
 	n->execute(s);
 }
 
-SP_Node Node::clone(const SP_Scope &scope) {
+SP_Node Node::clone(const SP_Scope &scope) const {
 	VEC_Node new_params;
 	for (auto &n : params)
 		new_params.push_back(n->clone(scope));
@@ -718,7 +718,7 @@ SP_Node Node::clone(const SP_Scope &scope) {
 	return nn;
 }
 
-std::string Node::toString() {
+const std::string Node::toString() const {
 	switch(nt){
 		case VAR:		return key;
 		case MEM: 		return mem_data->toString();

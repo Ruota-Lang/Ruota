@@ -178,29 +178,29 @@ public:
 	Memory(VEC_Memory);
 	Memory(void*);
 
-	SP_Memory 	add(const SP_Memory&);
-	SP_Memory 	sub(const SP_Memory&);
-	SP_Memory 	mul(const SP_Memory&);
-	SP_Memory 	div(const SP_Memory&);
-	SP_Memory 	mod(const SP_Memory&);
-	SP_Memory 	pow(const SP_Memory&);
-	SP_Memory 	less(const SP_Memory&);
-	SP_Memory 	more(const SP_Memory&);
-	SP_Memory 	eless(const SP_Memory&);
-	SP_Memory 	emore(const SP_Memory&);
-	bool 		equals(const SP_Memory&);
-	ObjectMode	getObjectMode();
-	bool 		isLocal();
+	SP_Memory 	add(const SP_Memory&) const;
+	SP_Memory 	sub(const SP_Memory&) const;
+	SP_Memory 	mul(const SP_Memory&) const;
+	SP_Memory 	div(const SP_Memory&) const;
+	SP_Memory 	mod(const SP_Memory&) const;
+	SP_Memory 	pow(const SP_Memory&) const;
+	SP_Memory 	less(const SP_Memory&) const;
+	SP_Memory 	more(const SP_Memory&) const;
+	SP_Memory 	eless(const SP_Memory&) const;
+	SP_Memory 	emore(const SP_Memory&) const;
+	bool 		equals(const SP_Memory&) const;
+	ObjectMode	getObjectMode() const;
+	bool 		isLocal() const;
 	SP_Memory	set(const SP_Memory&);
-	long double	getValue();
+	long double	getValue() const;
 	SP_Memory	index(const SP_Memory&);
 	SP_Memory	index(const std::string&);
 	SP_Memory	setObjectMode(const ObjectMode&);
 	SP_Memory	setLocal(const bool&);
 	SP_Memory	setArray(VEC_Memory);
 	SP_Memory	setValue(const long double&);
-	std::string		toString();
-	SP_Memory	clone(const SP_Scope&);
+	const std::string		toString() const;
+	SP_Memory	clone(const SP_Scope&) const;
 	SP_Lambda	getLambda();
 	SP_Scope	getScope();
 	SP_Memory	setScope(const SP_Scope&);
@@ -213,7 +213,7 @@ public:
 	SP_Memory	unshift(SP_Memory&);
 	SP_Memory	eraseLambda();
 	VEC_Memory	getArray();
-	MemType		getType();
+	MemType		getType() const;
 	void		clear();
 	void *		getPointer();
 };
@@ -237,9 +237,9 @@ struct Node : std::enable_shared_from_this<Node> {
 	Node(SP_Memory);
 	~Node();
 
-	std::string		toString();
-	SP_Memory	execute(const SP_Scope&);
-	SP_Node		clone(const SP_Scope&);
+	const std::string	toString() const;
+	SP_Memory	execute(const SP_Scope&) const;
+	SP_Node		clone(const SP_Scope&) const;
 	void		weakListCheck();
 	static void	threadWrapper(SP_Node, SP_Scope);
 };
@@ -256,7 +256,7 @@ struct Lambda : std::enable_shared_from_this<Lambda> {
 	Lambda(const SP_Scope&, const SP_Node&, std::vector<std::string>, std::vector<int>, VEC_Memory);
 	~Lambda();
 	SP_Memory	execute(VEC_Memory);
-	SP_Lambda	clone(const SP_Scope&);
+	SP_Lambda	clone(const SP_Scope&) const;
 };
 
 struct Scope : std::enable_shared_from_this<Scope> {
@@ -273,8 +273,8 @@ struct Scope : std::enable_shared_from_this<Scope> {
 	SP_Memory	execute();
 	SP_Memory	getVariable(std::string);
 	SP_Memory	declareVariable(std::string);
-	SP_Scope	clone(SP_Scope);
-	std::string		toString();
+	SP_Scope	clone(SP_Scope) const;
+	const std::string	toString() const;
 };
 
 class Interpreter {

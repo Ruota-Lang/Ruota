@@ -1,6 +1,7 @@
 #ifndef RUOTA_H
 #define RUOTA_H
 
+#define DEBUG
 #define THREADING
 #define FILE_IO
 
@@ -139,18 +140,18 @@ enum MemType {
 };
 
 
-typedef	std::shared_ptr<Memory>	SP_Memory;
-typedef	std::shared_ptr<Node>	SP_Node;
-typedef	std::shared_ptr<Scope>	SP_Scope;
-typedef	std::shared_ptr<Lambda>	SP_Lambda;
+#define	SP_MEMORY	std::shared_ptr<Memory>
+#define	SP_NODE		std::shared_ptr<Node>
+#define	SP_SCOPE	std::shared_ptr<Scope>
+#define	SP_LAMBDA	std::shared_ptr<Lambda>
 
-typedef	std::vector<SP_Memory>	VEC_Memory;
-typedef	std::vector<SP_Node>	VEC_Node;
+typedef	std::vector<SP_MEMORY>	VEC_Memory;
+typedef	std::vector<SP_NODE>	VEC_Node;
 
-#define	new_memory	std::make_shared<Memory>
-#define	new_node	std::make_shared<Node>
-#define	new_lambda	std::make_shared<Lambda>
-#define	new_scope	std::make_shared<Scope>
+#define	NEW_MEMORY	std::make_shared<Memory>
+#define	NEW_NODE	std::make_shared<Node>
+#define	NEW_LAMBDA	std::make_shared<Lambda>
+#define	NEW_SCOPE	std::make_shared<Scope>
 
 #define to_this_ptr	shared_from_this()
 
@@ -160,9 +161,9 @@ private:
 	char		char_data = 0;
 	MemType		mt;
 	VEC_Memory	arr_data;
-	SP_Scope	obj_data;
-	SP_Lambda	lambda;
-	SP_Memory	reference;
+	SP_SCOPE	obj_data;
+	SP_LAMBDA	lambda;
+	SP_MEMORY	reference;
 	ObjectMode	om = UNDEF;
 	bool		local_var = false;
 	void *		ptr_data = NULL;
@@ -173,45 +174,45 @@ public:
 	~Memory();
 	Memory(const std::string&);
 	Memory(MemType, const long double&);
-	Memory(SP_Scope);
-	Memory(SP_Lambda);
+	Memory(SP_SCOPE);
+	Memory(SP_LAMBDA);
 	Memory(VEC_Memory);
 	Memory(void*);
 
-	SP_Memory 	add(const SP_Memory&) const;
-	SP_Memory 	sub(const SP_Memory&) const;
-	SP_Memory 	mul(const SP_Memory&) const;
-	SP_Memory 	div(const SP_Memory&) const;
-	SP_Memory 	mod(const SP_Memory&) const;
-	SP_Memory 	pow(const SP_Memory&) const;
-	SP_Memory 	less(const SP_Memory&) const;
-	SP_Memory 	more(const SP_Memory&) const;
-	SP_Memory 	eless(const SP_Memory&) const;
-	SP_Memory 	emore(const SP_Memory&) const;
-	bool 		equals(const SP_Memory&) const;
+	SP_MEMORY 	add(const SP_MEMORY&) const;
+	SP_MEMORY 	sub(const SP_MEMORY&) const;
+	SP_MEMORY 	mul(const SP_MEMORY&) const;
+	SP_MEMORY 	div(const SP_MEMORY&) const;
+	SP_MEMORY 	mod(const SP_MEMORY&) const;
+	SP_MEMORY 	pow(const SP_MEMORY&) const;
+	SP_MEMORY 	less(const SP_MEMORY&) const;
+	SP_MEMORY 	more(const SP_MEMORY&) const;
+	SP_MEMORY 	eless(const SP_MEMORY&) const;
+	SP_MEMORY 	emore(const SP_MEMORY&) const;
+	bool 		equals(const SP_MEMORY&) const;
 	ObjectMode	getObjectMode() const;
 	bool 		isLocal() const;
-	SP_Memory	set(const SP_Memory&);
+	SP_MEMORY	set(const SP_MEMORY&);
 	long double	getValue() const;
-	SP_Memory	index(const SP_Memory&);
-	SP_Memory	index(const std::string&);
-	SP_Memory	setObjectMode(const ObjectMode&);
-	SP_Memory	setLocal(const bool&);
-	SP_Memory	setArray(VEC_Memory);
-	SP_Memory	setValue(const long double&);
+	SP_MEMORY	index(const SP_MEMORY&);
+	SP_MEMORY	index(const std::string&);
+	SP_MEMORY	setObjectMode(const ObjectMode&);
+	SP_MEMORY	setLocal(const bool&);
+	SP_MEMORY	setArray(VEC_Memory);
+	SP_MEMORY	setValue(const long double&);
 	const std::string		toString() const;
-	SP_Memory	clone(const SP_Scope&) const;
-	SP_Lambda	getLambda();
-	SP_Scope	getScope();
-	SP_Memory	setScope(const SP_Scope&);
-	SP_Memory	makeScope(const SP_Scope&);
-	SP_Memory	setType(const MemType&);
-	SP_Memory	refer(const SP_Memory&);
-	SP_Memory	pop();
-	SP_Memory	shift();
-	SP_Memory	push(SP_Memory&);
-	SP_Memory	unshift(SP_Memory&);
-	SP_Memory	eraseLambda();
+	SP_MEMORY	clone(const SP_SCOPE&) const;
+	SP_LAMBDA	getLambda();
+	SP_SCOPE	getScope();
+	SP_MEMORY	setScope(const SP_SCOPE&);
+	SP_MEMORY	makeScope(const SP_SCOPE&);
+	SP_MEMORY	setType(const MemType&);
+	SP_MEMORY	refer(const SP_MEMORY&);
+	SP_MEMORY	pop();
+	SP_MEMORY	shift();
+	SP_MEMORY	push(SP_MEMORY&);
+	SP_MEMORY	unshift(SP_MEMORY&);
+	SP_MEMORY	eraseLambda();
 	VEC_Memory	getArray();
 	MemType		getType() const;
 	void		clear();
@@ -223,57 +224,57 @@ struct Node : std::enable_shared_from_this<Node> {
 	static long	reference_del;
 	VEC_Node 	params;
 	NodeType 	nt;
-	SP_Scope 	scope_ref = nullptr;
-	SP_Memory 	mem_data = nullptr;
+	SP_SCOPE 	scope_ref = nullptr;
+	SP_MEMORY 	mem_data = nullptr;
 	std::string		key;
-	std::unordered_map<long double, SP_Node> switch_values;
+	std::unordered_map<long double, SP_NODE> switch_values;
 	int			flag = 0;
 
-	Node(SP_Scope);
+	Node(SP_SCOPE);
 	Node(long double);
-	Node(SP_Node, std::unordered_map<long double, SP_Node>);
+	Node(SP_NODE, std::unordered_map<long double, SP_NODE>);
 	Node(std::string);
 	Node(NodeType, VEC_Node);
-	Node(SP_Memory);
+	Node(SP_MEMORY);
 	~Node();
 
 	const std::string	toString() const;
-	SP_Memory	execute(const SP_Scope&) const;
-	SP_Node		clone(const SP_Scope&) const;
+	SP_MEMORY	execute(const SP_SCOPE&) const;
+	SP_NODE		clone(const SP_SCOPE&) const;
 	void		weakListCheck();
-	static void	threadWrapper(SP_Node, SP_Scope);
+	static void	threadWrapper(SP_NODE, SP_SCOPE);
 };
 
 struct Lambda : std::enable_shared_from_this<Lambda> {
 	static long	reference_add;
 	static long	reference_del;
-	SP_Node		base = nullptr;
-	SP_Scope	parent = nullptr;
+	SP_NODE		base = nullptr;
+	SP_SCOPE	parent = nullptr;
 	std::vector<std::string>	param_keys;
 	std::vector<int> param_types;
 	VEC_Memory	default_params;
 
-	Lambda(const SP_Scope&, const SP_Node&, std::vector<std::string>, std::vector<int>, VEC_Memory);
+	Lambda(const SP_SCOPE&, const SP_NODE&, std::vector<std::string>, std::vector<int>, VEC_Memory);
 	~Lambda();
-	SP_Memory	execute(VEC_Memory);
-	SP_Lambda	clone(const SP_Scope&) const;
+	SP_MEMORY	execute(VEC_Memory);
+	SP_LAMBDA	clone(const SP_SCOPE&) const;
 };
 
 struct Scope : std::enable_shared_from_this<Scope> {
 	static long	reference_add;
 	static long	reference_del;
-	SP_Scope	parent = nullptr;
-	SP_Node		main = nullptr;
-	std::unordered_map<std::string, SP_Memory> variables;
+	SP_SCOPE	parent;
+	SP_NODE		main = nullptr;
+	std::unordered_map<std::string, SP_MEMORY> variables;
 
-	Scope(SP_Scope);
-	Scope(SP_Scope, SP_Node);
+	Scope(SP_SCOPE);
+	Scope(SP_SCOPE, SP_NODE);
 	~Scope();
 
-	SP_Memory	execute();
-	SP_Memory	getVariable(std::string);
-	SP_Memory	declareVariable(std::string);
-	SP_Scope	clone(SP_Scope) const;
+	SP_MEMORY	execute();
+	SP_MEMORY	getVariable(std::string);
+	SP_MEMORY	declareVariable(std::string);
+	SP_SCOPE	clone(SP_SCOPE) const;
 	const std::string	toString() const;
 };
 
@@ -289,8 +290,8 @@ private:
 	static std::unordered_map<std::string, int> operators;
 	std::vector<std::string> LOADED;
 	Interpreter(std::string);
-	SP_Scope generate(std::string, SP_Scope, std::string);
-	SP_Memory execute(SP_Scope);
+	SP_SCOPE generate(std::string, SP_SCOPE, std::string);
+	SP_MEMORY execute(SP_SCOPE);
 	static void throwError(std::string errorMessage, std::string errorLine);
 public:	
 	static std::string path;
@@ -301,11 +302,11 @@ public:
 class RuotaWrapper {
 private:
 	Interpreter * interpreter;
-	SP_Scope main_scope;
+	SP_SCOPE main_scope;
 	std::string current_dir;
 public:
 	RuotaWrapper(std::string);
-	SP_Memory runLine(std::string);
+	SP_MEMORY runLine(std::string);
 	~RuotaWrapper();
 };
 

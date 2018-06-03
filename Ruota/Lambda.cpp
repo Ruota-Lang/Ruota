@@ -3,15 +3,15 @@
 long Lambda::reference_add = 0;
 long Lambda::reference_del = 0;
 
-SP_Memory Lambda::execute(VEC_Memory params) {
-	SP_Scope scope = new_scope(parent);
+SP_MEMORY Lambda::execute(VEC_Memory params) {
+	SP_SCOPE scope = NEW_SCOPE(parent);
 	auto new_base = base->clone(scope);
 	scope->main = new_base;
 	auto idem = scope->declareVariable("idem");
-	idem->set(new_memory(to_this_ptr));
+	idem->set(NEW_MEMORY(to_this_ptr));
 
 	for (size_t i = 0; i < param_keys.size(); i++) {
-		SP_Memory temp = scope->declareVariable(param_keys[i]);
+		SP_MEMORY temp = scope->declareVariable(param_keys[i]);
 		if (i < params.size()){
 			if (param_types[i] == 0)
 				temp->set(params[i]);
@@ -25,16 +25,16 @@ SP_Memory Lambda::execute(VEC_Memory params) {
 	auto temp = scope->execute();
 	idem->eraseLambda();
 	if (temp->getType() == RETURN_M)
-		return new_memory();
+		return NEW_MEMORY();
 	else
 		return temp;
 }
 
-SP_Lambda Lambda::clone(const SP_Scope &parent) const {
-	return new_lambda(parent, base->clone(parent), param_keys, param_types, default_params);
+SP_LAMBDA Lambda::clone(const SP_SCOPE &parent) const {
+	return NEW_LAMBDA(parent, base->clone(parent), param_keys, param_types, default_params);
 }
 
-Lambda::Lambda(const SP_Scope &parent, const SP_Node &base, std::vector<std::string> param_keys, std::vector<int> param_types, VEC_Memory default_params) {
+Lambda::Lambda(const SP_SCOPE &parent, const SP_NODE &base, std::vector<std::string> param_keys, std::vector<int> param_types, VEC_Memory default_params) {
 	this->reference_add++;
 	this->param_keys = param_keys;
 	this->param_types = param_types;

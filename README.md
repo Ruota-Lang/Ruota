@@ -2,6 +2,10 @@
 
 # Ruota Programming Language
 
+_For those who use VSCode, please thank Mirin for his lovely Ruota Plugin!_
+
+https://marketplace.visualstudio.com/items?itemName=minin.ruota#overview
+
 Side project of mine - all features below (unless otherwise specified) should work. Unfortunately, it is a little slow right now during runtime, but as the language and interpreter improves I hope that I may get it to the speed of other major interpreted languages.
 
 Ruota is a high-level abstract weakly-typed langauge. Variable types are, where applicable, implicitly converted. The language is both functional and object-oriented. The essential foundation is that everything, including functions, are variables and are stored as such. "Objects" or "Classes" as they may be called are essentially scopes and functions (variables) that are cloned and manipulated across mutliple instances. 

@@ -43,7 +43,7 @@ std::pair<int, int> getConsoleSize() {
 
 VEC_Memory __print(VEC_Memory args) {
 	std::cout << args[0]->toString();
-	return { new_memory() };
+	return { NEW_MEMORY() };
 }
 
 VEC_Memory __printat(VEC_Memory args) {
@@ -51,41 +51,41 @@ VEC_Memory __printat(VEC_Memory args) {
 	int pos_y = args[1]->getValue();
 	std::string line = args[2]->toString();
 	printToCoordinates(pos_x, pos_y, line);
-	return { new_memory() };
+	return { NEW_MEMORY() };
 }
 
 VEC_Memory __color(VEC_Memory args) {
 	setColor(args[0]->getValue());
-	return { new_memory() };
+	return { NEW_MEMORY() };
 }
 
 VEC_Memory __input_str(VEC_Memory args) {
 	std::string d;
 	std::cin >> d;
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	return { new_memory(d) };
+	return { NEW_MEMORY(d) };
 }
 
 VEC_Memory __input_line(VEC_Memory args) {
 	std::string d;
 	std::getline(std::cin, d);
-	return { new_memory(d) };
+	return { NEW_MEMORY(d) };
 }
 
 VEC_Memory __key_down(VEC_Memory args) {
 	#ifdef _WIN32
 		if(GetKeyState(args[0]->getValue()) & 0x8000)
-			return {new_memory(NUM, 1)};
+			return {NEW_MEMORY(NUM, 1)};
 		else
-			return {new_memory(NUM, 0)};
+			return {NEW_MEMORY(NUM, 0)};
 	#else
-		return { new_memory(NUM, 0) };
+		return { NEW_MEMORY(NUM, 0) };
 	#endif
 }
 
 VEC_Memory __console_size(VEC_Memory args) {
 	auto size = getConsoleSize();
-	return { new_memory(NUM, size.first), new_memory(NUM, size.second) };
+	return { NEW_MEMORY(NUM, size.first), NEW_MEMORY(NUM, size.second) };
 }
 
 RuotaWrapper * rw;
@@ -138,9 +138,7 @@ int checkClosed(std::string s) {
 
 int console(){
 	std::string line;
-	#ifndef DEBUG
 	rw->runLine("args := [];");
-	#endif
 	std::cout << "Ruota 0.10.10.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
@@ -160,7 +158,7 @@ int console(){
 			}
 
 			try {
-				SP_Memory res = rw->runLine(line);
+				SP_MEMORY res = rw->runLine(line);
 				
 				setColor(8);
 				if (res->getArray().size() > 1) {
@@ -217,9 +215,7 @@ int main(int argc, char * argv[]) {
 	Interpreter::addEmbed("console.color", &__color);
 	Interpreter::addEmbed("console.key_down", &__key_down);
 	Interpreter::addEmbed("console.size", &__console_size);
-	#ifndef DEBUG
 	rw->runLine(console_compiled);
-	#endif
 
 	if (argc >= 2) {
 		std::string var = "[ ";

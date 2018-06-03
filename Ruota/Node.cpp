@@ -5,11 +5,11 @@ long Node::reference_del = 0;
 
 Node::Node(long double data) {
 	this->reference_add++;
-	this->mem_data = new_memory(NUM, data);
+	this->mem_data = NEW_MEMORY(NUM, data);
 	this->nt = MEM;
 }
 
-Node::Node(SP_Memory m) {
+Node::Node(SP_MEMORY m) {
 	this->reference_add++;
 	this->mem_data = m;
 	this->nt = MEM;
@@ -27,14 +27,14 @@ Node::Node(std::string key) {
 	this->nt = VAR;
 }
 
-Node::Node(SP_Node val, std::unordered_map<long double, SP_Node> switch_values){
+Node::Node(SP_NODE val, std::unordered_map<long double, SP_NODE> switch_values){
 	this->reference_add++;
 	this->switch_values = switch_values;
 	this->nt = SWITCH;
 	this->params.push_back(val);
 }
 
-Node::Node(SP_Scope scope_ref) {
+Node::Node(SP_SCOPE scope_ref) {
 	this->reference_add++;
 	this->scope_ref = scope_ref;
 	this->nt = SCOPE;
@@ -48,10 +48,10 @@ Node::~Node(){
 	this->switch_values.clear();
 }
 
-SP_Memory Node::execute(const SP_Scope &scope) const {
+SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 	VEC_Memory executed;
 	if (nt != INDEX && nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
-		for (const SP_Node &n : params) {
+		for (const SP_NODE &n : params) {
 			auto e = n->execute(scope);
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
 				return e;
@@ -64,7 +64,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 		}
 	}
 
-	SP_Memory temp1 = new_memory();
+	SP_MEMORY temp1 = NEW_MEMORY();
 	switch (nt)
 	{
 	case BREAK:		return temp1->setType(BREAK_M);
@@ -105,7 +105,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->add(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -117,7 +117,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->sub(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -129,7 +129,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->mul(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -141,7 +141,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->div(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -153,7 +153,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->mod(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -165,41 +165,41 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->pow(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
 	case EQUAL:		switch(flag) {
-		case 0: return new_memory(NUM, executed[0]->equals(executed[1]));
+		case 0: return NEW_MEMORY(NUM, executed[0]->equals(executed[1]));
 		case 1: {
 			if (executed[0]->getArray().size() != executed[1]->getArray().size())
 				Interpreter::throwError("Error: cannot element-add arrays of unequal sizes!", toString());
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
-				new_list.push_back(new_memory(NUM, executed[0]->getArray()[i]->equals(executed[1]->getArray()[i])));
-			return new_memory(new_list);
+				new_list.push_back(NEW_MEMORY(NUM, executed[0]->getArray()[i]->equals(executed[1]->getArray()[i])));
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
 	case NOT:		switch(flag) {
-		case 0: return new_memory(NUM, !executed[0]->equals(new_memory(NUM, 1)));
+		case 0: return NEW_MEMORY(NUM, !executed[0]->equals(NEW_MEMORY(NUM, 1)));
 		case 1: {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
-				new_list.push_back(new_memory(NUM, !executed[0]->getArray()[i]->equals(new_memory(NUM, 1))));
-			return new_memory(new_list);
+				new_list.push_back(NEW_MEMORY(NUM, !executed[0]->getArray()[i]->equals(NEW_MEMORY(NUM, 1))));
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
 	case NEQUAL:	switch(flag) {
-		case 0: return new_memory(NUM, !executed[0]->equals(executed[1]));
+		case 0: return NEW_MEMORY(NUM, !executed[0]->equals(executed[1]));
 		case 1: {
 			if (executed[0]->getArray().size() != executed[1]->getArray().size())
 				Interpreter::throwError("Error: cannot element-add arrays of unequal sizes!", toString());
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
-				new_list.push_back(new_memory(NUM, !executed[0]->getArray()[i]->equals(executed[1]->getArray()[i])));
-			return new_memory(new_list);
+				new_list.push_back(NEW_MEMORY(NUM, !executed[0]->getArray()[i]->equals(executed[1]->getArray()[i])));
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -211,7 +211,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->less(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -223,7 +223,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->more(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -235,7 +235,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->eless(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
@@ -247,13 +247,13 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			VEC_Memory new_list;
 			for (int i = 0; i < executed[0]->getArray().size(); i++)
 				new_list.push_back(executed[0]->getArray()[i]->emore(executed[1]->getArray()[i]));
-			return new_memory(new_list);
+			return NEW_MEMORY(new_list);
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
-	case AND:		return new_memory(NUM, executed[0]->getValue() && executed[1]->getValue());
-	case OR:		return new_memory(NUM, executed[0]->getValue() || executed[1]->getValue());
-	case STR_CAT:	return new_memory(executed[0]->toString() + executed[1]->toString());
+	case AND:		return NEW_MEMORY(NUM, executed[0]->getValue() && executed[1]->getValue());
+	case OR:		return NEW_MEMORY(NUM, executed[0]->getValue() || executed[1]->getValue());
+	case STR_CAT:	return NEW_MEMORY(executed[0]->toString() + executed[1]->toString());
 	case OUT_CALL:	{
 		std::string fname = executed[0]->toString();
 		std::reverse(executed.begin(), executed.end());
@@ -261,7 +261,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 		std::reverse(executed.begin(), executed.end());
 		if (Interpreter::embedded.find(fname) == Interpreter::embedded.end())
 			Interpreter::throwError	("Error: outer call `" + fname + "` does not exist!", toString());
-		return new_memory(Interpreter::embedded[fname](executed));
+		return NEW_MEMORY(Interpreter::embedded[fname](executed));
 	}
 	case SWITCH:	{
 		executed.push_back(params[0]->execute(scope));
@@ -283,14 +283,14 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 	}
 	case ALLOC: {
 		if (executed[0]->getType() == ARR){
-			SP_Memory base = new_memory();
+			SP_MEMORY base = NEW_MEMORY();
 			VEC_Memory base_list = {base};
 			for (auto m : executed[0]->getArray()){
 				VEC_Memory curr_list;
 				for (auto b : base_list) {
 					VEC_Memory temp_list;
 					for (int i = 0; i < m->getValue(); i++){
-						curr_list.push_back(new_memory());
+						curr_list.push_back(NEW_MEMORY());
 						temp_list.push_back(curr_list.back());
 					}
 					b->setArray(temp_list);
@@ -302,9 +302,9 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			auto len = executed[0]->getValue();
 			VEC_Memory list;
 			for (auto i = 0; i < len; i++){
-				list.push_back(new_memory());
+				list.push_back(NEW_MEMORY());
 			}
-			return new_memory(list);
+			return NEW_MEMORY(list);
 		}
 	}
 	case PUSH_ARR:	{
@@ -320,8 +320,8 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 	case VALUE:		{
 		try {
 			if (executed[0]->getType() == CHA || executed[0]->getType() == NUL || executed[0]->getType() == OBJ)
-				return new_memory(NUM, executed[0]->getValue());
-			return new_memory(NUM,std::stold(executed[0]->toString()));
+				return NEW_MEMORY(NUM, executed[0]->getValue());
+			return NEW_MEMORY(NUM,std::stold(executed[0]->toString()));
 		} catch (...){
 			Interpreter::throwError("Error: cannot convert string \"" + executed[0]->toString() + "\" to a numerical value!", toString());
 		}
@@ -334,7 +334,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 	}
 	case TOSTRING:	{
 		if (executed[0]->getType() != ARR)
-			return new_memory(executed[0]->toString());
+			return NEW_MEMORY(executed[0]->toString());
 		else {
 			std::string s = "";
 			for (auto &v : executed[0]->getArray()){
@@ -342,36 +342,36 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 					Interpreter::throwError("Error: Cannot convert multidimensional array to a string!", toString());
 				s += std::string(1,v->getValue());
 			}
-			return new_memory(s);
+			return NEW_MEMORY(s);
 		}
 	}
 	case TOARR:	{
 		if (executed[0]->getType() != STR && executed[0]->getType() != ARR)
-			return new_memory();
+			return NEW_MEMORY();
 		else if (executed[0]->getType() == ARR)
 			return executed[0];
 		else {
 			VEC_Memory new_vec;
 			for (auto &v : executed[0]->getArray()){
-				new_vec.push_back(new_memory(NUM, v->getValue()));
+				new_vec.push_back(NEW_MEMORY(NUM, v->getValue()));
 			}
-			return new_memory(new_vec);
+			return NEW_MEMORY(new_vec);
 		}
 	}
 	case TOCHAR: {
-		return new_memory(CHA, executed[0]->getValue());
+		return NEW_MEMORY(CHA, executed[0]->getValue());
 	}
 	case TYPE:
 		switch (executed[0]->getType())
 		{
-		case PTR:	return new_memory("pointer");
-		case NUM:	return new_memory("number");
-		case ARR:	return new_memory("array");
-		case STR:	return new_memory("string");
-		case CHA:	return new_memory("char");
-		case LAM: 	return new_memory("lambda");
-		case OBJ:	return new_memory("object");
-		default:	return new_memory("null");
+		case PTR:	return NEW_MEMORY("pointer");
+		case NUM:	return NEW_MEMORY("number");
+		case ARR:	return NEW_MEMORY("array");
+		case STR:	return NEW_MEMORY("string");
+		case CHA:	return NEW_MEMORY("char");
+		case LAM: 	return NEW_MEMORY("lambda");
+		case OBJ:	return NEW_MEMORY("object");
+		default:	return NEW_MEMORY("null");
 		}
 	case INDEX_OBJ:
 		temp1 = params[0]->execute(scope);
@@ -394,7 +394,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 	case INHERIT:{
 		auto par = params[0]->execute(scope)->getScope();
 		auto chi = params[1]->scope_ref;
-		auto new_s = new_scope(scope);
+		auto new_s = NEW_SCOPE(scope);
 		for (auto &v : par->variables) {
 			if (!v.second->isLocal())
 				new_s->declareVariable(v.first)->set(v.second);
@@ -405,36 +405,36 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 		return temp1;
 	}
 	case OBJ_LAM:{
-		temp1 = new_memory();
+		temp1 = NEW_MEMORY();
 		temp1->setScope(params[0]->scope_ref);
 		temp1->getScope()->execute();
 		auto obj = temp1->getScope()->clone(scope);
-		obj->variables["self"] = new_memory(obj);
+		obj->variables["self"] = NEW_MEMORY(obj);
 		return temp1;
 	}
 	case NEW: {
 		if (params[0]->nt == EXEC){
-			auto var = new_memory();
+			auto var = NEW_MEMORY();
 			executed.push_back(params[0]->params[0]->execute(scope));
 			if (executed[0]->getObjectMode() != DYNAMIC)
 				Interpreter::throwError("Error: cannot instantiate a static object!", toString());
 			if (executed[0]->getScope() == nullptr)
 				Interpreter::throwError("Error: object template does not exist!", toString());
 			auto obj = executed[0]->getScope()->clone(scope);
-			obj->variables["self"] = new_memory(obj);
+			obj->variables["self"] = NEW_MEMORY(obj);
 			auto args = params[0]->params[1]->execute(scope)->getArray();
 			var->setScope(obj);
 			obj->variables["init"]->getLambda()->execute(args);
 			return var;
 		}else{
 			executed.push_back(params[0]->execute(scope));
-			auto var = new_memory();
+			auto var = NEW_MEMORY();
 			if (executed[0]->getObjectMode() != DYNAMIC)
 				Interpreter::throwError("Error: cannot instantiate a static object!", toString());
 			if (executed[0]->getScope() == nullptr)
 				Interpreter::throwError("Error: object template does not exist!", toString());
 			auto obj = executed[0]->getScope()->clone(scope);
-			obj->variables["self"] = new_memory(obj);
+			obj->variables["self"] = NEW_MEMORY(obj);
 			var->setScope(obj);
 			return var;
 		}
@@ -455,7 +455,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 		VEC_Memory new_array;
 		for (auto &m : p1) new_array.push_back(m);
 		for (auto &m : p2) new_array.push_back(m);
-		return new_memory(new_array);
+		return NEW_MEMORY(new_array);
 	}
 	case DES: {
 		std::vector<std::string> param_keys;
@@ -469,10 +469,10 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			} else {
 				param_keys.push_back(n->key);
 				param_types.push_back(n->flag);
-				default_params.push_back(new_memory());
+				default_params.push_back(NEW_MEMORY());
 			}
 		}
-		return new_memory(new_lambda(scope, params[1], param_keys, param_types, default_params));
+		return NEW_MEMORY(NEW_LAMBDA(scope, params[1], param_keys, param_types, default_params));
 	}
 	case LDES: {
 		std::vector<std::string> param_keys;
@@ -486,10 +486,10 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			} else {
 				param_keys.push_back(n->key);
 				param_types.push_back(n->flag);
-				default_params.push_back(new_memory());
+				default_params.push_back(NEW_MEMORY());
 			}
 		}
-		auto lambda = new_memory(new_lambda(scope, params[1], param_keys, param_types, default_params));
+		auto lambda = NEW_MEMORY(NEW_LAMBDA(scope, params[1], param_keys, param_types, default_params));
 		if (params[0]->params[0]->nt != VAR) {
 			auto e = params[0]->params[0]->execute(scope);
 			e->set(lambda);
@@ -504,8 +504,8 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 	case EXEC_ITER: {	
 		VEC_Memory list;	
 		if (params[0]->nt == ITER) {
-			SP_Memory var = params[0]->params[1]->execute(scope);
-			SP_Memory iter_arr;
+			SP_MEMORY var = params[0]->params[1]->execute(scope);
+			SP_MEMORY iter_arr;
 			
 			if (var->getType() == ARR || var->getType() == STR)
 				iter_arr = var;
@@ -516,11 +516,11 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 
 			if (params[0]->params[0]->nt == VAR){
 				std::string iter_key = params[0]->params[0]->key;
-				SP_Scope inner_scope = new_scope(scope);
+				SP_SCOPE inner_scope = NEW_SCOPE(scope);
 				for (auto &m : iter_arr->getArray()) {
 					inner_scope->main = params[1]->clone(inner_scope);
 					inner_scope->variables[iter_key] = m;
-					SP_Memory v = inner_scope->execute();
+					SP_MEMORY v = inner_scope->execute();
 					if (v->getType() == RETURN_M) return v;
 					list.push_back(v);
 					if (v->getType() == BREAK_M) break;
@@ -530,21 +530,21 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 				for (auto &v : params[0]->params[0]->params)
 					iter_keys.push_back(v->key);
 				VEC_Memory iter_values = iter_arr->getArray();
-				SP_Scope inner_scope = new_scope(scope);
+				SP_SCOPE inner_scope = NEW_SCOPE(scope);
 				for (int i = 0; i < iter_values[0]->getArray().size(); i++) {
 					inner_scope->main = params[1]->clone(inner_scope);
 					for (int j = 0; j < iter_keys.size(); j++)
 						inner_scope->variables[iter_keys[j]] = iter_values[j]->getArray()[i];
-					SP_Memory v = inner_scope->execute();
+					SP_MEMORY v = inner_scope->execute();
 					if (v->getType() == RETURN_M) return v;
 					list.push_back(v);
 					if (v->getType() == BREAK_M) break;
 				}				
 			}
 		} else {
-			SP_Memory var = params[0]->execute(scope);
-			SP_Memory iter_arr;
-			SP_Scope inner_scope = new_scope(scope);
+			SP_MEMORY var = params[0]->execute(scope);
+			SP_MEMORY iter_arr;
+			SP_SCOPE inner_scope = NEW_SCOPE(scope);
 			if (var->getType() == ARR || var->getType() == STR)
 				iter_arr = var;
 			else if (var->getType() == OBJ)
@@ -553,24 +553,24 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 				Interpreter::throwError("Error: Cannot iterate over non-iterable value!", toString());
 			for (auto &m : iter_arr->getArray()) {
 				inner_scope->main = params[1]->clone(inner_scope);
-				SP_Memory v = inner_scope->execute();
+				SP_MEMORY v = inner_scope->execute();
 				if (v->getType() == RETURN_M) return v;
 				list.push_back(v);
 				if (v->getType() == BREAK_M) break;
 			}
 		}
-		return new_memory(list);
+		return NEW_MEMORY(list);
 	}
 	case DOL: {
 		auto dec = params[0];
-		SP_Scope inner_scope = new_scope(scope);
+		SP_SCOPE inner_scope = NEW_SCOPE(scope);
 		while(dec->execute(scope)->getValue() != 0) {
 			inner_scope->main = params[1]->clone(inner_scope);
 			auto v = inner_scope->execute();
 			if (v->getType() == BREAK_M)
 				break;
 		}
-		return new_memory();
+		return NEW_MEMORY();
 	}
 	case THEN: {
 		auto dec = params[0]->execute(scope);
@@ -578,7 +578,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			return params[1]->execute(scope);
 		else if (params.size() > 2)
 			return params[2]->execute(scope);
-		return new_memory();
+		return NEW_MEMORY();
 	}
 	case RANGE: {
 		auto p1 = executed[0]->getValue();
@@ -591,27 +591,27 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 		if (flag == 0){
 			if (step >= 0){
 				for (long double i = p1; i < p2; i += step)
-					range.push_back(new_memory(NUM, i));
+					range.push_back(NEW_MEMORY(NUM, i));
 			}else{
 				for (long double i = p1; i > p2; i += step)
-					range.push_back(new_memory(NUM, i));
+					range.push_back(NEW_MEMORY(NUM, i));
 			}
 		}else if (flag == 1){
 			if (step >= 0){
 				for (long double i = p1; i <= p2; i += step)
-					range.push_back(new_memory(NUM, i));
+					range.push_back(NEW_MEMORY(NUM, i));
 			}else{
 				for (long double i = p1; i >= p2; i += step)
-					range.push_back(new_memory(NUM, i));
+					range.push_back(NEW_MEMORY(NUM, i));
 			}
 		}
-		return new_memory(range);
+		return NEW_MEMORY(range);
 	}
 	case LIST:
-		return new_memory(executed);
+		return NEW_MEMORY(executed);
 	case SIZE_O: {
 		if (executed[0]->getType() == ARR || executed[0]->getType() == STR)
-			return new_memory(NUM, executed[0]->getArray().size());
+			return NEW_MEMORY(NUM, executed[0]->getArray().size());
 		else if (executed[0]->getType() == OBJ) {
 			if (executed[0]->getScope()->variables.find("size") != executed[0]->getScope()->variables.end()) {
 				auto l = executed[0]->getScope()->variables["size"]->getLambda();
@@ -637,7 +637,7 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			n->execute(scope);
 		}
 		#endif
-		return new_memory();
+		return NEW_MEMORY();
 	}
 	case DETACH:{
 		#ifdef THREADING
@@ -646,29 +646,29 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 		#else
 		params[0]->execute(scope);
 		#endif
-		return new_memory();
+		return NEW_MEMORY();
 	}
 	case TRY_CATCH: {
 		try {
 			return params[0]->execute(scope);
 		} catch (std::runtime_error &e){
 			if (params.size() > 1){
-				SP_Scope ns = new_scope(scope);
-				ns->declareVariable("_err")->set(new_memory(std::string(e.what())));
+				SP_SCOPE ns = NEW_SCOPE(scope);
+				ns->declareVariable("_err")->set(NEW_MEMORY(std::string(e.what())));
 				return params[1]->execute(ns);
 			}else
-				return new_memory();
+				return NEW_MEMORY();
 		}
 	}
 	case SOFT_LIST:
 		if (executed.size() == 1)
 			return executed[0];
 		else
-			return new_memory(executed);
+			return NEW_MEMORY(executed);
 	case INDEX: {
 		auto p1 = params[0]->execute(scope);
-		SP_Scope s = new_scope(scope);
-		s->declareVariable("end")->set(new_memory(NUM, p1->getArray().size() - 1));
+		SP_SCOPE s = NEW_SCOPE(scope);
+		s->declareVariable("end")->set(NEW_MEMORY(NUM, p1->getArray().size() - 1));
 		auto p2 = params[1]->execute(s);
 		VEC_Memory new_arr;
 		for (auto &i : p2->getArray()){
@@ -678,13 +678,13 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 			new_arr.push_back(temp);
 		}
 		if (new_arr.size() > 1 || new_arr.size() == 0)
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		else
 			return new_arr[0];
 	}
 	case FROM: {
 		auto scope_inner = params[1]->scope_ref;
-		scope_inner->variables[params[0]->key] = new_memory();
+		scope_inner->variables[params[0]->key] = NEW_MEMORY();
 		params[1]->execute(scope);
 		temp1 = scope_inner->getVariable(params[0]->key);
 		return temp1;
@@ -693,19 +693,19 @@ SP_Memory Node::execute(const SP_Scope &scope) const {
 	}
 }
 
-void Node::threadWrapper(SP_Node n, SP_Scope s){
+void Node::threadWrapper(SP_NODE n, SP_SCOPE s){
 	n->execute(s);
 }
 
-SP_Node Node::clone(const SP_Scope &scope) const {
+SP_NODE Node::clone(const SP_SCOPE &scope) const {
 	VEC_Node new_params;
 	for (auto &n : params)
 		new_params.push_back(n->clone(scope));
-	SP_Node nn = new_node(this->nt, new_params);
+	SP_NODE nn = NEW_NODE(this->nt, new_params);
 	nn->key = this->key;
 	nn->flag = this->flag;
 	if (this->nt == SWITCH){
-		std::unordered_map<long double, SP_Node> nsw;
+		std::unordered_map<long double, SP_NODE> nsw;
 		for (auto &c : switch_values) {
 			nsw[c.first] = c.second->clone(scope);
 		}
@@ -797,7 +797,7 @@ void Node::weakListCheck() {
 	for (auto &p : params){\
 		if (p == nullptr)
 			Interpreter::throwError("Error: unbalanced operator!", "NA");
-		SP_Node nn = p;
+		SP_NODE nn = p;
 		while (nn->nt == SOFT_LIST && nn->params.size() == 1)
 			nn = nn->params[0];
 		nn->weakListCheck();

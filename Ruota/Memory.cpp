@@ -33,13 +33,13 @@ void Memory::clear() {
 	arr_data.clear();
 }
 
-Memory::Memory(SP_Scope scope) {
+Memory::Memory(SP_SCOPE scope) {
 	reference_add++;
 	obj_data = scope;
 	mt = OBJ;
 }
 
-Memory::Memory(SP_Lambda lambda) {
+Memory::Memory(SP_LAMBDA lambda) {
 	reference_add++;
 	this->lambda = lambda;
 	this->mt = LAM;
@@ -61,30 +61,30 @@ bool Memory::isLocal() const {
 	return this->local_var;
 }
 
-SP_Scope Memory::getScope() {
+SP_SCOPE Memory::getScope() {
 	if (mt == REF)	return reference->getScope();
 	return this->obj_data;
 }
 
-SP_Memory Memory::setType(const MemType &mt) {
+SP_MEMORY Memory::setType(const MemType &mt) {
 	if (mt == REF)	reference->setType(mt);
 	else			this->mt = mt;
 	return to_this_ptr;
 }
 
-SP_Memory Memory::setObjectMode(const ObjectMode &om) {
+SP_MEMORY Memory::setObjectMode(const ObjectMode &om) {
 	if (mt == REF)	reference->setObjectMode(om);
 	else			this->om = om;
 	return to_this_ptr;
 }
 
-SP_Memory Memory::makeScope(const SP_Scope &parent) {
+SP_MEMORY Memory::makeScope(const SP_SCOPE &parent) {
 	if (mt == REF) {
 		reference->makeScope(parent);
 		return to_this_ptr;
 	}
 	this->clear();
-	this->obj_data = new_scope(parent);
+	this->obj_data = NEW_SCOPE(parent);
 	this->mt = OBJ;
 	return to_this_ptr;
 }
@@ -92,30 +92,30 @@ SP_Memory Memory::makeScope(const SP_Scope &parent) {
 Memory::Memory(const std::string &s) {
 	reference_add++;
 	for (auto &c : s){
-		this->arr_data.push_back(new_memory(CHA, c));
+		this->arr_data.push_back(NEW_MEMORY(CHA, c));
 		this->arr_data.back()->setObjectMode(STATIC);
 	}
 	this->mt = STR;
 }
 
-SP_Memory Memory::pop() {
+SP_MEMORY Memory::pop() {
 	this->arr_data.pop_back();
 	return to_this_ptr;
 }
 
-SP_Memory Memory::shift() {
+SP_MEMORY Memory::shift() {
 	std::reverse(arr_data.begin(), arr_data.end());
 	this->arr_data.pop_back();
 	std::reverse(arr_data.begin(), arr_data.end());
 	return to_this_ptr;
 }
 
-SP_Memory Memory::push(SP_Memory &m) {
+SP_MEMORY Memory::push(SP_MEMORY &m) {
 	this->arr_data.push_back(m);
 	return to_this_ptr;
 }
 
-SP_Memory Memory::unshift(SP_Memory &m) {
+SP_MEMORY Memory::unshift(SP_MEMORY &m) {
 	std::reverse(arr_data.begin(), arr_data.end());
 	this->arr_data.push_back(m);
 	std::reverse(arr_data.begin(), arr_data.end());
@@ -146,7 +146,7 @@ long double Memory::getValue() const {
 	}
 }
 
-SP_Lambda Memory::getLambda() {
+SP_LAMBDA Memory::getLambda() {
 	if (mt == REF)	return reference->getLambda();
 	return this->lambda;
 }
@@ -155,19 +155,19 @@ VEC_Memory Memory::getArray() {
 	return this->arr_data;
 }
 
-SP_Memory Memory::setArray(VEC_Memory arr_data) {
+SP_MEMORY Memory::setArray(VEC_Memory arr_data) {
 	this->clear();
 	this->mt = ARR;
 	this->arr_data = arr_data;
 	return to_this_ptr;
 }
 
-SP_Memory Memory::setLocal(const bool &b) {
+SP_MEMORY Memory::setLocal(const bool &b) {
 	this->local_var = b;
 	return to_this_ptr;
 }
 
-SP_Memory Memory::refer(const SP_Memory &m) {
+SP_MEMORY Memory::refer(const SP_MEMORY &m) {
 	if (m->mt == NUL && m->data == 1) {
 		this->mt = NUL;
 	}else{
@@ -182,7 +182,7 @@ SP_Memory Memory::refer(const SP_Memory &m) {
 	return to_this_ptr;
 }
 
-SP_Memory Memory::index(const SP_Memory &m) {
+SP_MEMORY Memory::index(const SP_MEMORY &m) {
 	if (mt == REF)	return reference->index(m);
 
 	if (mt == ARR || mt == STR) {
@@ -201,30 +201,30 @@ SP_Memory Memory::index(const SP_Memory &m) {
 	}
 }
 
-SP_Memory Memory::clone(const SP_Scope &parent) const {
-	SP_Memory m;
+SP_MEMORY Memory::clone(const SP_SCOPE &parent) const {
+	SP_MEMORY m;
 	switch (mt)
 	{
-	case PTR:	m = new_memory((void*)ptr_data); break;
+	case PTR:	m = NEW_MEMORY((void*)ptr_data); break;
 	case REF:	m = reference->clone(parent); break;
-	case CHA:	m = new_memory(CHA, char_data); break;
-	case NUM:	m = new_memory(NUM, data); break;
-	case LAM:	m = new_memory(lambda->clone(parent)); break;
-	case NUL:	m = new_memory(); break;
-	case STR:	m = new_memory(this->toString()); break;
+	case CHA:	m = NEW_MEMORY(CHA, char_data); break;
+	case NUM:	m = NEW_MEMORY(NUM, data); break;
+	case LAM:	m = NEW_MEMORY(lambda->clone(parent)); break;
+	case NUL:	m = NEW_MEMORY(); break;
+	case STR:	m = NEW_MEMORY(this->toString()); break;
 	case ARR: {
 		VEC_Memory new_arr;
 		for (auto &v : arr_data)
 			new_arr.push_back(v->clone(parent));
-		m = new_memory(new_arr);
+		m = NEW_MEMORY(new_arr);
 		break;
 	}
 	case OBJ: {
-		auto temp = new_memory();
+		auto temp = NEW_MEMORY();
 		temp->mt = OBJ;
 		temp->om = this->om;
 		temp->obj_data = obj_data->clone(parent);
-		temp->obj_data->variables["self"] = new_memory(obj_data);
+		temp->obj_data->variables["self"] = NEW_MEMORY(obj_data);
 		m = temp;
 		break;
 	}
@@ -234,7 +234,7 @@ SP_Memory Memory::clone(const SP_Scope &parent) const {
 	return m;
 }
 
-bool Memory::equals(const SP_Memory &a) const {
+bool Memory::equals(const SP_MEMORY &a) const {
 	if (mt == REF)		return reference->equals(a);
 	if (a->mt == REF)	return equals(a->reference);
 	if (mt != a->mt)	return false;
@@ -267,13 +267,13 @@ bool Memory::equals(const SP_Memory &a) const {
 	}
 }
 
-SP_Memory Memory::setValue(const long double &data){
+SP_MEMORY Memory::setValue(const long double &data){
 	if (mt == REF)	this->reference->setValue(data);
 	else			this->data = data;
 	return to_this_ptr;
 }
 
-SP_Memory Memory::set(const SP_Memory &m) {
+SP_MEMORY Memory::set(const SP_MEMORY &m) {
 	if (to_this_ptr == m)
 		return to_this_ptr;
 	if (mt == REF) {
@@ -313,7 +313,7 @@ SP_Memory Memory::set(const SP_Memory &m) {
 	case STR:
 		if (this->arr_data.empty()) {
 			for (auto &v : m->arr_data) {
-				SP_Memory temp = new_memory();
+				SP_MEMORY temp = NEW_MEMORY();
 				temp->set(v);
 				if (temp->getType() != CHA)
 					this->mt = ARR;
@@ -330,7 +330,7 @@ SP_Memory Memory::set(const SP_Memory &m) {
 	case ARR:
 		if (this->arr_data.empty()) {
 			for (auto &v : m->arr_data) {
-				SP_Memory temp = new_memory();
+				SP_MEMORY temp = NEW_MEMORY();
 				temp->set(v);
 				this->arr_data.push_back(temp);
 			}
@@ -353,7 +353,7 @@ SP_Memory Memory::set(const SP_Memory &m) {
 	return to_this_ptr;
 }
 
-SP_Memory Memory::setScope(const SP_Scope &scope) {
+SP_MEMORY Memory::setScope(const SP_SCOPE &scope) {
 	if (mt == REF) {
 		reference->setScope(scope);
 		return to_this_ptr;
@@ -363,7 +363,7 @@ SP_Memory Memory::setScope(const SP_Scope &scope) {
 	return to_this_ptr;
 }
 
-SP_Memory Memory::add(const SP_Memory &a) const {
+SP_MEMORY Memory::add(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->add(a);
 
@@ -373,12 +373,12 @@ SP_Memory Memory::add(const SP_Memory &a) const {
 		switch (a->mt)
 		{ 
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() + a->getValue());
+			return NEW_MEMORY(this->mt == CHA ? CHA : NUM, this->getValue() + a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->add(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -387,14 +387,14 @@ SP_Memory Memory::add(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->add(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::sub(const SP_Memory &a) const {
+SP_MEMORY Memory::sub(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->sub(a);
 	switch (mt)
@@ -403,12 +403,12 @@ SP_Memory Memory::sub(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() - a->getValue());
+			return NEW_MEMORY(this->mt == CHA ? CHA : NUM, this->getValue() - a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->sub(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -417,14 +417,14 @@ SP_Memory Memory::sub(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->sub(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::mul(const SP_Memory &a) const {
+SP_MEMORY Memory::mul(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->mul(a);
 	switch (mt)
@@ -433,12 +433,12 @@ SP_Memory Memory::mul(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() * a->getValue());
+			return NEW_MEMORY(this->mt == CHA ? CHA : NUM, this->getValue() * a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->mul(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -447,14 +447,14 @@ SP_Memory Memory::mul(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->mul(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::div(const SP_Memory &a) const {
+SP_MEMORY Memory::div(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->div(a);
 	switch (mt)
@@ -463,12 +463,12 @@ SP_Memory Memory::div(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, this->getValue() / a->getValue());
+			return NEW_MEMORY(this->mt == CHA ? CHA : NUM, this->getValue() / a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->div(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -477,14 +477,14 @@ SP_Memory Memory::div(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->div(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::mod(const SP_Memory &a) const {
+SP_MEMORY Memory::mod(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->mod(a);
 	switch (mt)
@@ -493,12 +493,12 @@ SP_Memory Memory::mod(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, (int)this->getValue() % (int)a->getValue());
+			return NEW_MEMORY(this->mt == CHA ? CHA : NUM, (int)this->getValue() % (int)a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->mod(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -507,14 +507,14 @@ SP_Memory Memory::mod(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->mod(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::pow(const SP_Memory &a) const {
+SP_MEMORY Memory::pow(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->pow(a);
 	switch (mt)
@@ -523,12 +523,12 @@ SP_Memory Memory::pow(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(this->mt == CHA ? CHA : NUM, std::pow(this->getValue(), a->getValue()));
+			return NEW_MEMORY(this->mt == CHA ? CHA : NUM, std::pow(this->getValue(), a->getValue()));
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->pow(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -537,14 +537,14 @@ SP_Memory Memory::pow(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->pow(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::less(const SP_Memory &a) const {
+SP_MEMORY Memory::less(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->less(a);
 	switch (mt)
@@ -553,12 +553,12 @@ SP_Memory Memory::less(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(NUM, this->getValue() < a->getValue());
+			return NEW_MEMORY(NUM, this->getValue() < a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->less(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -567,14 +567,14 @@ SP_Memory Memory::less(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->less(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::eless(const SP_Memory &a) const {
+SP_MEMORY Memory::eless(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->eless(a);
 	switch (mt)
@@ -583,12 +583,12 @@ SP_Memory Memory::eless(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(NUM, this->getValue() <= a->getValue());
+			return NEW_MEMORY(NUM, this->getValue() <= a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->eless(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -597,14 +597,14 @@ SP_Memory Memory::eless(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->eless(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::more(const SP_Memory &a) const {
+SP_MEMORY Memory::more(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->more(a);
 	switch (mt)
@@ -613,12 +613,12 @@ SP_Memory Memory::more(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(NUM, this->getValue() > a->getValue());
+			return NEW_MEMORY(NUM, this->getValue() > a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->more(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -627,14 +627,14 @@ SP_Memory Memory::more(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->more(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
 	return nullptr;
 }
 
-SP_Memory Memory::emore(const SP_Memory &a) const {
+SP_MEMORY Memory::emore(const SP_MEMORY &a) const {
 	if (mt == REF)
 		return reference->emore(a);
 	switch (mt)
@@ -643,12 +643,12 @@ SP_Memory Memory::emore(const SP_Memory &a) const {
 		switch (a->mt)
 		{
 		default:
-			return new_memory(NUM, this->getValue() >= a->getValue());
+			return NEW_MEMORY(NUM, this->getValue() >= a->getValue());
 		case ARR:
 			VEC_Memory new_arr;
 			for (auto &v : a->arr_data)
 				new_arr.push_back(this->emore(v));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	case ARR:
 		switch (a->mt)
@@ -657,7 +657,7 @@ SP_Memory Memory::emore(const SP_Memory &a) const {
 			VEC_Memory new_arr;
 			for (auto &v : this->arr_data)
 				new_arr.push_back(v->emore(a));
-			return new_memory(new_arr);
+			return NEW_MEMORY(new_arr);
 		}
 	}
 
@@ -738,7 +738,7 @@ MemType Memory::getType() const {
 }
 
 
-SP_Memory Memory::eraseLambda() {
+SP_MEMORY Memory::eraseLambda() {
 	this->clear();
 	this->mt = NUL;
 	return to_this_ptr;

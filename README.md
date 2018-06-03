@@ -2,7 +2,7 @@
 
 # Ruota Programming Language
 
-_For those who use VSCode, please thank Mirin for his lovely Ruota Plugin!_
+_For those who use VSCode, please thank Minin for his lovely Ruota Plugin!_
 
 https://marketplace.visualstudio.com/items?itemName=minin.ruota#overview
 

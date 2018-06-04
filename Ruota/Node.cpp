@@ -67,6 +67,16 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 	SP_MEMORY temp1 = NEW_MEMORY();
 	switch (nt)
 	{
+	case EVAL:	{
+		std::string last_dir = Interpreter::current_dir;
+		std::string last_file = Interpreter::curr_file;
+		auto n_s = NEW_SCOPE(scope);
+		auto node = RuotaWrapper::interpreter->generate(executed[0]->toString(), n_s, "");
+		temp1 = RuotaWrapper::interpreter->execute(node);
+		Interpreter::current_dir = last_dir;
+		Interpreter::curr_file = last_file;
+		return temp1;
+	}
 	case BREAK:		return temp1->setType(BREAK_M);
 	case RETURN:	return temp1->setType(RETURN_M);
 	case VAR:		return scope->getVariable(key);

@@ -1,7 +1,6 @@
 #ifndef RUOTA_H
 #define RUOTA_H
 
-#define DEBUG
 #define THREADING
 #define FILE_IO
 
@@ -111,6 +110,7 @@ enum NodeType {
 	TRY_CATCH,	// try .. catch
 	DECLARE,	// var
 	INHERIT,	// +>
+	EVAL,		// eval()
 
 	BREAK,		// break
 	RETURN		// return
@@ -285,7 +285,7 @@ class Interpreter {
 	friend Memory;
 	friend RuotaWrapper;
 private:
-	std::string current_dir;
+	static std::string current_dir;
 	static std::unordered_map<std::string, VEC_Memory(*)(VEC_Memory)> embedded;
 	static std::unordered_map<std::string, int> operators;
 	std::vector<std::string> LOADED;
@@ -301,10 +301,10 @@ public:
 
 class RuotaWrapper {
 private:
-	Interpreter * interpreter;
 	SP_SCOPE main_scope;
 	std::string current_dir;
 public:
+	static Interpreter * interpreter;
 	RuotaWrapper(std::string);
 	SP_MEMORY runLine(std::string);
 	~RuotaWrapper();

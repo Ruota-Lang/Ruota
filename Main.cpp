@@ -139,7 +139,7 @@ int checkClosed(std::string s) {
 int console(){
 	std::string line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.10.3 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.11.0 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {
@@ -171,12 +171,6 @@ int console(){
 				else if(!res->getArray().empty()) {
 					std::cout << "\t" << res->getArray()[0]->toString() << std::endl;
 				}
-				#ifdef DEBUG
-				std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << "\t" << Memory::reference_add - Memory::reference_del << std::endl;
-				std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << "\t" << Lambda::reference_add - Lambda::reference_del << std::endl;
-				std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << "\t" << Node::reference_add - Node::reference_del << std::endl;
-				std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << "\t" << Scope::reference_add - Scope::reference_del << std::endl;
-				#endif
 			}
 			catch (const std::runtime_error &e) {
 				setColor(12);
@@ -233,13 +227,6 @@ int main(int argc, char * argv[]) {
 		console();
 	}
 	delete rw;
-
-	#ifdef DEBUG
-	std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << "\t" << Memory::reference_add - Memory::reference_del << std::endl;
-	std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << "\t" << Lambda::reference_add - Lambda::reference_del << std::endl;
-	std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << "\t" << Node::reference_add - Node::reference_del << std::endl;
-	std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << "\t" << Scope::reference_add - Scope::reference_del << std::endl;
-	#endif
 
 	setColor(7);
 	return EXIT_SUCCESS;

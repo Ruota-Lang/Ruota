@@ -2,6 +2,8 @@
 
 std::string Interpreter::path = "\\";
 std::string Interpreter::curr_file = "";
+std::string Interpreter::current_dir = "";
+Interpreter * RuotaWrapper::interpreter = NULL;
 
 std::unordered_map<std::string, int> Interpreter::operators = {
 	{ "load", 999 },
@@ -666,6 +668,10 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 				}
 				else if (a->key == "thread"){
 					b->nt = THREAD;
+					stack.push_back(b);
+				}
+				else if (a->key == "eval") {
+					b->nt = EVAL;
 					stack.push_back(b);
 				}
 				else {

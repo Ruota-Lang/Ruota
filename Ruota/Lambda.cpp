@@ -24,6 +24,7 @@ SP_MEMORY Lambda::execute(VEC_Memory params) {
 
 	auto temp = scope->execute();
 	idem->eraseLambda();
+	scope.reset();
 	if (temp->getType() == RETURN_M)
 		return NEW_MEMORY();
 	else

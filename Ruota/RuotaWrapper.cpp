@@ -320,7 +320,26 @@ RuotaWrapper::RuotaWrapper(std::string current_dir){
 
 SP_MEMORY RuotaWrapper::runLine(std::string line) {
 	this->interpreter->generate(line , main_scope, "\\");
-	return this->interpreter->execute(main_scope);
+
+	#ifdef DEBUG
+	std::cout << "PRE:" << std::endl;
+	std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << "\t" << Memory::reference_add - Memory::reference_del << std::endl;
+	std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << "\t" << Lambda::reference_add - Lambda::reference_del << std::endl;
+	std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << "\t" << Node::reference_add - Node::reference_del << std::endl;
+	std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << "\t" << Scope::reference_add - Scope::reference_del << std::endl;
+	#endif
+
+	auto temp = this->interpreter->execute(main_scope);
+
+	#ifdef DEBUG
+	std::cout << "POST:" << std::endl;
+	std::cout << "MEM:\t+" << Memory::reference_add << "\t-" << Memory::reference_del << "\t" << Memory::reference_add - Memory::reference_del << std::endl;
+	std::cout << "LAM:\t+" << Lambda::reference_add << "\t-" << Lambda::reference_del << "\t" << Lambda::reference_add - Lambda::reference_del << std::endl;
+	std::cout << "NOD:\t+" << Node::reference_add << "\t-" << Node::reference_del << "\t" << Node::reference_add - Node::reference_del << std::endl;
+	std::cout << "SCO:\t+" << Scope::reference_add << "\t-" << Scope::reference_del << "\t" << Scope::reference_add - Scope::reference_del << std::endl;
+	#endif
+
+	return temp;
 }
 
 RuotaWrapper::~RuotaWrapper() {

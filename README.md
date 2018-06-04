@@ -179,5 +179,5 @@ If-then statements use the keywords `then` and `else`.
 	type a		Returns a string-array declaring the type of data `a` holds
 
 [1]:https://marketplace.visualstudio.com/items?itemName=minin.ruota#overview
-[2]:https://agilulfulus.github.io/Ruota/Docs/
+[2]:https://ruota-lang.github.io/Ruota-Docs/index.html
 [3]:https://discord.gg/UCWbyb9

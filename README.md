@@ -2,9 +2,7 @@
 
 # Ruota Programming Language
 
-_For those who use VSCode, please thank Minin for his lovely Ruota Plugin!_
-
-https://marketplace.visualstudio.com/items?itemName=minin.ruota#overview
+_For those who use VS Code, please thank Minin for his lovely Ruota Plugin!_ [minin.ruota][1]
 
 Side project of mine - all features below (unless otherwise specified) should work. Unfortunately, it is a little slow right now during runtime, but as the language and interpreter improves I hope that I may get it to the speed of other major interpreted languages.
 
@@ -16,11 +14,13 @@ At the moment, the language has no implementations outside of the command line.
 
 # Library Documentation
 
-https://agilulfulus.github.io/Ruota/Docs/
+[Ruota Documentation][2]
+
+_Note: Documentation for Ruota is incomplete, but getting better..._
 
 # Contact
 
-Pop in here: https://discord.gg/UCWbyb9
+[Discord Support Server][3]
 
 # Planned Features
 
@@ -177,3 +177,7 @@ If-then statements use the keywords `then` and `else`.
 				The syntax `a .= null` removes the connection
 	a :&= b		Declare `a`, then refer it to `b`
 	type a		Returns a string-array declaring the type of data `a` holds
+
+[1]:https://marketplace.visualstudio.com/items?itemName=minin.ruota#overview
+[2]:https://agilulfulus.github.io/Ruota/Docs/
+[3]:https://discord.gg/UCWbyb9

@@ -163,6 +163,7 @@ If-then statements use the keywords `then` and `else`.
 	num a			    Numerical value of string-array `a`
 	chr a			    Char value of number `a`
 	str a			    String value of `a`
+	keys a			    Gets keys in form of array from object `a`
 	arr a			    Array value of string `a`
 	str (arr "Hello World" + 1) Adds 1 to each char in the string and then converts it back to string
 	a push b		    Pushes value `b` to the end of `a`

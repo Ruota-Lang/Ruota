@@ -12,9 +12,9 @@ dynamic Map :: {
 		v &= (contents[end]).value;
 	};
 
-	getKeys() => keys from {
-		keys = [];
-		i in contents ->> { keys push i.key };
+	getKeys() => keys_m from {
+		keys_m = [];
+		i in contents ->> { keys_m push i.key };
 	};
 
 	getValues() => values from {

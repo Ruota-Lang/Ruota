@@ -1,3 +1,0 @@
-uwu(s) => {
-	Regex.replace(s, "u", "uwu");
-};

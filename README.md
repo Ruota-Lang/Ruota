@@ -173,6 +173,7 @@ If-then statements use the keywords `then` and `else`.
 	end a			    Returns value from end of `a`
 	a ++ b			    Array concatanation of `a` and `b`
 	a .. b			    String concatanation of `a` and `b`
+	a ..= b			    Sets value of `a` to string concatination of `a` and `b`
 	a &= b			    `a` refers to `b` - anything done to `a` is done to `b`
 	a .= null      	  	    Removes the connection
 	a :&= b			    Declare `a`, then refer it to `b`

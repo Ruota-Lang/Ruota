@@ -42,10 +42,32 @@ Node::Node(SP_SCOPE scope_ref) {
 
 Node::~Node(){
 	this->reference_del++;
-	this->scope_ref = nullptr;
+	destroy();
+}
+
+void Node::destroy() {
+	//std::cout << " >> STARTING DELETION\n";
 	this->mem_data = nullptr;
-	this->params.clear();
-	this->switch_values.clear();
+	if (nt == SWITCH) {
+		for (auto &n : switch_values){
+			if (n.second != nullptr)
+				n.second->destroy();
+		}
+	}
+	switch_values.clear();
+	for (auto &n : params){
+		if (n != nullptr)
+			n->destroy();
+	}
+	params.clear();
+	if (scope_ref!=nullptr){
+		//this->scope_ref->parent = nullptr;
+		if (this->scope_ref->main != nullptr)
+			this->scope_ref->main->destroy();
+		this->scope_ref->main = nullptr;
+		this->scope_ref = nullptr;
+	}
+	//std::cout << " >> ENDING DELETION\n";
 }
 
 SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
@@ -67,6 +89,13 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 	SP_MEMORY temp1 = NEW_MEMORY();
 	switch (nt)
 	{
+	case OBJ_KEYS:	{
+		VEC_Memory new_list;
+		for (auto e : executed[0]->getScope()->variables) {
+			new_list.push_back(NEW_MEMORY(e.first));
+		}
+		return NEW_MEMORY(new_list);
+	}
 	case EVAL:	{
 		std::string last_dir = Interpreter::current_dir;
 		std::string last_file = Interpreter::curr_file;
@@ -275,10 +304,12 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 	}
 	case SWITCH:	{
 		executed.push_back(params[0]->execute(scope));
-		if (switch_values.find(executed[0]->getValue()) != switch_values.end())
-			return switch_values.at(executed[0]->getValue())->execute(scope);
-		else if (params.size() > 1)
-			return params[1]->execute(scope);
+		if (switch_values.find(executed[0]->getValue()) != switch_values.end()){
+			temp1 = switch_values.at(executed[0]->getValue())->execute(scope);
+		}
+		else if (params.size() > 1) {
+			temp1 = params[1]->execute(scope);
+		}
 		return temp1;
 	}
 	case POP_ARR:	{

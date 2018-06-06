@@ -32,6 +32,7 @@ std::unordered_map<std::string, int> Interpreter::operators = {
 	{ "str", -10 },
 	{ "arr", -10 },
 	{ "chr", -10 },
+	{ "keys", -10 },
 	{ "alloc", -10 },
 
 	{ "pop", -10 },
@@ -393,6 +394,12 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 				params = { b };
 				stack.push_back(NEW_NODE(NEW, params));
 			}
+			else if (token == "keys") {
+				if (a != nullptr)
+					stack.push_back(a);
+				params = { b };
+				stack.push_back(NEW_NODE(OBJ_KEYS, params));
+			}
 			else if (token == "detach") {
 				if (a != nullptr)
 					stack.push_back(a);
@@ -642,7 +649,7 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 			else if (token == "switch"){
 				std::unordered_map<long double, SP_NODE> switch_values;
 				for (auto &n : b->scope_ref->main->params) {
-					switch_values[n->params[0]->mem_data->getValue()] = n->params[1];
+					switch_values[n->params[0]->mem_data->getValue()] = n->params[1]->clone(current);
 				}
 				stack.push_back(NEW_NODE(a, switch_values));
 			}

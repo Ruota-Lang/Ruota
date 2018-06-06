@@ -16,8 +16,10 @@ Scope::Scope(SP_SCOPE parent, SP_NODE main) {
 
 Scope::~Scope(){
 	this->reference_del++;
+	if (this->main != nullptr)
+		this->main->destroy();
 	this->main = nullptr;
-	//this->parent = nullptr;
+	this->parent = nullptr;
 	this->variables.clear();
 }
 

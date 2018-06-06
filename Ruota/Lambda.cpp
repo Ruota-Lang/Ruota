@@ -24,7 +24,8 @@ SP_MEMORY Lambda::execute(VEC_Memory params) {
 
 	auto temp = scope->execute();
 	idem->eraseLambda();
-	scope.reset();
+	//scope.reset();
+
 	if (temp->getType() == RETURN_M)
 		return NEW_MEMORY();
 	else
@@ -47,6 +48,8 @@ Lambda::Lambda(const SP_SCOPE &parent, const SP_NODE &base, std::vector<std::str
 Lambda::~Lambda(){
 	this->reference_del++;
 	this->parent = nullptr;
+	if (this->base != nullptr)
+		this->base->destroy();
 	this->base = nullptr;
 	this->default_params.clear();
 }

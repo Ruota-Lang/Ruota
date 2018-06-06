@@ -111,6 +111,7 @@ enum NodeType {
 	DECLARE,	// var
 	INHERIT,	// +>
 	EVAL,		// eval()
+	OBJ_KEYS,	// keys
 
 	BREAK,		// break
 	RETURN		// return
@@ -242,6 +243,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	SP_MEMORY	execute(const SP_SCOPE&) const;
 	SP_NODE		clone(const SP_SCOPE&) const;
 	void		weakListCheck();
+	void		destroy();
 	static void	threadWrapper(SP_NODE, SP_SCOPE);
 };
 
@@ -263,7 +265,7 @@ struct Lambda : std::enable_shared_from_this<Lambda> {
 struct Scope : std::enable_shared_from_this<Scope> {
 	static long	reference_add;
 	static long	reference_del;
-	SP_SCOPE	parent;
+	SP_SCOPE	parent = nullptr;
 	SP_NODE		main = nullptr;
 	std::unordered_map<std::string, SP_MEMORY> variables;
 
@@ -304,6 +306,7 @@ private:
 	SP_SCOPE main_scope;
 	std::string current_dir;
 public:
+	static void debugPrint();
 	static Interpreter * interpreter;
 	RuotaWrapper(std::string);
 	SP_MEMORY runLine(std::string);

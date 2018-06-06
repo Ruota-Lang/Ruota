@@ -304,8 +304,13 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 	}
 	case SWITCH:	{
 		executed.push_back(params[0]->execute(scope));
-		if (switch_values.find(executed[0]->getValue()) != switch_values.end()){
-			temp1 = switch_values.at(executed[0]->getValue())->execute(scope);
+		long double switch_value = 0;
+		if (flag == 0)
+			switch_value = executed[0]->getValue();
+		else
+			switch_value = std::hash<std::string>{}(executed[0]->toString());
+;		if (switch_values.find(switch_value) != switch_values.end()){
+			temp1 = switch_values.at(switch_value)->execute(scope);
 		}
 		else if (params.size() > 1) {
 			temp1 = params[1]->execute(scope);

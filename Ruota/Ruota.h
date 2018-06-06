@@ -13,6 +13,7 @@
 #include<algorithm>
 #include<memory>
 #include<time.h>
+#include<functional>
 #include<filesystem>
 #ifdef _WIN32
 	#define _WINSOCK_DEPRECATED_NO_WARNINGS

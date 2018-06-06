@@ -648,10 +648,17 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 				stack.push_back(NEW_NODE(THEN, params));
 			else if (token == "switch"){
 				std::unordered_map<long double, SP_NODE> switch_values;
+				int flag = 0;
 				for (auto &n : b->scope_ref->main->params) {
-					switch_values[n->params[0]->mem_data->getValue()] = n->params[1]->clone(current);
+					if (n->params[0]->mem_data->getType() == STR){
+						switch_values[std::hash<std::string>{}(n->params[0]->mem_data->toString())] = n->params[1]->clone(current);
+						flag = 1;
+					}else {
+						switch_values[n->params[0]->mem_data->getValue()] = n->params[1]->clone(current);
+					}
 				}
 				stack.push_back(NEW_NODE(a, switch_values));
+				stack.back()->flag = flag;
 			}
 			else if (token == ">>") {
 				if (a->nt == SWITCH){

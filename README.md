@@ -158,25 +158,25 @@ If-then statements use the keywords `then` and `else`.
 
 # Notable Operators
 
-	a ** b		The exponential of `a` to the power of `b`
-	len a		Size of array `a`
-	num a		Numerical value of string-array `a`
-	chr a		Char value of number `a`
-	str a		String value of `a`
-				condenses array into a string format
-	arr a		Array value of string `a`
-				`str (arr "Hello World" + 1)` adds 1 to each char in the string and then converts it back to string
-	a push b	Pushes value `b` to the end of `a`
-	a post b	Pushes value `b` to the front of `a`
-	pop a		Pops value from end of `a`
-	mov a		Pops value from front of `a`
-	end a		Returns value from end of `a`
-	a ++ b		Array concatanation of `a` and `b`
-	a .. b		String concatanation of `a` and `b`
-	a &= b		`a` refers to `b` - anything done to `a` is done to `b`
-				The syntax `a .= null` removes the connection
-	a :&= b		Declare `a`, then refer it to `b`
-	type a		Returns a string-array declaring the type of data `a` holds
+	a ** b			    The exponential of `a` to the power of `b`
+	len a			    Size of array `a`
+	num a			    Numerical value of string-array `a`
+	chr a			    Char value of number `a`
+	str a			    String value of `a`
+	keys a			    Gets keys in form of array from object `a`
+	arr a			    Array value of string `a`
+	str (arr "Hello World" + 1) Adds 1 to each char in the string and then converts it back to string
+	a push b		    Pushes value `b` to the end of `a`
+	a post b		    Pushes value `b` to the front of `a`
+	pop a			    Pops value from end of `a`
+	mov a			    Pops value from front of `a`
+	end a			    Returns value from end of `a`
+	a ++ b			    Array concatanation of `a` and `b`
+	a .. b			    String concatanation of `a` and `b`
+	a &= b			    `a` refers to `b` - anything done to `a` is done to `b`
+	a .= null      	  	    Removes the connection
+	a :&= b			    Declare `a`, then refer it to `b`
+	type a			    Returns a string-array declaring the type of data `a` holds
 
 [1]:https://marketplace.visualstudio.com/items?itemName=minin.ruota#overview
 [2]:https://ruota-lang.github.io/Ruota-Docs/index.html

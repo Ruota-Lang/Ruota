@@ -765,7 +765,7 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 	}
 
 	main->main = NEW_NODE(LIST, stack);
-	main->main->weakListCheck();
+	main->main->weakListCheck(main);
 	return main;
 }
 

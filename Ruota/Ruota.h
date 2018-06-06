@@ -15,6 +15,7 @@
 #include<time.h>
 #include<filesystem>
 #ifdef _WIN32
+	#define _WINSOCK_DEPRECATED_NO_WARNINGS
 	#include <winsock2.h>
 	#include <ws2tcpip.h>
 	#pragma comment(lib, "Ws2_32.lib")
@@ -242,7 +243,7 @@ struct Node : std::enable_shared_from_this<Node> {
 	const std::string	toString() const;
 	SP_MEMORY	execute(const SP_SCOPE&) const;
 	SP_NODE		clone(const SP_SCOPE&) const;
-	void		weakListCheck();
+	void		weakListCheck(const SP_SCOPE&);
 	void		destroy();
 	static void	threadWrapper(SP_NODE, SP_SCOPE);
 };

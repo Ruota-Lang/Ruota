@@ -139,7 +139,7 @@ int checkClosed(std::string s) {
 int console(){
 	std::string line;
 	rw->runLine("args := [];");
-	std::cout << "Ruota 0.10.11.1 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
+	std::cout << "Ruota 0.10.11.2 Alpha - Copyright (C) 2018 - Benjamin Park" << std::endl;
 
 	while (true) {
 		do {

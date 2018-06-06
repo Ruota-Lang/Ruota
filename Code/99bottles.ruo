@@ -2,7 +2,7 @@ x := 99;
 
 printl(x .. " bottles of beer on the wall, " .. x .. " bottles of beer.");
 
-i in [1 :> x] ->> {
+i in [1 :> x] ->> { # Alternatively, [ x :> 1 : -1 ] (using a step)
 	printl("Take one down, pass it around, " .. (x - i) .. " bottles of beer on the wall...");
 };
 

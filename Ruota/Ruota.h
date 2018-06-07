@@ -114,6 +114,7 @@ enum NodeType {
 	INHERIT,	// +>
 	EVAL,		// eval()
 	OBJ_KEYS,	// keys
+	GET_MET,	// get
 
 	BREAK,		// break
 	RETURN		// return

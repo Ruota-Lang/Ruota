@@ -106,6 +106,10 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		Interpreter::curr_file = last_file;
 		return temp1;
 	}
+	case GET_MET: {
+		std::string key = executed[1]->toString();
+		return executed[0]->getScope()->getVariable(key);
+	}
 	case BREAK:		return temp1->setType(BREAK_M);
 	case RETURN:	return temp1->setType(RETURN_M);
 	case VAR:		return scope->getVariable(key);

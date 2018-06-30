@@ -16,9 +16,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
-#ifdef _WIN32
-	#include <Windows.h>
-#endif
 #include<chrono>
 #include<cmath>
 #include<regex>

@@ -168,7 +168,6 @@ std::vector<SP_MEMORY> __filesystem_remove(std::vector<SP_MEMORY> args) {
 	return {NEW_MEMORY()};
 }
 
-#ifdef _WIN32
 std::vector<SP_MEMORY> __network_start(std::vector<SP_MEMORY> args) {
 	/*	WSADATA wsaData;
 		int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -284,7 +283,6 @@ std::vector<SP_MEMORY> __network_shutdown(std::vector<SP_MEMORY> args) {
 	ConnectSocket->close();
 	return {NEW_MEMORY()};
 }
-#endif
 
 RuotaWrapper::RuotaWrapper(std::string current_dir){
 	Interpreter::addEmbed("error", &__error);

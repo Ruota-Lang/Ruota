@@ -1,0 +1,42 @@
+dec_var	0
+push_var	0
+push_val	1
+set
+dec_var	1
+push_var	1
+push_val	1
+set
+
+push_var	0
+print
+dec_var	2
+push_var	2
+push_var	0
+push_var	1
+add
+set
+push_var	0
+push_var	1
+set
+push_var	1
+push_var	2
+set
+
+push_var	0
+push_val	100
+less
+if_goto	10
+
+#	Equivalent C code:
+#	--------------------
+#	int x;
+#	x = 1;
+#	int y;
+#	y = 1;
+#	do {
+		printf("%d", x);
+#		int z;
+#		z = x + y;
+#		x = y;
+#		y = z;
+#	} while (x < 100);

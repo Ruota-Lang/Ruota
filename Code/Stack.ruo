@@ -1,0 +1,115 @@
+load "Strings";
+
+runCode(filename) => {
+	f := new File(filename);
+	line := "";
+	lines := [];
+	(line = f.readLine()) != null do {
+		l := line;
+		lines push l;
+	};
+
+	stack := [];
+	vars := alloc 64;
+
+	i := 0;
+	i < len lines do {
+		s := Strings.split(lines[i], '\t', 1);
+		len s switch {
+			1 >> {
+				s[0] switch {
+					"set" >> {
+						val :&= stack[end];
+						pop stack;
+						ref :&= stack[end];
+						pop stack;
+						ref = val;
+					};
+					"add" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a + b);
+					};
+					"sub" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a - b);
+					};
+					"mul" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a * b);
+					};
+					"div" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a / b);
+					};
+					"mod" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a % b);
+					};
+					"pow" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a ** b);
+					};
+					"less" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a < b);
+					};
+					"more" >> {
+						b := stack[end];
+						pop stack;
+						a := stack[end];
+						pop stack;
+						stack push (a > b);
+					};
+					"print" >> {
+						a := stack[end];
+						pop stack;
+						printl(a);
+					};
+				};
+			};
+			2 >> {
+				s[0] switch {
+					"dec_var" >> {
+						vars[num s[1]] = 0;
+					};
+					"push_var" >> {
+						ref :&= vars[num s[1]];
+						stack push ref;
+					};
+					"push_val" >> {
+						stack push num s[1];
+					};
+					"if_goto" >> {
+						a := stack[end];
+						pop stack;
+						a != 0 then i = num s[1] - 2;
+					};
+				};
+			};
+		};
+		i += 1;
+	};
+};
+
+len args == 1 then runCode(args[0]);

@@ -1,9 +1,2 @@
-x := 99;
-
-printl(x .. " bottles of beer on the wall, " .. x .. " bottles of beer.");
-
-i in [1 :> x] ->> { # Alternatively, [ x :> 1 : -1 ] (using a step)
-	printl("Take one down, pass it around, " .. (x - i) .. " bottles of beer on the wall...");
-};
-
-printl("No more bottles of beer on the wall, no more bottles of beer.");
+(b,o,s):=(" bottles of beer"," on the wall"," bottle of beer");
+i in 99:0:-1->>print(i..(i>1 then b..o..", "..i..b..".\nTake one down and pass it around, "..i else s..o..", 1"..s..".\nGo to the store and buy some more, 99")..b..o..".\n")

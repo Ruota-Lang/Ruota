@@ -1,0 +1,30 @@
+# using sockets to get HTML, oof
+
+dynamic Server :: {
+	socket := null;
+	address := "";
+	init(address) => {
+		self.address = address;
+		socket = Network.createSocket();
+		socket.connect(address, 80);
+	};
+
+	GET(a = "", bytes = 2**16) => html from {
+		socket.send("GET / HTTP/1.1\nHost: " .. address .. a .. "\n\n");
+		html = socket.receive(bytes);
+	};
+
+	HEAD(a = "", bytes = 2**16) => html from {
+		socket.send("HEAD / HTTP/1.1\nHost: " .. address .. a .. "\n\n");
+		html = socket.receive(bytes);
+	};
+
+	shutdown() => {
+		socket.shutdown();
+	};
+};
+
+Network.start();
+s := new Server("example.org");
+print(s.GET());
+s.shutdown();

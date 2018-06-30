@@ -20,7 +20,7 @@ std::vector<SP_MEMORY> __getenv(std::vector<SP_MEMORY> args) {
 }
 
 std::vector<SP_MEMORY> __exit(std::vector<SP_MEMORY> args) {
-	quick_exit(0);
+	_c_exit();
 	return { NEW_MEMORY() }; //superfluous?
 }
 
@@ -83,7 +83,7 @@ std::vector<SP_MEMORY> __file_read_line(std::vector<SP_MEMORY> args) {
 
 std::vector<SP_MEMORY> __file_read(std::vector<SP_MEMORY> args) {
 	std::ifstream *file = (std::ifstream*)args[0]->getPointer();
-	char * buffer = new char[args[1]->getValue()];
+	char * buffer = new char[(int)args[1]->getValue()];
 	if (file->read(buffer, args[1]->getValue()))
 		return { NEW_MEMORY(std::string(buffer, args[1]->getValue())) };
 	else
@@ -124,7 +124,7 @@ std::vector<SP_MEMORY> __regex_replace(std::vector<SP_MEMORY> args) {
 std::vector<SP_MEMORY> __filesystem_listdir(std::vector<SP_MEMORY> args) {
 	VEC_Memory list;
 	std::string path = Interpreter::path.substr(1) + args[0]->toString();
-	for (auto &p : std::filesystem::directory_iterator(path)){
+	for (auto &p : boost::filesystem::directory_iterator(path)){
 		std::string file = p.path().string().substr(path.length());
 		while (file[0] == '\\' || file[0] == '/')
 			file = file.substr(1);
@@ -133,74 +133,94 @@ std::vector<SP_MEMORY> __filesystem_listdir(std::vector<SP_MEMORY> args) {
 	return list;
 }
 std::vector<SP_MEMORY> __filesystem_path(std::vector<SP_MEMORY> args) {
-	return {NEW_MEMORY(std::filesystem::current_path().string() + Interpreter::path)};
+	return {NEW_MEMORY(boost::filesystem::current_path().string() + Interpreter::path)};
 }
 
 std::vector<SP_MEMORY> __filesystem_mkdir(std::vector<SP_MEMORY> args) {
-	std::filesystem::create_directory(Interpreter::path.substr(1) + args[0]->toString());
+	boost::filesystem::create_directory(Interpreter::path.substr(1) + args[0]->toString());
 	return {NEW_MEMORY()};
 }
 
 std::vector<SP_MEMORY> __filesystem_exists(std::vector<SP_MEMORY> args) {
-	return { NEW_MEMORY(NUM, std::filesystem::exists(Interpreter::path.substr(1) + args[0]->toString())) };
+	return { NEW_MEMORY(NUM, boost::filesystem::exists(Interpreter::path.substr(1) + args[0]->toString())) };
 }
 
 std::vector<SP_MEMORY> __filesystem_copy(std::vector<SP_MEMORY> args) {
 	std::string origin = Interpreter::path.substr(1) + args[0]->toString();
 	std::string path = Interpreter::path.substr(1) + args[1]->toString();
-	std::filesystem::copy(origin, path);
+	boost::filesystem::copy(origin, path);
 	return {NEW_MEMORY()};
 }
 
 std::vector<SP_MEMORY> __filesystem_rename(std::vector<SP_MEMORY> args) {
 	std::string origin = Interpreter::path.substr(1) + args[0]->toString();
 	std::string path = Interpreter::path.substr(1) + args[1]->toString();
-	std::filesystem::rename(origin, path);
+	boost::filesystem::rename(origin, path);
 	return {NEW_MEMORY()};
 }
 
 std::vector<SP_MEMORY> __filesystem_size(std::vector<SP_MEMORY> args) {
-	return { NEW_MEMORY(NUM, std::filesystem::file_size(Interpreter::path.substr(1) + args[0]->toString())) };
+	return { NEW_MEMORY(NUM, boost::filesystem::file_size(Interpreter::path.substr(1) + args[0]->toString())) };
 }
 
 std::vector<SP_MEMORY> __filesystem_remove(std::vector<SP_MEMORY> args) {
-	std::filesystem::remove(Interpreter::path.substr(1) + args[0]->toString());
+	boost::filesystem::remove(Interpreter::path.substr(1) + args[0]->toString());
 	return {NEW_MEMORY()};
 }
 
 #ifdef _WIN32
-std::vector<SP_MEMORY> __winsock_start(std::vector<SP_MEMORY> args) {
-		WSADATA wsaData;
+std::vector<SP_MEMORY> __network_start(std::vector<SP_MEMORY> args) {
+	/*	WSADATA wsaData;
 		int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 		if (iResult != NO_ERROR) {
 			return {NEW_MEMORY("WSAStartup failed: " + std::to_string(iResult)) };
 		}
-	return {NEW_MEMORY()};
+	return {NEW_MEMORY()};*/
+
+	boost::asio::io_service * ios = new boost::asio::io_service();
+	return { NEW_MEMORY((void*)ios)};
 }
-std::vector<SP_MEMORY> __winsock_create_socket(std::vector<SP_MEMORY> args) {
-	SOCKET ConnectSocket = INVALID_SOCKET;
+std::vector<SP_MEMORY> __network_create_socket(std::vector<SP_MEMORY> args) {
+	/*SOCKET ConnectSocket = INVALID_SOCKET;
 	ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (ConnectSocket == INVALID_SOCKET) {
         WSACleanup();
         return {NEW_MEMORY("Error at socket(): " + std::to_string(WSAGetLastError()) )};
     }
+	return {NEW_MEMORY(), NEW_MEMORY((void*)ConnectSocket)};*/
+	boost::asio::io_service * ios = (boost::asio::io_service*)args[0]->getPointer();
+	boost::asio::ip::tcp::socket * ConnectSocket = new boost::asio::ip::tcp::socket(*ios);
 	return {NEW_MEMORY(), NEW_MEMORY((void*)ConnectSocket)};
 }
-std::vector<SP_MEMORY> __winsock_get_addresses(std::vector<SP_MEMORY> args) {	
+std::vector< std::string > getHostByName(std::string hostname) {
+  std::vector<std::string> addresses;
+  boost::asio::io_service io_service;
+  try {
+    boost::asio::ip::tcp::resolver resolver(io_service);
+    boost::asio::ip::tcp::resolver::query query(hostname, "");
+    boost::asio::ip::tcp::resolver::iterator destination = resolver.resolve(query);
+    boost::asio::ip::tcp::resolver::iterator end;
+    boost::asio::ip::tcp::endpoint endpoint;
+    while (destination != end) {
+      endpoint = *destination++;
+      addresses.push_back(endpoint.address().to_string());
+    }
+  } catch(boost::system::system_error& error) {
+	  throw std::runtime_error("Hostname not found!");
+  }
+
+  return(addresses);
+
+}
+std::vector<SP_MEMORY> __network_get_addresses(std::vector<SP_MEMORY> args) {	
 	VEC_Memory ret;
-	struct hostent *remoteHost;
-	remoteHost = gethostbyname(args[0]->toString().c_str());
-	struct in_addr addr;
-	int i = 0;
-	while (remoteHost->h_addr_list[i] != 0)
-	{
-		addr.s_addr = *(u_long *) remoteHost->h_addr_list[i++];
-		ret.push_back(NEW_MEMORY(std::string(inet_ntoa(addr))));
-	}
+	auto hosts = getHostByName(args[0]->toString());
+	for (auto h : hosts)
+		ret.push_back(NEW_MEMORY(h));
 	return ret;
 }
-std::vector<SP_MEMORY> __winsock_connect(std::vector<SP_MEMORY> args) {
-    struct sockaddr_in clientService; 
+std::vector<SP_MEMORY> __network_connect(std::vector<SP_MEMORY> args) {
+    /*struct sockaddr_in clientService; 
 	clientService.sin_family = AF_INET;
     clientService.sin_addr.s_addr = inet_addr(args[1]->toString().c_str());
     clientService.sin_port = htons(args[2]->getValue());
@@ -210,60 +230,58 @@ std::vector<SP_MEMORY> __winsock_connect(std::vector<SP_MEMORY> args) {
         closesocket (ConnectSocket);
         WSACleanup();
         return {NEW_MEMORY("Unable to connect to server: " + std::to_string(WSAGetLastError()) )};
-    }
+    }*/
+
+	boost::asio::ip::tcp::socket * ConnectSocket = (boost::asio::ip::tcp::socket*)args[0]->getPointer();
+	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(args[1]->toString()), args[2]->getValue());
+	ConnectSocket->connect(endpoint);
 	return {NEW_MEMORY()};
 }
-std::vector<SP_MEMORY> __winsock_send(std::vector<SP_MEMORY> args) {
-	const char * sendbuf = args[1]->toString().c_str();
-	SOCKET ConnectSocket = (SOCKET)args[0]->getPointer();
-	int iResult = send( ConnectSocket, sendbuf, (int)strlen(sendbuf), 0 );
-    if (iResult == SOCKET_ERROR) {
-        WSACleanup();
-        closesocket(ConnectSocket);
-        return {NEW_MEMORY("Send failed: " + std::to_string(WSAGetLastError()) )};
-    }
+std::vector<SP_MEMORY> __network_send(std::vector<SP_MEMORY> args) {	
+	boost::asio::ip::tcp::socket * ConnectSocket = (boost::asio::ip::tcp::socket*)args[0]->getPointer();
+	std::string message = args[1]->toString();
+
+	//boost::array<char, 128> buf;	
+	//std::copy(message.begin(),message.end(),buf.begin());
+
+	boost::system::error_code error;
+	ConnectSocket->write_some(boost::asio::buffer(message, message.size()), error);
+
 	return {NEW_MEMORY()};
 }
-std::vector<SP_MEMORY> __winsock_listen(std::vector<SP_MEMORY> args) {
+
+std::vector<SP_MEMORY> __network_listen(std::vector<SP_MEMORY> args) {
+	boost::asio::ip::tcp::socket * ConnectSocket = (boost::asio::ip::tcp::socket *)args[0]->getPointer();
 	SP_LAMBDA callback = args[2]->getLambda();
-	SOCKET ConnectSocket = (SOCKET)args[0]->getPointer();
 	int iResult;
 	int recvbuflen = args[1]->getValue();
-	do {	
-		char * recvbuf = new char[args[1]->getValue()];
-        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if ( iResult > 0 )
-			callback->execute({NEW_MEMORY(std::string(recvbuf))});
-        else if ( iResult == 0 )
-            throw std::runtime_error("Connection closed");
-        else
-            throw std::runtime_error("Receive Failure: " + std::to_string(WSAGetLastError()));
-    } while( iResult > 0 );
+	
+	do {
+		char * recvbuf = new char[(int)args[1]->getValue()];
+		try {
+			iResult = ConnectSocket->receive(boost::asio::buffer(recvbuf, recvbuflen));
+			if ( iResult > 0 )
+				callback->execute({NEW_MEMORY(std::string(recvbuf))});
+		} catch (...){
+			throw std::runtime_error("an error has occurred along the socket.");
+		}
+	} while(iResult > 0);
+
 	return {NEW_MEMORY()};
 }
 
-std::vector<SP_MEMORY> __winsock_receive(std::vector<SP_MEMORY> args) {
-	SOCKET ConnectSocket = (SOCKET)args[0]->getPointer();
-	char * recvbuf = new char[args[1]->getValue()];
+std::vector<SP_MEMORY> __network_receive(std::vector<SP_MEMORY> args) {
+	boost::asio::ip::tcp::socket * ConnectSocket = (boost::asio::ip::tcp::socket*)args[0]->getPointer();
+	char * recvbuf = new char[(int)args[1]->getValue()];
 	int recvbuflen = args[1]->getValue();
-	int iResult;
-	iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-	if ( iResult > 0 )
-		return {NEW_MEMORY(std::string(recvbuf))};
-	else if ( iResult == 0 )
-		throw std::runtime_error("Connection closed");
-	else
-		throw std::runtime_error("Receive Failure: " + std::to_string(WSAGetLastError()));
+    boost::system::error_code error;
+	size_t len = ConnectSocket->read_some(boost::asio::buffer(recvbuf, recvbuflen), error);
+	return {NEW_MEMORY(std::string(recvbuf, len))};
 }
 
-std::vector<SP_MEMORY> __winsock_shutdown(std::vector<SP_MEMORY> args) {
-	SOCKET ConnectSocket = (SOCKET)args[0]->getPointer();
-	int iResult = shutdown(ConnectSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR) {
-        closesocket(ConnectSocket);
-        WSACleanup();
-		return {NEW_MEMORY("Shutdown Failure: " + std::to_string(WSAGetLastError()))};
-    }
+std::vector<SP_MEMORY> __network_shutdown(std::vector<SP_MEMORY> args) {
+	boost::asio::ip::tcp::socket * ConnectSocket = (boost::asio::ip::tcp::socket *)args[0]->getPointer();
+	ConnectSocket->close();
 	return {NEW_MEMORY()};
 }
 #endif
@@ -287,14 +305,14 @@ RuotaWrapper::RuotaWrapper(std::string current_dir){
 	Interpreter::addEmbed("filesystem.rename", &__filesystem_rename);
 	Interpreter::addEmbed("filesystem.remove", &__filesystem_remove);
 	#ifdef _WIN32
-		Interpreter::addEmbed("winsock.start", &__winsock_start);
-		Interpreter::addEmbed("winsock.create_socket", &__winsock_create_socket);
-		Interpreter::addEmbed("winsock.connect", &__winsock_connect);
-		Interpreter::addEmbed("winsock.send", &__winsock_send);
-		Interpreter::addEmbed("winsock.listen", &__winsock_listen);
-		Interpreter::addEmbed("winsock.receive", &__winsock_receive);
-		Interpreter::addEmbed("winsock.get_addresses", &__winsock_get_addresses);
-		Interpreter::addEmbed("winsock.shutdown", &__winsock_shutdown);
+		Interpreter::addEmbed("network.start", &__network_start);
+		Interpreter::addEmbed("network.create_socket", &__network_create_socket);
+		Interpreter::addEmbed("network.connect", &__network_connect);
+		Interpreter::addEmbed("network.send", &__network_send);
+		Interpreter::addEmbed("network.listen", &__network_listen);
+		Interpreter::addEmbed("network.receive", &__network_receive);
+		Interpreter::addEmbed("network.get_addresses", &__network_get_addresses);
+		Interpreter::addEmbed("network.shutdown", &__network_shutdown);
 	#endif
 	#ifdef FILE_IO
 		Interpreter::addEmbed("file.open", &__file_open);

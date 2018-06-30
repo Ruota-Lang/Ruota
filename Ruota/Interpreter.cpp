@@ -138,7 +138,7 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 				std::vector<std::string> files;
 				std::string path = Interpreter::path.substr(1) + var_string;
 				path.pop_back();
-				for (auto &p : std::filesystem::directory_iterator(path)){
+				for (auto &p : boost::filesystem::directory_iterator(path)){
 					std::string file = p.path().string();
 					if (file.length() > 4 && file.compare(file.length() - 4, 4, ".ruo") == 0)
 						files.push_back(file);

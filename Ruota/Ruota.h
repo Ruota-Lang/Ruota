@@ -14,14 +14,11 @@
 #include<memory>
 #include<time.h>
 #include<functional>
-#include<filesystem>
+#include <boost/filesystem.hpp>
+#include <boost/asio.hpp>
+#include <boost/array.hpp>
 #ifdef _WIN32
-	#define _WINSOCK_DEPRECATED_NO_WARNINGS
-	#include <winsock2.h>
-	#include <ws2tcpip.h>
-	#pragma comment(lib, "Ws2_32.lib")
-#else
-	#include <dlfcn.h>
+	#include <Windows.h>
 #endif
 #include<chrono>
 #include<cmath>

@@ -174,20 +174,20 @@ dynamic File :: {
 	};
 };
 
-static Winsock :: {
-	# Activates the Winsock API
+static Network :: {
+	ios := null;
+	# Activates the Boost ASIO API
 	start() => { 
-		r := _OUTER_CALL_("winsock.start")[0];
-		r != null then throw(r);
+		ios = _OUTER_CALL_("network.start")[0];
 	};
 	# Returns a newly created Socket
 	createSocket() => socket from {
-		r := _OUTER_CALL_("winsock.create_socket");
+		r := _OUTER_CALL_("network.create_socket", ios);
 		r[0] != null then throw(r[0]);
 		socket = new Socket(r[1]);
 	};
 	# Returns a list of addresses from a given url
-	getAddresses(url) => { _OUTER_CALL_("winsock.get_addresses", url) };
+	getAddresses(url) => { _OUTER_CALL_("network.get_addresses", url) };
 
 	dynamic Socket :: {
 		ptr := null;
@@ -198,16 +198,16 @@ static Winsock :: {
 		connect(addr, port) => {
 			c in addr ->> { 
 				!(c == '.' && c > '0' && c < '9') then {
-					addr = Winsock.getAddresses(addr)[0]; 
+					addr = Network.getAddresses(addr)[0]; 
 					break; 
 				};
 			};
-			r := _OUTER_CALL_("winsock.connect", ptr, str addr, num port)[0];
+			r := _OUTER_CALL_("network.connect", ptr, str addr, num port)[0];
 			r != null then throw(r);
 		};
 		# Sends data to the connected server
 		send(value) => {
-			r := _OUTER_CALL_("winsock.send", ptr, value)[0];
+			r := _OUTER_CALL_("network.send", ptr, value)[0];
 			r != null then throw(r);
 		};
 		# Receives data up to a given amount of bytes from server
@@ -218,22 +218,22 @@ static Winsock :: {
 		# the callback.
 		receive(bytes = 512, callback = null) => r from {
 			callback != null then {
-				detach callback(_OUTER_CALL_("winsock.receive", ptr, bytes)[0]);
+				detach callback(_OUTER_CALL_("network.receive", ptr, bytes)[0]);
 			} else {
-				r = _OUTER_CALL_("winsock.receive", ptr, bytes)[0];
+				r = _OUTER_CALL_("network.receive", ptr, bytes)[0];
 			};
 		};
 		# Listens continuously, requires a callback
-		# Blocking can be specified, defaults to 'false'
-		listen(callback, bytes = 512, blocking = false) => {
-			blocking then {
-				_OUTER_CALL_("winsock.listen", ptr, bytes, callback);
+		# Blocking can be specified
+		listen(callback, bytes = 512, block = false) => {
+			block then {
+				_OUTER_CALL_("network.listen", ptr, bytes, callback);
 			} else {
-				detach _OUTER_CALL_("winsock.listen", ptr, bytes, callback);
+				detach _OUTER_CALL_("network.listen", ptr, bytes, callback);
 			};
 		};
 		shutdown() => {
-			r := _OUTER_CALL_("winsock.shutdown", ptr)[0];
+			r := _OUTER_CALL_("network.shutdown", ptr)[0];
 			r != null then throw(r);
 		};
 	};

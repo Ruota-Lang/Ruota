@@ -12,5 +12,6 @@ std::vector<SP_MEMORY> __network_send(std::vector<SP_MEMORY> args);
 std::vector<SP_MEMORY> __network_listen(std::vector<SP_MEMORY> args);
 std::vector<SP_MEMORY> __network_receive(std::vector<SP_MEMORY> args);
 std::vector<SP_MEMORY> __network_shutdown(std::vector<SP_MEMORY> args);
+std::vector<SP_MEMORY> __network_io_shutdown(std::vector<SP_MEMORY> args);
 
 #endif

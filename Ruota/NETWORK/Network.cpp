@@ -113,5 +113,12 @@ std::vector<SP_MEMORY> __network_receive(std::vector<SP_MEMORY> args) {
 std::vector<SP_MEMORY> __network_shutdown(std::vector<SP_MEMORY> args) {
 	boost::asio::ip::tcp::socket * ConnectSocket = (boost::asio::ip::tcp::socket *)args[0]->getPointer();
 	ConnectSocket->close();
+	delete ConnectSocket;
+	return {NEW_MEMORY()};
+}
+
+std::vector<SP_MEMORY> __network_io_shutdown(std::vector<SP_MEMORY> args) {
+	boost::asio::io_service * ios = (boost::asio::io_service*)args[0]->getPointer();
+	delete ios;
 	return {NEW_MEMORY()};
 }

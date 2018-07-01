@@ -138,6 +138,7 @@ RuotaWrapper::RuotaWrapper(std::string current_dir){
 	Interpreter::addEmbed("network.receive", &__network_receive);
 	Interpreter::addEmbed("network.get_addresses", &__network_get_addresses);
 	Interpreter::addEmbed("network.shutdown", &__network_shutdown);
+	Interpreter::addEmbed("network.io_shutdown", &__network_io_shutdown);
 	Interpreter::addEmbed("file.open", &__file_open);
 	Interpreter::addEmbed("file.close", &__file_close);
 	Interpreter::addEmbed("file.read_line", &__file_read_line);

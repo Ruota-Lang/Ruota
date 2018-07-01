@@ -175,67 +175,69 @@ dynamic File :: {
 };
 
 static Network :: {
-	ios := null;
-	# Activates the Boost ASIO API
-	start() => { 
-		ios = _OUTER_CALL_("network.start")[0];
-	};
-	# Returns a newly created Socket
-	createSocket() => socket from {
-		r := _OUTER_CALL_("network.create_socket", ios);
-		r[0] != null then throw(r[0]);
-		socket = new Socket(r[1]);
-	};
 	# Returns a list of addresses from a given url
 	getAddresses(url) => { _OUTER_CALL_("network.get_addresses", url) };
+};
 
-	dynamic Socket :: {
-		ptr := null;
-		init(ptr) => {
-			self.ptr = ptr;
-		};
-		# Connects to an address (url or IP) on a given port
-		connect(addr, port) => {
-			c in addr ->> { 
-				!(c == '.' && c > '0' && c < '9') then {
-					addr = Network.getAddresses(addr)[0]; 
-					break; 
-				};
-			};
-			r := _OUTER_CALL_("network.connect", ptr, str addr, num port)[0];
-			r != null then throw(r);
-		};
-		# Sends data to the connected server
-		send(value) => {
-			r := _OUTER_CALL_("network.send", ptr, value)[0];
-			r != null then throw(r);
-		};
-		# Receives data up to a given amount of bytes from server
-		# If no callback is given, the function waits until it recieves
-		# a response and then returns the function. If a callback is given,
-		# it detaches the receiving function from the main thread and calls
-		# the callback when it receives the answer, passing the value to
-		# the callback.
-		receive(bytes = 512, callback = null) => r from {
-			callback != null then {
-				detach callback(_OUTER_CALL_("network.receive", ptr, bytes)[0]);
-			} else {
-				r = _OUTER_CALL_("network.receive", ptr, bytes)[0];
+dynamic IOService :: {
+	ptr := null;
+	init() => {
+		ptr = _OUTER_CALL_("network.start")[0];
+	};
+	shutdown() => {
+		_OUTER_CALL_("network.io_shutdown", ptr);
+	};
+};
+
+dynamic Socket :: {
+	ptr := null;
+	init(ios) => {
+		ios == null then throw("No IOService given.");
+		r := _OUTER_CALL_("network.create_socket", ios.ptr);
+		r[0] != null then throw(r[0]);
+		ptr = r[1];
+	};
+	# Connects to an address (url or IP) on a given port
+	connect(addr, port) => {
+		c in addr ->> { 
+			!(c == '.' && c > '0' && c < '9') then {
+				addr = Network.getAddresses(addr)[0]; 
+				break; 
 			};
 		};
-		# Listens continuously, requires a callback
-		# Blocking can be specified
-		listen(callback, bytes = 512, block = false) => {
-			block then {
-				_OUTER_CALL_("network.listen", ptr, bytes, callback);
-			} else {
-				detach _OUTER_CALL_("network.listen", ptr, bytes, callback);
-			};
+		r := _OUTER_CALL_("network.connect", ptr, str addr, num port)[0];
+		r != null then throw(r);
+	};
+	# Sends data to the connected server
+	send(value) => {
+		r := _OUTER_CALL_("network.send", ptr, value)[0];
+		r != null then throw(r);
+	};
+	# Receives data up to a given amount of bytes from server
+	# If no callback is given, the function waits until it recieves
+	# a response and then returns the function. If a callback is given,
+	# it detaches the receiving function from the main thread and calls
+	# the callback when it receives the answer, passing the value to
+	# the callback.
+	receive(bytes = 512, callback = null) => r from {
+		callback != null then {
+			detach callback(_OUTER_CALL_("network.receive", ptr, bytes)[0]);
+		} else {
+			r = _OUTER_CALL_("network.receive", ptr, bytes)[0];
 		};
-		shutdown() => {
-			r := _OUTER_CALL_("network.shutdown", ptr)[0];
-			r != null then throw(r);
+	};
+	# Listens continuously, requires a callback
+	# Blocking can be specified
+	listen(callback, bytes = 512, block = false) => {
+		block then {
+			_OUTER_CALL_("network.listen", ptr, bytes, callback);
+		} else {
+			detach _OUTER_CALL_("network.listen", ptr, bytes, callback);
 		};
+	};
+	shutdown() => {
+		r := _OUTER_CALL_("network.shutdown", ptr)[0];
+		r != null then throw(r);
 	};
 };
 

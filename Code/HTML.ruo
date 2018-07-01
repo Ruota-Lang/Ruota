@@ -3,9 +3,11 @@
 dynamic Server :: {
 	socket := null;
 	address := "";
+	ios := null;
 	init(address) => {
+		ios = new IOService();
 		self.address = address;
-		socket = Network.createSocket();
+		socket = new Socket(ios);
 		socket.connect(address, 80);
 	};
 
@@ -21,10 +23,10 @@ dynamic Server :: {
 
 	shutdown() => {
 		socket.shutdown();
+		ios.shutdown();
 	};
 };
 
-Network.start();
 s := new Server("example.org");
 print(s.GET());
 s.shutdown();

@@ -1,4 +1,9 @@
 ![RUOTA](https://raw.githubusercontent.com/Agilulfulus/Ruota/master/LogoIdeas/LogoBanner.png)
+<center>
+	<a href="https://github.com/Agilulfulus/Ruota/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Agilulfulus/Ruota.svg?style=for-the-badge"/></a>
+	<a href="https://github.com/Agilulfulus/Ruota/issues"><img src="https://img.shields.io/github/issues/Agilulfulus/Ruota.svg?style=for-the-badge"/></a>
+	<a href="https://github.com/Agilulfulus/Ruota/network"><img src="https://img.shields.io/github/forks/Agilulfulus/Ruota.svg?style=for-the-badge"/></a>
+</center>
 
 # Ruota Programming Language
 

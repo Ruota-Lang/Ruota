@@ -1,5 +1,6 @@
 #include "Ruota.h"
 #include "FILE_IO/FileIO.h"
+#include "TREE/Tree.h"
 #include "NETWORK/Network.h"
 
 const char * os_compiled = {
@@ -146,6 +147,7 @@ RuotaWrapper::RuotaWrapper(std::string current_dir){
 	Interpreter::addEmbed("filew.open", &__filew_open);
 	Interpreter::addEmbed("filew.close", &__filew_close);
 	Interpreter::addEmbed("filew.write", &__filew_write);
+	Interpreter::addEmbed("json.parse", &__json_parse);
 	this->current_dir = current_dir;
 	while (this->current_dir.back() != '\\' && this->current_dir.back() != '/') {
 		this->current_dir.pop_back();

@@ -101,7 +101,7 @@ snake(size_x = 15, size_y = 15) => {
 		frames += 1;
 		time_start := os.milli();
 		keypress();
-		timer > 100 then {
+		timer > 150 then {
 			control() then break;
 			drawMap();
 			timer = 0;

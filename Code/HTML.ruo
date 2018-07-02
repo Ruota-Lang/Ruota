@@ -11,14 +11,21 @@ dynamic Server :: {
 		socket.connect(address, 80);
 	};
 
-	GET(a = "", bytes = 2**16) => html from {
-		socket.send("GET / HTTP/1.1\nHost: " .. address .. a .. "\n\n");
+	GET(a = "/", bytes = 2**16) => html from {
+		socket.send("GET " .. a .. " HTTP/1.1\nHost: " .. address .. "\n\n");
 		html = socket.receive(bytes);
 	};
 
-	HEAD(a = "", bytes = 2**16) => html from {
-		socket.send("HEAD / HTTP/1.1\nHost: " .. address .. a .. "\n\n");
+	HEAD(a = "/", bytes = 2**16) => html from {
+		socket.send("HEAD " .. a .. " HTTP/1.1\nHost: " .. address .. "\n\n");
 		html = socket.receive(bytes);
+	};
+
+	POST(a, data) => {
+		s := "";
+		[key, value] in data ->> s ..= key .. "=" .. value .. "&";
+		s = str s[0:end];
+		socket.send("POST " .. a .. " HTTP/1.1\nHost: " .. address .. "\n" .. data .. "\n\n");
 	};
 
 	shutdown() => {
@@ -27,6 +34,8 @@ dynamic Server :: {
 	};
 };
 
-s := new Server("example.org");
+s := new Server("reddit.com");
+print(s.GET());
+s.POST("/test/demo_form.php", [["content", "test_message"], ["token", "12345"]]);
 print(s.GET());
 s.shutdown();

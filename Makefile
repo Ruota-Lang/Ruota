@@ -6,17 +6,20 @@ all: win32 linux
 win32: bin/ruota.exe
 linux: bin/ruota.out
 
-bin/ruota.exe: Compiled/Main.o Compiled/FileIO.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
-	$(CC) -o bin/ruota.exe Compiled/Main.o Compiled/FileIO.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o -lmingw32 $(CFLAGS)
+bin/ruota.exe: Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
+	$(CC) -o bin/ruota.exe Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o -lmingw32 $(CFLAGS)
 
-bin/ruota.out: Compiled/Main.o Compiled/FileIO.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
-	$(CC) -o bin/ruota.out Compiled/Main.o Compiled/FileIO.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o $(CFLAGS)
+bin/ruota.out: Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
+	$(CC) -o bin/ruota.out Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o $(CFLAGS)
 
 Compiled/FileIO.o: Ruota/FILE_IO/FileIO.cpp
 	$(CC) Ruota/FILE_IO/FileIO.cpp -o Compiled/FileIO.o -c $(CFLAGS)
 
 Compiled/Network.o: Ruota/NETWORK/Network.cpp
 	$(CC) Ruota/NETWORK/Network.cpp -o Compiled/Network.o -c $(CFLAGS)
+
+Compiled/Tree.o: Ruota/TREE/Tree.cpp
+	$(CC) Ruota/TREE/Tree.cpp -o Compiled/Tree.o -c $(CFLAGS)
 
 Compiled/Main.o: Main.cpp Console.ruo
 	$(CC) Main.cpp -o Compiled/Main.o -c $(CFLAGS)

@@ -1,6 +1,8 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <boost/asio.hpp>
+#include <boost/array.hpp>
 #include "../Ruota.h"
 
 std::vector<SP_MEMORY> __network_start(std::vector<SP_MEMORY> args);

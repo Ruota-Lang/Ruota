@@ -58,6 +58,7 @@
 		"filesystem": "cpp",
 		"codecvt": "cpp",
 		"iomanip": "cpp",
-		"string_view": "cpp"
+		"string_view": "cpp",
+		"sstream": "cpp"
 	}
 }

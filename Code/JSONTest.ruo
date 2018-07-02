@@ -1,0 +1,25 @@
+f := new File("test.json");
+j := new JSONTree(f.readAll());
+f.close();
+
+printl(j);
+
+prettyTree(tree, index = 0) => {
+	i in tree ->> {
+		k in [0 : index] ->> print("\t");
+		type i.value == "object" then {
+			printl(i.key);
+			prettyTree(i.value, index + 1);
+		} else {
+			printl(i.key .. " = " .. i.value);
+		};
+	};
+};
+
+prettyTree(j);
+
+f2 := new File("test.json");
+j2 := new JSONTree(f2.readAll());
+f2.close();
+
+printl(j == j2);

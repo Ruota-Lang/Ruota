@@ -31,11 +31,12 @@ _Note: Documentation for Ruota is incomplete, but getting better..._
 
 There are, of course, a few features that I wish to see implemented in the future:
 
-1.	Proper memory management (moving away from using std::shared_ptr) and overall optimization
-2.	Ruota to C++/C compiler
-3.	Inline C++/C code - probably will come with point 2
-4.	DLL Loading for more usability (i.e., a curses module, graphicals module, etc.)
-5.	Full fledged documentation
+- [ ] Proper memory management (moving away from using std::shared_ptr) and overall optimization
+- [ ] Ruota to C++/C compiler
+- [ ] Inline C++/C code - probably will come with point 2
+- [ ] DLL Loading for more usability (i.e., a curses module, graphicals module, etc.)
+- [ ] Full fledged documentation
+- [x] Remove Herobrine
 
 # Basic Syntax
 

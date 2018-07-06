@@ -1,8 +1,8 @@
 ![RUOTA](https://raw.githubusercontent.com/Agilulfulus/Ruota/master/LogoIdeas/LogoBanner.png)
 <center>
-	<a href="https://github.com/Agilulfulus/Ruota/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Agilulfulus/Ruota.svg?style=for-the-badge"/></a>
-	<a href="https://github.com/Agilulfulus/Ruota/issues"><img src="https://img.shields.io/github/issues/Agilulfulus/Ruota.svg?style=for-the-badge"/></a>
-	<a href="https://github.com/Agilulfulus/Ruota/network"><img src="https://img.shields.io/github/forks/Agilulfulus/Ruota.svg?style=for-the-badge"/></a>
+	<a href="https://github.com/Ruota-Lang/Ruota/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Ruota-Lang/Ruota.svg?style=for-the-badge"/></a>
+	<a href="https://github.com/Ruota-Lang/Ruota/issues"><img src="https://img.shields.io/github/issues/Ruota-Lang/Ruota.svg?style=for-the-badge"/></a>
+	<a href="https://github.com/Ruota-Lang/Ruota/network"><img src="https://img.shields.io/github/forks/Ruota-Lang/Ruota.svg?style=for-the-badge"/></a>
 </center>
 
 # Ruota Programming Language
@@ -31,11 +31,12 @@ _Note: Documentation for Ruota is incomplete, but getting better..._
 
 There are, of course, a few features that I wish to see implemented in the future:
 
-1.	Proper memory management (moving away from using std::shared_ptr) and overall optimization
-2.	Ruota to C++/C compiler
-3.	Inline C++/C code - probably will come with point 2
-4.	DLL Loading for more usability (i.e., a curses module, graphicals module, etc.)
-5.	Full fledged documentation
+- [ ] Proper memory management (moving away from using std::shared_ptr) and overall optimization
+- [ ] Ruota to C++/C compiler
+- [ ] Inline C++/C code - probably will come with point 2
+- [ ] DLL Loading for more usability (i.e., a curses module, graphicals module, etc.)
+- [ ] Full fledged documentation
+- [x] Remove Herobrine
 
 # Basic Syntax
 

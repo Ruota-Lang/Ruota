@@ -1,0 +1,23 @@
+dynamic test :: {
+	a := [0:10];
+	
+	dynamic Iterator :: {
+		o := null;
+		current_index := 0;
+		init(&o) => {
+			self.o = o;
+		};
+		next() => {
+			current_index+=1;
+		};
+		hasi() => {
+			current_index < len o.a;
+		};
+		geti() => {
+			o.a[current_index];
+		};
+	};
+};
+
+t := new test;
+i in t ->> { printl(i) };

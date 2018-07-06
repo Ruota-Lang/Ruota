@@ -71,6 +71,7 @@ void Node::destroy() {
 }
 
 SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
+//	std::cout << toString() << std::endl;
 	VEC_Memory executed;
 	if (nt != INDEX && nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
 		for (const SP_NODE &n : params) {
@@ -99,7 +100,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 	case EVAL:	{
 		std::string last_dir = Interpreter::current_dir;
 		std::string last_file = Interpreter::curr_file;
-		auto n_s = NEW_SCOPE(scope);
+		auto n_s = NEW_SCOPE(scope, "$EVAL$");
 		auto node = RuotaWrapper::interpreter->generate(executed[0]->toString(), n_s, "");
 		temp1 = RuotaWrapper::interpreter->execute(node);
 		Interpreter::current_dir = last_dir;
@@ -420,7 +421,10 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		case STR:	return NEW_MEMORY("string");
 		case CHA:	return NEW_MEMORY("char");
 		case LAM: 	return NEW_MEMORY("lambda");
-		case OBJ:	return NEW_MEMORY("object");
+		case OBJ:	{
+			return NEW_MEMORY(executed[0]->getScope()->key);
+			//return NEW_MEMORY("object");
+		}
 		default:	return NEW_MEMORY("null");
 		}
 	case INDEX_OBJ:
@@ -440,11 +444,13 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}else{
 			temp1->setScope(params[1]->execute(scope)->getScope());
 		}
+		temp1->getScope()->key = params[0]->key;
+		//temp1->getScope()->key = temp1->getScope()->getPath();
 		return temp1;
 	case INHERIT:{
 		auto par = params[0]->execute(scope)->getScope();
 		auto chi = params[1]->scope_ref;
-		auto new_s = NEW_SCOPE(scope);
+		auto new_s = NEW_SCOPE(scope, par->key);
 		for (auto &v : par->variables) {
 			if (!v.second->isLocal())
 				new_s->declareVariable(v.first)->set(v.second);
@@ -458,6 +464,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		temp1 = NEW_MEMORY();
 		temp1->setScope(params[0]->scope_ref);
 		temp1->getScope()->execute();
+		temp1->getScope()->key = "*";
 		auto obj = temp1->getScope()->clone(scope);
 		obj->variables["self"] = NEW_MEMORY(obj);
 		return temp1;
@@ -477,8 +484,8 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			obj->variables["init"]->getLambda()->execute(args);
 			return var;
 		}else{
-			executed.push_back(params[0]->execute(scope));
 			auto var = NEW_MEMORY();
+			executed.push_back(params[0]->execute(scope));
 			if (executed[0]->getObjectMode() != DYNAMIC)
 				Interpreter::throwError("Error: cannot instantiate a static object!", toString());
 			if (executed[0]->getScope() == nullptr)
@@ -551,69 +558,104 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return scope->variables[varname];
 		}
 	}
-	case EXEC_ITER: {	
+	case EXEC_ITER: {
 		VEC_Memory list;	
 		if (params[0]->nt == ITER) {
 			SP_MEMORY var = params[0]->params[1]->execute(scope);
 			SP_MEMORY iter_arr;
+			SP_SCOPE inner_scope = NEW_SCOPE(scope, "$LOOP$");
 			
-			if (var->getType() == ARR || var->getType() == STR)
+			if (var->getType() == ARR || var->getType() == STR) {
 				iter_arr = var;
-			else if (var->getType() == OBJ)
-				iter_arr = var->getScope()->variables["iterator"]->getLambda()->execute({});
+				if (params[0]->params[0]->nt == VAR){
+					std::string iter_key = params[0]->params[0]->key;
+					for (auto &m : iter_arr->getArray()) {
+						inner_scope->main = params[1]->clone(inner_scope);
+						inner_scope->variables[iter_key] = m;
+						SP_MEMORY v = inner_scope->execute();
+						if (v->getType() == RETURN_M) return v;
+						list.push_back(v);
+						if (v->getType() == BREAK_M) break;
+					}
+				}else {
+					std::vector<std::string> iter_keys;
+					for (auto &v : params[0]->params[0]->params)
+						iter_keys.push_back(v->key);
+					VEC_Memory iter_values = iter_arr->getArray();
+					for (int i = 0; i < iter_values[0]->getArray().size(); i++) {
+						inner_scope->main = params[1]->clone(inner_scope);
+						for (int j = 0; j < iter_keys.size(); j++)
+							inner_scope->variables[iter_keys[j]] = iter_values[j]->getArray()[i];
+						SP_MEMORY v = inner_scope->execute();
+						if (v->getType() == RETURN_M) return v;
+						list.push_back(v);
+						if (v->getType() == BREAK_M) break;
+					}				
+				}
+			}else if (var->getType() == OBJ && var->getScope()->variables.find("Iterator") != var->getScope()->variables.end()){
+				//iter_arr = var->getScope()->variables["iterator"]->getLambda()->execute({});
+				std::string iter_key = params[0]->params[0]->key;
+				auto iter_obj = var->getScope()->variables["Iterator"]->getScope()->clone(inner_scope);
+				iter_obj->key = "Iterator";
+				iter_obj->variables["self"] = NEW_MEMORY(iter_obj);
+				iter_obj->variables["init"]->getLambda()->execute({var});
+				auto hasNext = iter_obj->variables["hasi"]->getLambda();
+				auto next = iter_obj->variables["next"]->getLambda();
+				auto geti = iter_obj->variables["geti"]->getLambda();
+
+				while (hasNext->execute({})->getValue() != 0) {
+					inner_scope->variables[iter_key] = geti->execute({});
+					inner_scope->main = params[1]->clone(inner_scope);
+					SP_MEMORY v = inner_scope->execute();
+					next->execute({});
+					if (v->getType() == RETURN_M) return v;
+					list.push_back(v);
+					if (v->getType() == BREAK_M) break;
+				}
+			}
 			else
 				Interpreter::throwError("Error: Cannot iterate over non-iterable value!", toString());
-
-			if (params[0]->params[0]->nt == VAR){
-				std::string iter_key = params[0]->params[0]->key;
-				SP_SCOPE inner_scope = NEW_SCOPE(scope);
+		} else {
+			SP_MEMORY var = params[0]->execute(scope);
+			SP_MEMORY iter_arr;
+			SP_SCOPE inner_scope = NEW_SCOPE(scope, "$LOOP$");
+			if (var->getType() == ARR || var->getType() == STR){ 
+				iter_arr = var;
 				for (auto &m : iter_arr->getArray()) {
 					inner_scope->main = params[1]->clone(inner_scope);
-					inner_scope->variables[iter_key] = m;
 					SP_MEMORY v = inner_scope->execute();
 					if (v->getType() == RETURN_M) return v;
 					list.push_back(v);
 					if (v->getType() == BREAK_M) break;
 				}
-			}else {
-				std::vector<std::string> iter_keys;
-				for (auto &v : params[0]->params[0]->params)
-					iter_keys.push_back(v->key);
-				VEC_Memory iter_values = iter_arr->getArray();
-				SP_SCOPE inner_scope = NEW_SCOPE(scope);
-				for (int i = 0; i < iter_values[0]->getArray().size(); i++) {
+			}
+			else if (var->getType() == OBJ && var->getScope()->variables.find("Iterator") != var->getScope()->variables.end()) {
+				//iter_arr = var->getScope()->variables["iterator"]->getLambda()->execute({});
+				auto iter_obj = var->getScope()->variables["Iterator"]->getScope()->clone(scope);
+				iter_obj->key = "Iterator";
+				iter_obj->variables["self"] = NEW_MEMORY(iter_obj);
+				iter_obj->variables["init"]->getLambda()->execute({var});
+				auto hasNext = iter_obj->variables["hasi"]->getLambda();
+				auto next = iter_obj->variables["next"]->getLambda();
+				auto geti = iter_obj->variables["geti"]->getLambda();
+
+				while (hasNext->execute({})->getValue() != 0) {
 					inner_scope->main = params[1]->clone(inner_scope);
-					for (int j = 0; j < iter_keys.size(); j++)
-						inner_scope->variables[iter_keys[j]] = iter_values[j]->getArray()[i];
 					SP_MEMORY v = inner_scope->execute();
+					next->execute({});
 					if (v->getType() == RETURN_M) return v;
 					list.push_back(v);
 					if (v->getType() == BREAK_M) break;
-				}				
+				}
 			}
-		} else {
-			SP_MEMORY var = params[0]->execute(scope);
-			SP_MEMORY iter_arr;
-			SP_SCOPE inner_scope = NEW_SCOPE(scope);
-			if (var->getType() == ARR || var->getType() == STR)
-				iter_arr = var;
-			else if (var->getType() == OBJ)
-				iter_arr = var->getScope()->variables["iterator"]->getLambda()->execute({});
 			else
 				Interpreter::throwError("Error: Cannot iterate over non-iterable value!", toString());
-			for (auto &m : iter_arr->getArray()) {
-				inner_scope->main = params[1]->clone(inner_scope);
-				SP_MEMORY v = inner_scope->execute();
-				if (v->getType() == RETURN_M) return v;
-				list.push_back(v);
-				if (v->getType() == BREAK_M) break;
-			}
 		}
 		return NEW_MEMORY(list);
 	}
 	case DOL: {
 		auto dec = params[0];
-		SP_SCOPE inner_scope = NEW_SCOPE(scope);
+		SP_SCOPE inner_scope = NEW_SCOPE(scope, "$DO$");
 		while(dec->execute(scope)->getValue() != 0) {
 			inner_scope->main = params[1]->clone(inner_scope);
 			auto v = inner_scope->execute();
@@ -703,7 +745,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return params[0]->execute(scope);
 		} catch (std::runtime_error &e){
 			if (params.size() > 1){
-				SP_SCOPE ns = NEW_SCOPE(scope);
+				SP_SCOPE ns = NEW_SCOPE(scope, "$TRY_CATCH$");
 				ns->declareVariable("_err")->set(NEW_MEMORY(std::string(e.what())));
 				return params[1]->execute(ns);
 			}else
@@ -717,7 +759,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return NEW_MEMORY(executed);
 	case INDEX: {
 		auto p1 = params[0]->execute(scope);
-		SP_SCOPE s = NEW_SCOPE(scope);
+		SP_SCOPE s = NEW_SCOPE(scope, "$INDEX$");
 		s->declareVariable("end")->set(NEW_MEMORY(NUM, p1->getArray().size() - 1));
 		auto p2 = params[1]->execute(s);
 		VEC_Memory new_arr;
@@ -763,8 +805,10 @@ SP_NODE Node::clone(const SP_SCOPE &scope) const {
 	}
 	if (this->mem_data != nullptr)
 		nn->mem_data = this->mem_data->clone(scope);
-	if (this->scope_ref != nullptr)
+	if (this->scope_ref != nullptr){
 		nn->scope_ref = this->scope_ref->clone(scope);
+		//nn->scope_ref->key = nn->scope_ref->getPath();
+	}
 	return nn;
 }
 

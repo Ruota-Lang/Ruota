@@ -155,7 +155,7 @@ RuotaWrapper::RuotaWrapper(std::string current_dir){
 			break;
 	}
 	this->interpreter = new Interpreter(this->current_dir);
-	main_scope = NEW_SCOPE(nullptr);
+	main_scope = NEW_SCOPE(nullptr, "$MAIN$");
 	this->interpreter->generate(os_compiled, main_scope, "\\");
 	this->interpreter->execute(main_scope);
 }

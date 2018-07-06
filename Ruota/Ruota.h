@@ -164,7 +164,7 @@ private:
 	ObjectMode	om = UNDEF;
 	bool		local_var = false;
 	void *		ptr_data = NULL;
-public:	
+public:
 	static long	reference_add;
 	static long	reference_del;
 	Memory();
@@ -259,20 +259,23 @@ struct Lambda : std::enable_shared_from_this<Lambda> {
 };
 
 struct Scope : std::enable_shared_from_this<Scope> {
+	std::string	key;
+
 	static long	reference_add;
 	static long	reference_del;
 	SP_SCOPE	parent = nullptr;
 	SP_NODE		main = nullptr;
 	std::unordered_map<std::string, SP_MEMORY> variables;
 
-	Scope(SP_SCOPE);
-	Scope(SP_SCOPE, SP_NODE);
+	Scope(SP_SCOPE, std::string);
+	Scope(SP_SCOPE, std::string, SP_NODE);
 	~Scope();
 
 	SP_MEMORY	execute();
 	SP_MEMORY	getVariable(std::string);
 	SP_MEMORY	declareVariable(std::string);
 	SP_SCOPE	clone(SP_SCOPE) const;
+	std::string			getPath() const;
 	const std::string	toString() const;
 };
 

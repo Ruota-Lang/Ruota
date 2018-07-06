@@ -725,7 +725,7 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 		}
 		else if (token == "{") {
 			stack.push_back(NEW_NODE(M_S, nullvec));
-			current = NEW_SCOPE(current);
+			current = NEW_SCOPE(current, "$INNER$");
 		}
 		else if (token == "(") {
 			stack.push_back(NEW_NODE(M_P, nullvec));

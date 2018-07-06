@@ -34,8 +34,6 @@ dynamic Server :: {
 	};
 };
 
-s := new Server("reddit.com");
-print(s.GET());
-s.POST("/test/demo_form.php", [["content", "test_message"], ["token", "12345"]]);
+s := new Server("example.org");
 print(s.GET());
 s.shutdown();

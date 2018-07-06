@@ -1,6 +1,5 @@
 virtual List :: {
 	toArray() => { self[0 : len self] };
-	iterator() => { toArray() };
 	equals(&l) => b from {
 		b = true;
 		len self != len l then {

@@ -3,15 +3,21 @@
 long Scope::reference_add = 0;
 long Scope::reference_del = 0;
 
-Scope::Scope(SP_SCOPE parent) {
+Scope::Scope(SP_SCOPE parent, std::string key) {
 	this->reference_add++;
 	this->parent = parent;
+	this->key = key;
+	//if (key[0] != '.')
+	//	this->key = getPath();
 }
 
-Scope::Scope(SP_SCOPE parent, SP_NODE main) {
+Scope::Scope(SP_SCOPE parent, std::string key, SP_NODE main) {
 	this->reference_add++;
 	this->parent = parent;
 	this->main = main;
+	this->key = key;
+	//if (key[0] != '.')
+	//	this->key = getPath();
 }
 
 Scope::~Scope(){
@@ -30,9 +36,9 @@ SP_MEMORY Scope::execute() {
 SP_SCOPE Scope::clone(SP_SCOPE parent) const {
 	SP_SCOPE scope;
 	if (main != nullptr)
-		scope = NEW_SCOPE(parent, main->clone(parent));
+		scope = NEW_SCOPE(parent, key, main->clone(parent));
 	else
-		scope = NEW_SCOPE(parent);
+		scope = NEW_SCOPE(parent, key);
 
 	for (auto &v : variables)
 		scope->variables[v.first] = v.second->clone(scope);
@@ -59,6 +65,16 @@ SP_MEMORY Scope::getVariable(std::string key) {
 	}
 
 	return current->variables[key];
+}
+
+
+std::string	Scope::getPath() const {
+	std::string full_path = "." + key; //(key[0] != '$' ? "." + key : "");
+	if (parent != NULL) {
+		full_path = parent->getPath() + full_path;
+	}
+
+	return full_path;
 }
 
 const std::string Scope::toString() const {

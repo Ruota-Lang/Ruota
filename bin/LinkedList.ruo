@@ -57,4 +57,22 @@ dynamic LinkedList :: List +> {
 			next = null;
 		};
 	};
+
+	dynamic Iterator :: {
+		list_o := null;
+		current_node := 0;
+		init(&list_o) => {
+			self.list_o = list_o;
+			current_node = list_o.head;
+		};
+		next() => {
+			current_node = current_node.next;
+		};
+		hasi() => {
+			current_node != null;
+		};
+		geti() => {
+			current_node.value;
+		};
+	};
 };

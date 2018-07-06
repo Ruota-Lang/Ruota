@@ -5,6 +5,18 @@ throw(e) => {
 	_OUTER_CALL_("error", e);
 };
 
+# Returns every combination of arrays a and b
+lace(&a, &b) => t from {
+	t = [];
+	i in a ->> j in b ->> {
+		t push struct {
+			first :&= i;
+			second :&= j;
+			string() => { "(" .. first .. ", " .. second .. ")" };
+		};
+	};
+};
+
 static os :: {
 	system(x) => { _OUTER_CALL_("console.system", x)[0] };
 	getenv(v) => { _OUTER_CALL_("console.getenv", v)[0] };
@@ -21,18 +33,6 @@ static System :: {
 	size(path) => { _OUTER_CALL_("filesystem.size", path)[0] };
 	copy(origin, path) => { _OUTER_CALL_("filesystem.copy", origin, path) };
 	rename(origin, path) => { _OUTER_CALL_("filesystem.rename", origin, path) };
-};
-
-# Returns every combination of arrays a and b
-lace(&a, &b) => t from {
-	t = [];
-	i in a ->> j in b ->> {
-		t push struct {
-			first :&= i;
-			second :&= j;
-			string() => { "(" .. first .. ", " .. second .. ")" };
-		};
-	};
 };
 
 static Math :: {
@@ -157,6 +157,24 @@ dynamic File :: {
 		};
 		ptr = null;
 	};
+
+	dynamic Iterator :: {
+		file_o := null;
+		current_line := null;
+		init(&file_o) => {
+			self.file_o = file_o;
+			next();
+		};
+		next() => {
+			current_line = file_o.readLine();			
+		};
+		hasi() => {
+			current_line != null;
+		};
+		geti() => {
+			current_line;
+		};
+	};
 };
 
 static Network :: {
@@ -177,7 +195,7 @@ dynamic IOService :: {
 dynamic Socket :: {
 	ptr := null;
 	init(ios) => {
-		ios == null then throw("No IOService given.");
+		type ios == "IOService" then throw("No IOService given.");
 		r := _OUTER_CALL_("network.create_socket", ios.ptr);
 		r[0] != null then throw(r[0]);
 		ptr = r[1];
@@ -237,19 +255,20 @@ dynamic JSONTree :: {
 	};
 	generate(a) => {
 		x in a ->> {
-			data push struct{key := x[0], value := x[1]};
+			data push new TreeNode(x[0], x[1]);
 			x[0] == "" then { data[end].key = len data - 1; };
 			type x[1] == "array" then { data[end].value = new JSONTree(x[1]); };
 		};
 	};
 	index(key) => i from {
+		key = str key;
 		x in data ->> {
 			x.key == key then {
 				i &= x.value;
 				return;
 			};
 		};
-		data push [key, new JSONTree()];
+		data push new TreeNode(key, new JSONTree());
 		i &= data[end].value;
 	};
 	containsKey(key) => b from {
@@ -270,7 +289,6 @@ dynamic JSONTree :: {
 			};
 		};
 	};
-	iterator() => { data };
 	getKeys() => keys_m from {
 		keys_m = [];
 		i in data ->> { keys_m push i.key };
@@ -283,7 +301,7 @@ dynamic JSONTree :: {
 		s = "{";
 		x in data ->> {
 			s ..= "\"" .. Strings.literal(x.key) .. "\":";
-			type x.value == "object" then {
+			type x.value == "JSONTree" then {
 				s ..= x.value .. ",";
 			} else {
 				s ..= "\"" .. Strings.literal(x.value) .. "\",";
@@ -294,12 +312,39 @@ dynamic JSONTree :: {
 	size() => { len data };
 	equals(tree) => b from {
 		b = false;
+		type tree != type self then return;
 		len tree.data != len data then return;
 		x in tree ->> {
 			!containsKey(x.key) then return;
 			index(x.key) != x.value then return;
 		};
 		b = true;
+	};
+
+	dynamic TreeNode :: {
+		key := null;
+		value := null;
+		init(key, value) => {
+			self.key = key;
+			self.value = value;
+		};
+	};
+
+	dynamic Iterator :: {
+		tree_o := null;
+		current_index := 0;
+		init(&tree_o) => {
+			self.tree_o = tree_o;
+		};
+		next() => {
+			current_index += 1;	
+		};
+		hasi() => {
+			current_index < len tree_o.data;
+		};
+		geti() => {
+			tree_o.data[current_index];
+		};
 	};
 };
 

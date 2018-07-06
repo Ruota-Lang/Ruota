@@ -1,14 +1,7 @@
-struct Object :: {
-	s := "";
-	n := 0;
-	init(s, n) => {
-		self.s = s;
-		self.n = n;
-	};
-	string() => {
-		"String: " .. s;
-	};
-	value() => {
-		n;
+static Object :: {
+	static Member :: {
+		dynamic Further :: {
+
+		};
 	};
 };

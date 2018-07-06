@@ -111,7 +111,6 @@ dynamic Huffman :: {
 	};
 
 	toArray() => { encoded };
-	iterator() => { encoded };
 
 	binToArr() => a from {
 		btod(a) => d from { 

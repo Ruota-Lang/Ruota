@@ -4,7 +4,7 @@ long Lambda::reference_add = 0;
 long Lambda::reference_del = 0;
 
 SP_MEMORY Lambda::execute(VEC_Memory params) {
-	SP_SCOPE scope = NEW_SCOPE(parent);
+	SP_SCOPE scope = NEW_SCOPE(parent, "$LAMBDA$");
 	auto new_base = base->clone(scope);
 	scope->main = new_base;
 	auto idem = scope->declareVariable("idem");

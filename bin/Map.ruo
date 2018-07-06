@@ -42,8 +42,6 @@ dynamic Map :: {
 		b = false;
 	};
 
-	iterator() => { contents; };
-
 	size() => { len contents; };
 
 	string() => s from {
@@ -88,6 +86,23 @@ dynamic Map :: {
 		};
 		string() => {
 			key .. "=" .. value;
+		};
+	};
+
+	dynamic Iterator :: {
+		map_o := null;
+		current_index := 0;
+		init(&map_o) => {
+			self.map_o = map_o;
+		};
+		next() => {
+			current_index+=1;
+		};
+		hasi() => {
+			current_index < len map_o;
+		};
+		geti() => {
+			map_o.contents[current_index];
 		};
 	};
 };

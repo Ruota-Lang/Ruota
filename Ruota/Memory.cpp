@@ -84,7 +84,7 @@ SP_MEMORY Memory::makeScope(const SP_SCOPE &parent) {
 		return to_this_ptr;
 	}
 	this->clear();
-	this->obj_data = NEW_SCOPE(parent);
+	this->obj_data = NEW_SCOPE(parent, "$INNER$");
 	this->mt = OBJ;
 	return to_this_ptr;
 }

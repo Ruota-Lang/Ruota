@@ -3,9 +3,22 @@
 #include "TREE/Tree.h"
 #include "NETWORK/Network.h"
 
+SP_LAMBDA RuotaWrapper::on_exit = nullptr;
+
 const char * os_compiled = {
 	#include "compiled/System.ruo"
 };
+
+void signalCommand(int s){
+	if (RuotaWrapper::on_exit != nullptr)
+		RuotaWrapper::on_exit->execute({});
+	exit(1);
+}
+
+std::vector<SP_MEMORY> __onexit(std::vector<SP_MEMORY> args) {
+	RuotaWrapper::on_exit = args[0]->getLambda();
+	return {NEW_MEMORY()};
+}
 
 std::vector<SP_MEMORY> __error(std::vector<SP_MEMORY> args) {
 	throw std::runtime_error(args[0]->toString());
@@ -114,6 +127,8 @@ std::vector<SP_MEMORY> __filesystem_remove(std::vector<SP_MEMORY> args) {
 }
 
 RuotaWrapper::RuotaWrapper(std::string current_dir){
+	signal(SIGINT, signalCommand);
+	
 	Interpreter::addEmbed("error", &__error);
 	Interpreter::addEmbed("console.system", &__system);
 	Interpreter::addEmbed("console.getenv", &__getenv);
@@ -121,6 +136,7 @@ RuotaWrapper::RuotaWrapper(std::string current_dir){
 	Interpreter::addEmbed("console.random", &__random);
 	Interpreter::addEmbed("console.floor", &__floor);
 	Interpreter::addEmbed("console.milli", &__milli);
+	Interpreter::addEmbed("console.onexit", &__onexit);
 	Interpreter::addEmbed("regex.search", &__regex_search);
 	Interpreter::addEmbed("regex.replace", &__regex_replace);
 	Interpreter::addEmbed("filesystem.listdir", &__filesystem_listdir);

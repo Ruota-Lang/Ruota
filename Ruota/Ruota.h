@@ -9,6 +9,8 @@
 #include<vector>
 #include<fstream>
 #include<iostream>
+#include <stdlib.h>
+#include <stdio.h>
 #include<algorithm>
 #include<memory>
 #include<time.h>
@@ -19,6 +21,7 @@
 #include<chrono>
 #include<cmath>
 #include<regex>
+#include <signal.h>
 #ifdef THREADING
 	#include<thread>
 #endif
@@ -305,11 +308,14 @@ private:
 	SP_SCOPE main_scope;
 	std::string current_dir;
 public:
+	static SP_LAMBDA on_exit;
 	static void debugPrint();
 	static Interpreter * interpreter;
 	RuotaWrapper(std::string);
 	SP_MEMORY runLine(std::string);
 	~RuotaWrapper();
 };
+
+void signalCommand(int s);
 
 #endif // !INTERPRETER_H

@@ -22,6 +22,7 @@ static os :: {
 	getenv(v) => { _OUTER_CALL_("console.getenv", v)[0] };
 	exit() => { _OUTER_CALL_("console.exit") };
 	milli() => { _OUTER_CALL_("console.milli")[0] };
+	onExit(l) => { _OUTER_CALL_("console.onexit", l) };
 };
 
 static System :: {

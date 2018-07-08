@@ -1,13 +1,13 @@
 CC=g++
-CFLAGS=-O2 -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -DBOOST_SYSTEM_NO_DEPRECATED -lws2_32
+CFLAGS=-O3 -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -DBOOST_SYSTEM_NO_DEPRECATED -lws2_32
 
-all: win32 linux
+all: win64 linux
 
-win32: bin/ruota.exe
+win64: bin/ruota.exe
 linux: bin/ruota.out
 
 bin/ruota.exe: Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
-	$(CC) -o bin/ruota.exe Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o -lmingw32 $(CFLAGS)
+	$(CC) -o bin/ruota.exe Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o $(CFLAGS)
 
 bin/ruota.out: Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o
 	$(CC) -o bin/ruota.out Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Interpreter.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o $(CFLAGS)

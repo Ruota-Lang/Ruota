@@ -1,5 +1,3 @@
-load "Strings";
-
 runCode(filename) => {
 	f := new File(filename);
 	line := "";

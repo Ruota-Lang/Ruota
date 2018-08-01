@@ -669,7 +669,7 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 					stack.push_back(NEW_NODE(CASE, params));
 			}
 			else if (token == "else") {
-				a->params.push_back(b);
+				a->params.push_back(b); //xd
 				stack.push_back(a);
 			}
 			else if (token == ".index")	

@@ -196,7 +196,7 @@ dynamic IOService :: {
 dynamic Socket :: {
 	ptr := null;
 	init(ios) => {
-		type ios == "IOService" then throw("No IOService given.");
+		type ios != "IOService" then throw("No IOService given.");
 		r := _OUTER_CALL_("network.create_socket", ios.ptr);
 		r[0] != null then throw(r[0]);
 		ptr = r[1];

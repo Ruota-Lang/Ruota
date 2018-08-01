@@ -1,9 +1,9 @@
 CC=g++
 CFLAGS=-O3 -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -DBOOST_SYSTEM_NO_DEPRECATED -lws2_32
 
-all: win64 linux
+all: win32 linux
 
-win64: bin/ruota.exe
+win32: bin/ruota.exe
 linux: bin/ruota.out
 
 bin/ruota.exe: Compiled/Main.o Compiled/FileIO.o Compiled/Tree.o Compiled/Network.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Interpreter.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/Memory.o

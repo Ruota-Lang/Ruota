@@ -1,0 +1,98 @@
+ue1() => {
+	# Print your name on screen
+	printl("Benjamin Park");
+};
+
+ue2() => {
+	i in [700 :> 200 : -13] ->> {
+		printl(i);
+	};
+};
+
+ue3() => {
+	a := [0 : 10];
+	printl(a[1]);
+};
+
+ue4() => {
+	name := Input.line();
+	name == "Jack" then {
+		printl("Hi Jack!");
+	} else {
+		printl("Hello, " .. name);
+	};
+};
+
+ue5A() => {
+	i in [0 : 100] ->> {
+		print(i .. "\t");
+		i % 2 == 0 then {
+			printl("EVEN");
+		} else {
+			printl("ODD");
+		};
+	};
+};
+
+ue5B() => {
+	i in [0 : 100] ->> {
+		print(i .. "\t");
+		Math.floor(i / 2) == i / 2 then {
+			printl("EVEN");
+		} else {
+			printl("ODD");
+		};
+	};
+};
+
+ue5C() => {
+	evens := (i in [0 : 100 : 2] ->> {i .. "\tEVEN"});
+	odds := (i in [1 : 100 : 2] ->> {i .. "\tODD"});
+	(i, j) in (evens, odds) ->> {
+		printl(i);
+		printl(j);
+	};
+};
+
+ue6A() => {
+	i in [1 :> 12] ->> {
+		j in [1 :> 12] ->> {
+			print((i * j) .. "\t");
+		};
+		print("\n");
+	};
+};
+
+ue6B() => {
+	i in lace([1 :> 12], [1 :> 12]) ->> {
+		print((i.first * i.second) .. "\t");
+		i.second == 12 then print("\n");
+	};
+};
+
+ue7() => {
+	raw := Input.line();
+	words := [""];
+	c in raw ->> {
+		c == ' ' then {
+			words push "";
+		} else {
+			words[end] ..= str c;
+		};
+	};
+	i in words ->> printl(i);
+};
+
+ue8() => {
+	int := ([0:3]->>Random.int(0, 20));
+	max := int[0];
+	min := int[1];
+	avg := Math.sum(int) / len int;
+ 	i in int ->> {
+		i > max then {max = i};
+		i < min then {min = i};
+	};
+	printl("MAX\t" .. max);
+	printl("MIN\t" .. min);
+	printl("AVG\t" .. avg);
+};

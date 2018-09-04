@@ -201,6 +201,27 @@ SP_MEMORY Memory::index(const SP_MEMORY &m) {
 	}
 }
 
+SP_MEMORY Memory::steal(const SP_MEMORY &m) {
+	if (mt == REF)	return reference->steal(m);
+
+	if (mt == ARR || mt == STR) {
+		size_t pos = m->getValue();
+		if (this->arr_data.size() <= pos || pos < 0)
+			return nullptr;
+		auto v = this->arr_data[pos];
+		this->arr_data.erase(this->arr_data.begin() + pos);
+		return v;
+	} else if (mt == OBJ) {
+		if (obj_data->variables.find("pullindex") != obj_data->variables.end()) {
+			auto l = obj_data->variables["pullindex"]->getLambda();
+			if (l != nullptr)
+				return l->execute({m});
+		}
+	} else {
+		Interpreter::throwError("Error: value type is not indexable!", toString());
+	}
+}
+
 SP_MEMORY Memory::clone(const SP_SCOPE &parent) const {
 	SP_MEMORY m;
 	switch (mt)
@@ -345,7 +366,7 @@ SP_MEMORY Memory::set(const SP_MEMORY &m) {
 		this->obj_data = m->obj_data;
 		break;
 	case LAM:
-		this->lambda = m->lambda;
+		this->lambda = m->lambda->clone(m->lambda->parent);
 		break;
 	default:
 		break;

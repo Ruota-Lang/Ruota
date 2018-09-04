@@ -74,6 +74,7 @@ std::unordered_map<std::string, int> Interpreter::operators = {
 	{ "||", 4 },
 	{ "push", 4 },
 	{ "get", 4 },
+	{ "pull", 4 },
 	{ "post", 4 },
 	{ "=", -3 },
 	{ "+=", -3},
@@ -676,6 +677,8 @@ SP_SCOPE Interpreter::generate(std::string code, SP_SCOPE main, std::string loca
 				stack.push_back(NEW_NODE(INDEX, params));
 			else if (token == "get")	
 				stack.push_back(NEW_NODE(GET_MET, params));
+			else if (token == "pull")	
+				stack.push_back(NEW_NODE(PULL_ARR, params));
 			else if (token == ".")
 				stack.push_back(NEW_NODE(INDEX_OBJ, params));
 			else if (token == ".exec") {

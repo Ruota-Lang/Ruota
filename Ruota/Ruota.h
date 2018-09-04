@@ -103,6 +103,7 @@ enum NodeType {
 	SHIFT_ARR,	// shift
 	UNSHIFT_ARR,// post
 	PUSH_ARR,	// push
+	PULL_ARR,	// pull
 	LAST_ARR,	// last
 	TOARR,		// arr
 	TRY_CATCH,	// try .. catch
@@ -195,6 +196,7 @@ public:
 	SP_MEMORY	set(const SP_MEMORY&);
 	long double	getValue() const;
 	SP_MEMORY	index(const SP_MEMORY&);
+	SP_MEMORY	steal(const SP_MEMORY&);
 	SP_MEMORY	index(const std::string&);
 	SP_MEMORY	setObjectMode(const ObjectMode&);
 	SP_MEMORY	setLocal(const bool&);

@@ -1,0 +1,12 @@
+isPalindrome(s) => {
+	s[0:>end] == s[end:>0:-1];
+};
+
+f := new File("words.txt");
+line in f ->> {
+	isPalindrome(line) then {
+		printl(line);
+	};
+};
+
+f.close();

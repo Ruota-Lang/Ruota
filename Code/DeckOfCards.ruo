@@ -1,0 +1,26 @@
+load "Arrays";
+
+suits := [
+	"Diamonds",
+	"Spades",
+	"Hearts",
+	"Clubs"
+];
+
+values := [
+	2:>10,
+	"Jack",
+	"Queen",
+	"King",
+	"Ace"
+];
+
+cards := (k in lace(suits, values) ->> {k.second .. " of " .. k.first});
+
+randomC(x) => picked from {
+	picked = [];
+	c_r := cards;
+	[0:x] ->> {
+		picked push (c_r pull Random.int(len c_r));
+	};
+};

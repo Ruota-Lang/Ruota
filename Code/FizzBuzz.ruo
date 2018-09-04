@@ -1,0 +1,6 @@
+i in [1 :> 100] ->> {
+	i % 3 == 0 then print("Fizz");
+	i % 5 == 0 then print("Buzz");
+	i % 3 && i % 5 then print(i);
+	printl("");
+};

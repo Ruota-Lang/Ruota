@@ -34,7 +34,7 @@ if_goto	10
 #	int y;
 #	y = 1;
 #	do {
-		printf("%d", x);
+#		printf("%d", x);
 #		int z;
 #		z = x + y;
 #		x = y;

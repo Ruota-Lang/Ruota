@@ -3,30 +3,46 @@
 long Node::reference_add = 0;
 long Node::reference_del = 0;
 
+/*
+	Creates a Node that wraps itself around a memory unit with a specified 
+	numerical value.
+*/
 Node::Node(long double data) {
 	this->reference_add++;
 	this->mem_data = NEW_MEMORY(NUM, data);
 	this->nt = MEM;
 }
 
+/*
+	Creates a wrapper node for a Memory object.
+*/
 Node::Node(SP_MEMORY m) {
 	this->reference_add++;
 	this->mem_data = m;
 	this->nt = MEM;
 }
 
+/*
+	Creates a Node with specified type and parameters.
+*/
 Node::Node(NodeType nt, VEC_Node params) {
 	this->reference_add++;
 	this->params = params;
 	this->nt = nt;
 }
 
+/*
+	Creates a Node for a vgiven ariable name.
+*/
 Node::Node(std::string key) {
 	this->reference_add++;
 	this->key = key;
 	this->nt = VAR;
 }
 
+/*
+	Creates a switch node.
+*/
 Node::Node(SP_NODE val, std::unordered_map<long double, SP_NODE> switch_values){
 	this->reference_add++;
 	this->switch_values = switch_values;
@@ -34,17 +50,27 @@ Node::Node(SP_NODE val, std::unordered_map<long double, SP_NODE> switch_values){
 	this->params.push_back(val);
 }
 
+/*
+	Creates a Node for a Scope object.
+*/
 Node::Node(SP_SCOPE scope_ref) {
 	this->reference_add++;
 	this->scope_ref = scope_ref;
 	this->nt = SCOPE;
 }
 
+/*
+	Deconstructor
+*/
 Node::~Node(){
 	this->reference_del++;
 	destroy();
 }
 
+/*
+	Clears all pointer values related to the object. Renders the Node object
+	unusable.
+*/
 void Node::destroy() {
 	//std::cout << " >> STARTING DELETION\n";
 	this->mem_data = nullptr;
@@ -70,15 +96,24 @@ void Node::destroy() {
 	//std::cout << " >> ENDING DELETION\n";
 }
 
+/*
+	Node Evaluation Algorithm.
+*/
 SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
-//	std::cout << toString() << std::endl;
 	VEC_Memory executed;
+	//	Certain types of nodes cannot be evaluated until after a particular
+	//	prerequisite is met.
 	if (nt != INDEX && nt != EXEC_ITER && nt != SET && nt != DECLARE && nt != TRY_CATCH && nt != SWITCH && nt != OBJ_LAM && nt != SET_STAT && nt != DETACH && nt != THREAD && nt != NEW && nt != DES && nt != LDES && nt != DOL && nt != THEN && nt != INDEX_OBJ && nt != OBJ_SET && nt != FROM) {
 		for (const SP_NODE &n : params) {
 			auto e = n->execute(scope);
+
+			//	Break and return Nodes are marked and automatically returned.
 			if (e->getType() == BREAK_M || e->getType() == RETURN_M)
 				return e;
 
+			//	Range Nodes are very specific in usage, if the above node is a
+			//	list Node then the values are added sequentially, otherwise
+			//	the values are just added as a another Node.
 			if (n->nt == RANGE)
 				for (auto &n2 : e->getArray())
 					executed.push_back(n2);
@@ -87,9 +122,11 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 	}
 
+	//	A temporary value makes some functions more efficient
 	SP_MEMORY temp1 = NEW_MEMORY();
 	switch (nt)
 	{
+	//	keys A
 	case OBJ_KEYS:	{
 		VEC_Memory new_list;
 		for (auto e : executed[0]->getScope()->variables) {
@@ -97,6 +134,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		return NEW_MEMORY(new_list);
 	}
+	//	eval(A)
 	case EVAL:	{
 		std::string last_dir = Interpreter::current_dir;
 		std::string last_file = Interpreter::curr_file;
@@ -107,31 +145,41 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		Interpreter::curr_file = last_file;
 		return temp1;
 	}
+	//	get A
 	case GET_MET: {
 		std::string key = executed[1]->toString();
 		return executed[0]->getScope()->getVariable(key);
 	}
+	//	break
 	case BREAK:		return temp1->setType(BREAK_M);
+	//	returns
 	case RETURN:	return temp1->setType(RETURN_M);
+	//	varname
 	case VAR:		return scope->getVariable(key);
+	//	static A
 	case SET_STAT:	{
 		temp1 = scope->declareVariable(key);
 		return temp1->setObjectMode(STATIC);
 	}
+	//	dynamic A
 	case STRUCT:	{
 		temp1 = scope->declareVariable(key);
 		return temp1->setObjectMode(DYNAMIC);
 	}
+	//	virtual A
 	case SET_VIR:	{
 		temp1 = scope->declareVariable(key);
 		return temp1->setObjectMode(VIRTUAL);
 	}
+	//	A &= B
 	case REF_SET:	return executed[0]->refer(executed[1]);
+	//	A = B
 	case SET:		{
 		executed.push_back(params[0]->execute(scope));
 		executed.push_back(params[1]->execute(scope));
 		return executed[0]->set(executed[1]);
 	}
+	// var A
 	case DECLARE:	{
 		if (params[0]->nt == LIST || params[0]->nt == SOFT_LIST){
 			for (auto &v : params[0]->params)
@@ -140,7 +188,9 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		} else
 			return scope->declareVariable(params[0]->key);
 	}
+	//	Value Literal
 	case MEM:		return this->mem_data;
+	//	A + B
 	case ADD:		switch(flag) {
 		case 0: return executed[0]->add(executed[1]);
 		case 1: {
@@ -153,6 +203,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A - B
 	case SUB:		switch(flag) {
 		case 0: return executed[0]->sub(executed[1]);
 		case 1: {
@@ -165,6 +216,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A * B
 	case MUL:		switch(flag) {
 		case 0: return executed[0]->mul(executed[1]);
 		case 1: {
@@ -177,6 +229,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A / B
 	case DIV:		switch(flag) {
 		case 0: return executed[0]->div(executed[1]);
 		case 1: {
@@ -189,6 +242,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A % B
 	case MOD:		switch(flag) {
 		case 0: return executed[0]->mod(executed[1]);
 		case 1: {
@@ -201,6 +255,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A ** B
 	case POW:		switch(flag) {
 		case 0: return executed[0]->pow(executed[1]);
 		case 1: {
@@ -213,6 +268,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A == B
 	case EQUAL:		switch(flag) {
 		case 0: return NEW_MEMORY(NUM, executed[0]->equals(executed[1]));
 		case 1: {
@@ -225,6 +281,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	!A
 	case NOT:		switch(flag) {
 		case 0: return NEW_MEMORY(NUM, !executed[0]->equals(NEW_MEMORY(NUM, 1)));
 		case 1: {
@@ -235,6 +292,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A != B
 	case NEQUAL:	switch(flag) {
 		case 0: return NEW_MEMORY(NUM, !executed[0]->equals(executed[1]));
 		case 1: {
@@ -247,6 +305,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A < B
 	case LESS:		switch(flag) {
 		case 0: return executed[0]->less(executed[1]);
 		case 1: {
@@ -259,6 +318,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A > B
 	case MORE:		switch(flag) {
 		case 0: return executed[0]->more(executed[1]);
 		case 1: {
@@ -271,6 +331,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A <= B
 	case ELESS:		switch(flag) {
 		case 0: return executed[0]->eless(executed[1]);
 		case 1: {
@@ -283,6 +344,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A >= B
 	case EMORE:		switch(flag) {
 		case 0: return executed[0]->emore(executed[1]);
 		case 1: {
@@ -295,9 +357,13 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default: Interpreter::throwError("Error: an undefined error has occured!", toString());
 	}
+	//	A && B
 	case AND:		return NEW_MEMORY(NUM, executed[0]->getValue() && executed[1]->getValue());
+	//	A || B
 	case OR:		return NEW_MEMORY(NUM, executed[0]->getValue() || executed[1]->getValue());
+	//	A .. B
 	case STR_CAT:	return NEW_MEMORY(executed[0]->toString() + executed[1]->toString());
+	//	_OUTER_CALL_(A)
 	case OUT_CALL:	{
 		std::string fname = executed[0]->toString();
 		std::reverse(executed.begin(), executed.end());
@@ -307,6 +373,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			Interpreter::throwError	("Error: outer call `" + fname + "` does not exist!", toString());
 		return NEW_MEMORY(Interpreter::embedded[fname](executed));
 	}
+	//	A switch {} >> B
 	case SWITCH:	{
 		executed.push_back(params[0]->execute(scope));
 		long double switch_value = 0;
@@ -322,16 +389,19 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		return temp1;
 	}
+	//	pop A
 	case POP_ARR:	{
 		if (executed[0]->getArray().empty())
 			Interpreter::throwError("Error: cannot pop empty array!", toString());
 		return executed[0]->pop();
 	}
+	//	mov A
 	case SHIFT_ARR:	{		
 		if (executed[0]->getArray().empty())
 			Interpreter::throwError("Error: cannot mov empty array!", toString());
 		return executed[0]->shift();
 	}
+	//	alloc A
 	case ALLOC: {
 		if (executed[0]->getType() == ARR){
 			SP_MEMORY base = NEW_MEMORY();
@@ -358,16 +428,19 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return NEW_MEMORY(list);
 		}
 	}
+	//	A push B
 	case PUSH_ARR:	{
 		if (executed[0]->getType() != ARR)
 			Interpreter::throwError("Error: cannot push into a non-array value!", toString());
 		return executed[0]->push(executed[1]);
 	}
+	//	A post B
 	case UNSHIFT_ARR:	{
 		if (executed[0]->getType() != ARR)
 			Interpreter::throwError("Error: cannot post into a non-array value!", toString());
 		return executed[0]->unshift(executed[1]);
 	}
+	//	num A
 	case VALUE:		{
 		try {
 			if (executed[0]->getType() == CHA || executed[0]->getType() == NUL || executed[0]->getType() == OBJ)
@@ -377,12 +450,14 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			Interpreter::throwError("Error: cannot convert string \"" + executed[0]->toString() + "\" to a numerical value!", toString());
 		}
 	}
+	//	A(B)
 	case EXEC:		{
 		auto l = executed[0]->getLambda();
 		if (l == nullptr)
 			Interpreter::throwError("Error: Lambda does not exist!", toString());
 		return l->execute(executed[1]->getArray());
 	}
+	//	str A
 	case TOSTRING:	{
 		if (executed[0]->getType() != ARR)
 			return NEW_MEMORY(executed[0]->toString());
@@ -396,6 +471,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return NEW_MEMORY(s);
 		}
 	}
+	//	arr A
 	case TOARR:	{
 		if (executed[0]->getType() != STR && executed[0]->getType() != ARR)
 			return NEW_MEMORY();
@@ -409,9 +485,11 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return NEW_MEMORY(new_vec);
 		}
 	}
+	//	chr A
 	case TOCHAR: {
 		return NEW_MEMORY(CHA, executed[0]->getValue());
 	}
+	//	type A
 	case TYPE:
 		switch (executed[0]->getType())
 		{
@@ -427,6 +505,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		default:	return NEW_MEMORY("null");
 		}
+	//	A.B
 	case INDEX_OBJ:
 		temp1 = params[0]->execute(scope);
 		if (temp1->getObjectMode() == DYNAMIC)
@@ -436,6 +515,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		if (params[1]->nt == VAR && temp1->getScope()->variables.find(params[1]->key) == temp1->getScope()->variables.end())
 			temp1->getScope()->declareVariable(params[1]->key);
 		return params[1]->execute(temp1->getScope());
+	//	A :: B
 	case OBJ_SET:
 		temp1 = params[0]->execute(scope);
 		if (params[1]->nt != INHERIT){
@@ -447,6 +527,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		temp1->getScope()->key = params[0]->key;
 		//temp1->getScope()->key = temp1->getScope()->getPath();
 		return temp1;
+	//	A +> B
 	case INHERIT:{
 		auto par = params[0]->execute(scope)->getScope();
 		auto chi = params[1]->scope_ref;
@@ -460,6 +541,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		temp1->setScope(new_s);
 		return temp1;
 	}
+	//	struct A
 	case OBJ_LAM:{
 		temp1 = NEW_MEMORY();
 		temp1->setScope(params[0]->scope_ref);
@@ -469,6 +551,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		obj->variables["self"] = NEW_MEMORY(obj);
 		return temp1;
 	}
+	//	new A
 	case NEW: {
 		if (params[0]->nt == EXEC){
 			auto var = NEW_MEMORY();
@@ -496,14 +579,17 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return var;
 		}
 	}
+	//	local A
 	case LOCAL:
 		return executed[0]->setLocal(true);
+	//	{ ... }
 	case SCOPE:
 		scope_ref->parent = scope;
 		temp1 = scope_ref->execute();
 		if (temp1->getArray().empty())
 			return temp1;
 		return temp1->getArray()[0];
+	//	A ++ B
 	case ADD_ARR: {
 		if (executed[0]->getType() != ARR || executed[1]->getType() != ARR)
 			Interpreter::throwError("Error: cannot concatanate non-array values!", toString());
@@ -514,6 +600,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		for (auto &m : p2) new_array.push_back(m);
 		return NEW_MEMORY(new_array);
 	}
+	//	A -> B
 	case DES: {
 		std::vector<std::string> param_keys;
 		std::vector<int> param_types;
@@ -531,6 +618,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		return NEW_MEMORY(NEW_LAMBDA(scope, params[1], param_keys, param_types, default_params));
 	}
+	//	A(B) => C
 	case LDES: {
 		std::vector<std::string> param_keys;
 		std::vector<int> param_types;
@@ -558,6 +646,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return scope->variables[varname];
 		}
 	}
+	//	A in B ->> C
 	case EXEC_ITER: {
 		VEC_Memory list;	
 		if (params[0]->nt == ITER) {
@@ -653,6 +742,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		return NEW_MEMORY(list);
 	}
+	//	A do B
 	case DOL: {
 		auto dec = params[0];
 		SP_SCOPE inner_scope = NEW_SCOPE(scope, "$DO$");
@@ -664,6 +754,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		return NEW_MEMORY();
 	}
+	//	A then B else C
 	case THEN: {
 		auto dec = params[0]->execute(scope);
 		if (dec->getValue() != 0)
@@ -672,6 +763,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 			return params[2]->execute(scope);
 		return NEW_MEMORY();
 	}
+	//	A : B
 	case RANGE: {
 		auto p1 = executed[0]->getValue();
 		auto p2 = executed[1]->getValue();
@@ -699,8 +791,10 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}
 		return NEW_MEMORY(range);
 	}
+	//	[]
 	case LIST:
 		return NEW_MEMORY(executed);
+	//	len A
 	case SIZE_O: {
 		if (executed[0]->getType() == ARR || executed[0]->getType() == STR)
 			return NEW_MEMORY(NUM, executed[0]->getArray().size());
@@ -713,6 +807,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		}else
 			Interpreter::throwError("Error: cannot get size of non-array value, or object value where size() is undefined!", toString());
 	}
+	//	thread(A)
 	case THREAD:{
 		#ifdef THREADING
 		std::vector<std::thread> threads;
@@ -731,6 +826,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		#endif
 		return NEW_MEMORY();
 	}
+	//	detach A
 	case DETACH:{
 		#ifdef THREADING
 		std::thread th(threadWrapper, params[0], scope);
@@ -740,6 +836,7 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		#endif
 		return NEW_MEMORY();
 	}
+	//	try A catch B
 	case TRY_CATCH: {
 		try {
 			return params[0]->execute(scope);
@@ -752,11 +849,13 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 				return NEW_MEMORY();
 		}
 	}
+	//	()
 	case SOFT_LIST:
 		if (executed.size() == 1)
 			return executed[0];
 		else
 			return NEW_MEMORY(executed);
+	//	A[B]
 	case INDEX: {
 		auto p1 = params[0]->execute(scope);
 		SP_SCOPE s = NEW_SCOPE(scope, "$INDEX$");
@@ -774,6 +873,15 @@ SP_MEMORY Node::execute(const SP_SCOPE &scope) const {
 		else
 			return new_arr[0];
 	}
+	//	A pull B
+	case PULL_ARR: {
+		auto p1 = params[0]->execute(scope);
+		SP_SCOPE s = NEW_SCOPE(scope, "$INDEX$");
+		s->declareVariable("end")->set(NEW_MEMORY(NUM, p1->getArray().size() - 1));
+		auto p2 = params[1]->execute(s);
+		return p1->steal(p2);
+	}
+	//	A from { ... }
 	case FROM: {
 		auto scope_inner = params[1]->scope_ref;
 		scope_inner->variables[params[0]->key] = NEW_MEMORY();

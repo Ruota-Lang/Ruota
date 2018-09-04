@@ -28,7 +28,6 @@ SP_MEMORY Lambda::execute(VEC_Memory params) {
 		} else {
 			temp->set(default_params[i]);
 		}
-		std::cout << "VAR\t" << temp->toString() << std::endl;
 	}
 
 	//	Deletes the cloned lambda and its corresponding scope from memory
@@ -44,7 +43,11 @@ SP_MEMORY Lambda::execute(VEC_Memory params) {
 
 //	Clones a Lambda
 SP_LAMBDA Lambda::clone(const SP_SCOPE &parent) const {
-	return NEW_LAMBDA(parent, base->clone(parent), param_keys, param_types, default_params);
+	std::vector<SP_MEMORY> n_params;
+	for (auto &p : default_params) {
+		n_params.push_back(p->clone(parent));
+	}
+	return NEW_LAMBDA(parent, base->clone(parent), param_keys, param_types, n_params);
 }
 
 Lambda::Lambda(const SP_SCOPE &parent, const SP_NODE &base, std::vector<std::string> param_keys, std::vector<int> param_types, VEC_Memory default_params) {

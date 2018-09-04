@@ -1,6 +1,8 @@
 #ifndef RUOTA_H
 #define RUOTA_H
 
+const char RUOTA_VERSION[] = "0.11.2.2 Alpha";
+
 #define THREADING
 
 #include "Tokenizer.h"

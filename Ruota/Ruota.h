@@ -6,26 +6,26 @@ const char RUOTA_VERSION[] = "0.11.2.2 Alpha";
 #define THREADING
 
 #include "Tokenizer.h"
-#include<string>
-#include<unordered_map>
-#include<vector>
-#include<fstream>
-#include<iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <fstream>
+#include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
-#include<algorithm>
-#include<memory>
-#include<time.h>
-#include<functional>
+#include <algorithm>
+#include <memory>
+#include <time.h>
+#include <functional>
 #include <boost/filesystem.hpp>
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
-#include<chrono>
-#include<cmath>
-#include<regex>
+#include <chrono>
+#include <cmath>
+#include <regex>
 #include <signal.h>
 #ifdef THREADING
-	#include<thread>
+	#include <thread>
 #endif
 
 #undef	max

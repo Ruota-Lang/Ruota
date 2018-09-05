@@ -1,11 +1,13 @@
 #include "Ruota.h"
 
+//	Creates Memory unit without any value
 Memory::Memory() {
 	reference_add++;
 	this->data = 0;
 	this->mt = NUL;
 }
 
+//	Creates a memory unit with the type and value (numerical) specified
 Memory::Memory(MemType mt, const long double &data) {
 	reference_add++;
 	this->mt = mt;
@@ -19,11 +21,13 @@ Memory::Memory(MemType mt, const long double &data) {
 	}
 }
 
+//	Creates a memory unit with a pointer value
 Memory::Memory(void * ptr_data) {
 	this->ptr_data = ptr_data;
 	this->mt = PTR;
 }
 
+//	Clears data from memory unit
 void Memory::clear() {
 	obj_data = nullptr;
 	reference = nullptr;
@@ -33,51 +37,60 @@ void Memory::clear() {
 	arr_data.clear();
 }
 
+//	Creates a memory unit out of a scope
 Memory::Memory(SP_SCOPE scope) {
 	reference_add++;
 	obj_data = scope;
 	mt = OBJ;
 }
 
+//	Creates a memory unit out of a lambda (function)
 Memory::Memory(SP_LAMBDA lambda) {
 	reference_add++;
 	this->lambda = lambda;
 	this->mt = LAM;
 }
 
+//	Creates a memory unit out of an array of other memory units
 Memory::Memory(VEC_Memory arr_data) {
 	reference_add++;
 	this->arr_data = arr_data;
 	this->mt = ARR;
 }
 
+//	Returns whether an object is static or dynamic
 ObjectMode Memory::getObjectMode() const {
 	if (mt == REF) 	return reference->getObjectMode();
 	return this->om;
 }
 
+//	Returns whether the object has been set to local
 bool Memory::isLocal() const {
 	if (mt == REF) 	return reference->isLocal();
 	return this->local_var;
 }
 
+//	Returns the scope data stored in an object
 SP_SCOPE Memory::getScope() {
 	if (mt == REF)	return reference->getScope();
 	return this->obj_data;
 }
 
+//	Sets the object type
 SP_MEMORY Memory::setType(const MemType &mt) {
 	if (mt == REF)	reference->setType(mt);
 	else			this->mt = mt;
 	return to_this_ptr;
 }
 
+//	Sets the object mode
 SP_MEMORY Memory::setObjectMode(const ObjectMode &om) {
 	if (mt == REF)	reference->setObjectMode(om);
 	else			this->om = om;
 	return to_this_ptr;
 }
 
+//	Sets the scope data of a memory unit
 SP_MEMORY Memory::makeScope(const SP_SCOPE &parent) {
 	if (mt == REF) {
 		reference->makeScope(parent);
@@ -89,6 +102,7 @@ SP_MEMORY Memory::makeScope(const SP_SCOPE &parent) {
 	return to_this_ptr;
 }
 
+//	Creates a memory unit of type Array out of a string
 Memory::Memory(const std::string &s) {
 	reference_add++;
 	for (auto &c : s){
@@ -98,11 +112,13 @@ Memory::Memory(const std::string &s) {
 	this->mt = STR;
 }
 
+//	Pops the back of the memory unit's array
 SP_MEMORY Memory::pop() {
 	this->arr_data.pop_back();
 	return to_this_ptr;
 }
 
+//	Pops the front of the memory unit's array
 SP_MEMORY Memory::shift() {
 	std::reverse(arr_data.begin(), arr_data.end());
 	this->arr_data.pop_back();
@@ -110,11 +126,13 @@ SP_MEMORY Memory::shift() {
 	return to_this_ptr;
 }
 
+//	Pushes a memory unit to the back of the memory unit's array
 SP_MEMORY Memory::push(SP_MEMORY &m) {
 	this->arr_data.push_back(m);
 	return to_this_ptr;
 }
 
+//	Pushes a memory unit to the front of the memory 
 SP_MEMORY Memory::unshift(SP_MEMORY &m) {
 	std::reverse(arr_data.begin(), arr_data.end());
 	this->arr_data.push_back(m);
@@ -122,6 +140,7 @@ SP_MEMORY Memory::unshift(SP_MEMORY &m) {
 	return to_this_ptr;
 }
 
+//	Returns a numerical representation of the memory unit
 long double Memory::getValue() const {
 	if (mt == REF)	return reference->getValue();
 	switch(mt){
@@ -146,15 +165,19 @@ long double Memory::getValue() const {
 	}
 }
 
+//	Returns Lambda stored in memory unit
 SP_LAMBDA Memory::getLambda() {
 	if (mt == REF)	return reference->getLambda();
 	return this->lambda;
 }
+
+//	Returns array value stored in memory unit
 VEC_Memory Memory::getArray() {
 	if (mt == REF)	return reference->getArray();
 	return this->arr_data;
 }
 
+//	Sets the array data of a memory unit
 SP_MEMORY Memory::setArray(VEC_Memory arr_data) {
 	this->clear();
 	this->mt = ARR;
@@ -162,11 +185,13 @@ SP_MEMORY Memory::setArray(VEC_Memory arr_data) {
 	return to_this_ptr;
 }
 
+//	Sets whether memory unit is local
 SP_MEMORY Memory::setLocal(const bool &b) {
 	this->local_var = b;
 	return to_this_ptr;
 }
 
+//	Sets the memory unit to a referential pointer to another
 SP_MEMORY Memory::refer(const SP_MEMORY &m) {
 	if (m->mt == NUL && m->data == 1) {
 		this->mt = NUL;
@@ -182,6 +207,7 @@ SP_MEMORY Memory::refer(const SP_MEMORY &m) {
 	return to_this_ptr;
 }
 
+//	Indexes the array value (or object with valid index function)
 SP_MEMORY Memory::index(const SP_MEMORY &m) {
 	if (mt == REF)	return reference->index(m);
 
@@ -201,6 +227,7 @@ SP_MEMORY Memory::index(const SP_MEMORY &m) {
 	}
 }
 
+//	Returns and removes value from memory unit's array or object
 SP_MEMORY Memory::steal(const SP_MEMORY &m) {
 	if (mt == REF)	return reference->steal(m);
 

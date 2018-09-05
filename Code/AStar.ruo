@@ -1,0 +1,124 @@
+dynamic Node :: {
+	var walkable;
+	var x;
+	var y;
+	var path = false;
+	init(x, y, walkable = true) => {
+		self.x = x;
+		self.y = y;
+		self.walkable = walkable;
+	};
+	dist(start) => d from {
+		d = (start.x - self.x) ** 2 + (start.y - self.y) ** 2;
+	};
+};
+
+aStar(start, goal, map) => path from {
+	size_x := len map;
+	size_y := len map[0];
+	getNeighbors(x, y) => neighbors from {
+		neighbors = [];
+		x > 0 then {
+			map[x-1][y].walkable then neighbors push map[x - 1][y];
+		};
+		x < len map - 1 then {
+			map[x+1][y].walkable then neighbors push map[x + 1][y];
+		};
+		y > 0 then {
+			map[x][y - 1].walkable then neighbors push map[x][y - 1];
+		};
+		y < len map[0] - 1 then {
+			map[x][y + 1].walkable then neighbors push map[x][y + 1];
+		};
+		x > 0 && y > 0 then {
+			map[x-1][y].walkable || map[x][y-1].walkable then { 
+				map[x-1][y-1].walkable then neighbors push map[x - 1][y - 1];
+			};
+		};
+		x < len map - 1 && y > 0 then {
+			map[x+1][y].walkable || map[x][y-1].walkable then {
+				map[x+1][y-1].walkable then neighbors push map[x + 1][y - 1];
+			};
+		};
+		x > 0 && y < len map[0] - 1 then {
+			map[x-1][y].walkable || map[x][y+1].walkable then {
+				map[x-1][y+1].walkable then neighbors push map[x - 1][y + 1];
+			};
+		};
+		x < len map - 1 && y < len map[0] - 1 then {
+			map[x+1][y].walkable || map[x][y+1].walkable then {
+				map[x+1][y+1].walkable then neighbors push map[x + 1][y + 1];
+			};
+		};
+	};
+
+	path = [];
+	closedSet := alloc[size_x, size_y];
+	fScore := alloc[size_x, size_y] + 999;
+	gScore := alloc[size_x, size_y] + 999;
+	openSet := [start];
+	fScore[start.x][start.y] = start.dist(goal);
+	gScore[start.x][start.y] = 0;
+	current := null;
+	parentage :=alloc[size_x, size_y];
+	len openSet > 0 do {
+		current_i := 0;
+		i in [1 : len openSet] ->> {
+			new_n := fScore[openSet[i].x][openSet[i].y];
+			old_n := fScore[openSet[current_i].x][openSet[current_i].y];
+			new_n < old_n then current_i = i
+		};
+		current = openSet pull current_i;
+
+		current == goal then break;
+
+		closedSet[current.x][current.y] = true;
+		neighbors := getNeighbors(current.x, current.y);
+		n in neighbors ->> {
+			closedSet[n.x][n.y] == null then {
+				tentative_gScore := gScore[current.x][current.y] + current.dist(n);
+				flag := false;
+				o in openSet ->> {o == n then flag = true};
+				!flag then {openSet push n};
+				tentative_gScore < gScore[n.x][n.y] then {
+					parentage[n.x][n.y] = current;
+					gScore[n.x][n.y] = tentative_gScore;
+					fScore[n.x][n.y] = tentative_gScore + n.dist(goal);
+				};
+			};
+		};
+	};
+	current != null do {
+		path post struct{x:=current.x, y:=current.y};
+		current.path = true;
+		current = parentage[current.x][current.y];
+	};
+};
+
+map := alloc[20, 20];
+i in [0 : len map] ->> {
+	j in [0 : len map[i]] ->> {
+		map[i][j] = new Node(i, j, Random.int(4) != 0);
+	};
+};
+
+map[0][0].walkable = true;
+map[end][end].walkable = true;
+
+test := aStar(map[0][0], map[end][end], map);
+
+# if you're not on windows this will just look like a white box
+# sorry
+i in map ->> {
+	j in i ->> {
+		j.path then {
+			Color.set(0, Color.RED);
+		} else j.walkable then {
+			Color.set(0, Color.GREEN);
+		} else {
+			Color.set(0, Color.WHITE);
+		};
+		print("  ");	
+	};
+	printl("");
+};

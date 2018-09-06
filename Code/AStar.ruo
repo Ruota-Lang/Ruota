@@ -1,3 +1,5 @@
+comp_n := 0;
+
 dynamic Node :: {
 	var walkable;
 	var x;
@@ -9,7 +11,8 @@ dynamic Node :: {
 		self.walkable = walkable;
 	};
 	dist(start) => d from {
-		d = (start.x - self.x) ** 2 + (start.y - self.y) ** 2;
+		# Euclidian distance
+		d = ((start.x - x) ** 2 + (start.y - y) ** 2) ** 0.5;
 	};
 };
 
@@ -17,36 +20,37 @@ aStar(start, goal, map) => path from {
 	size_x := len map;
 	size_y := len map[0];
 	getNeighbors(x, y) => neighbors from {
+		# Up, down, left, right, and each diagnol as long as you don't run into the corner of a wall
 		neighbors = [];
 		x > 0 then {
 			map[x-1][y].walkable then neighbors push map[x - 1][y];
 		};
-		x < len map - 1 then {
+		x < size_x - 1 then {
 			map[x+1][y].walkable then neighbors push map[x + 1][y];
 		};
 		y > 0 then {
 			map[x][y - 1].walkable then neighbors push map[x][y - 1];
 		};
-		y < len map[0] - 1 then {
+		y < size_y - 1 then {
 			map[x][y + 1].walkable then neighbors push map[x][y + 1];
 		};
 		x > 0 && y > 0 then {
-			map[x-1][y].walkable || map[x][y-1].walkable then { 
+			map[x-1][y].walkable && map[x][y-1].walkable then { 
 				map[x-1][y-1].walkable then neighbors push map[x - 1][y - 1];
 			};
 		};
-		x < len map - 1 && y > 0 then {
-			map[x+1][y].walkable || map[x][y-1].walkable then {
+		x < size_x - 1 && y > 0 then {
+			map[x+1][y].walkable && map[x][y-1].walkable then {
 				map[x+1][y-1].walkable then neighbors push map[x + 1][y - 1];
 			};
 		};
-		x > 0 && y < len map[0] - 1 then {
-			map[x-1][y].walkable || map[x][y+1].walkable then {
+		x > 0 && y < size_y - 1 then {
+			map[x-1][y].walkable && map[x][y+1].walkable then {
 				map[x-1][y+1].walkable then neighbors push map[x - 1][y + 1];
 			};
 		};
-		x < len map - 1 && y < len map[0] - 1 then {
-			map[x+1][y].walkable || map[x][y+1].walkable then {
+		x < size_x - 1 && y < size_y - 1 then {
+			map[x+1][y].walkable && map[x][y+1].walkable then {
 				map[x+1][y+1].walkable then neighbors push map[x + 1][y + 1];
 			};
 		};
@@ -57,37 +61,42 @@ aStar(start, goal, map) => path from {
 	fScore := alloc[size_x, size_y] + 999;
 	gScore := alloc[size_x, size_y] + 999;
 	openSet := [start];
+	openFlag := alloc[size_x, size_y];
+	openFlag[start.x][start.y] = true;
 	fScore[start.x][start.y] = start.dist(goal);
 	gScore[start.x][start.y] = 0;
 	current := null;
-	parentage :=alloc[size_x, size_y];
+	parentage := alloc[size_x, size_y];
 	len openSet > 0 do {
 		current_i := 0;
 		i in [1 : len openSet] ->> {
 			new_n := fScore[openSet[i].x][openSet[i].y];
 			old_n := fScore[openSet[current_i].x][openSet[current_i].y];
-			new_n < old_n then current_i = i
+			new_n < old_n then current_i = i;
 		};
 		current = openSet pull current_i;
-
 		current == goal then break;
+		(c_x, c_y) := (current.x, current.y);
 
-		closedSet[current.x][current.y] = true;
-		neighbors := getNeighbors(current.x, current.y);
+		closedSet[c_x][c_y] = true;
+		neighbors := getNeighbors(c_x, c_y);
 		n in neighbors ->> {
-			closedSet[n.x][n.y] == null then {
-				tentative_gScore := gScore[current.x][current.y] + current.dist(n);
-				flag := false;
-				o in openSet ->> {o == n then flag = true};
-				!flag then {openSet push n};
-				tentative_gScore < gScore[n.x][n.y] then {
-					parentage[n.x][n.y] = current;
-					gScore[n.x][n.y] = tentative_gScore;
-					fScore[n.x][n.y] = tentative_gScore + n.dist(goal);
+			comp_n+=1;
+			(n_x, n_y) := (n.x, n.y);
+			closedSet[n_x][n_y] == null then {
+				tentative_gScore := gScore[c_x][c_y] + current.dist(n);
+				!openFlag[n_x][n_y] then {openSet push n; openFlag[n_x][n_y] = true};
+				tentative_gScore < gScore[n_x][n_y] then {
+					parentage[n_x][n_y] = current;
+					gScore[n_x][n_y] = tentative_gScore;
+					fScore[n_x][n_y] = tentative_gScore + n.dist(goal);
 				};
 			};
 		};
 	};
+
+	current != goal then return;
+
 	current != null do {
 		path post struct{x:=current.x, y:=current.y};
 		current.path = true;
@@ -102,10 +111,22 @@ i in [0 : len map] ->> {
 	};
 };
 
-map[0][0].walkable = true;
-map[end][end].walkable = true;
+corners := [
+	map[0][0],
+	map[0][end],
+	map[end][0],
+	map[end][end]
+];
 
-test := aStar(map[0][0], map[end][end], map);
+start := corners pull Random.int(4);
+goal := corners pull Random.int(3);
+
+start.walkable = true;
+goal.walkable = true;
+
+start_time := os.milli();
+path := aStar(start, goal, map);
+end_time := os.milli();
 
 # if you're not on windows this will just look like a white box
 # sorry
@@ -122,3 +143,6 @@ i in map ->> {
 	};
 	printl("");
 };
+
+Color.set();
+printl("Time: " .. (end_time - start_time .. " ms") .. "; Path Steps: " .. len path .. "; Computations: " .. comp_n .. ", " .. (comp_n / (end_time - start_time)) .. " comp/ms");

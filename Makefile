@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-O3 -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -DBOOST_SYSTEM_NO_DEPRECATED -lws2_32
+CFLAGS=-Ofast -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -DBOOST_SYSTEM_NO_DEPRECATED -lws2_32
 
 all: win32 linux
 

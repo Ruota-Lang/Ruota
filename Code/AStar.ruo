@@ -22,37 +22,22 @@ aStar(start, goal, map) => path from {
 	getNeighbors(x, y) => neighbors from {
 		# Up, down, left, right, and each diagnol as long as you don't run into the corner of a wall
 		neighbors = [];
-		x > 0 then {
-			map[x-1][y].walkable then neighbors push map[x - 1][y];
-		};
-		x < size_x - 1 then {
-			map[x+1][y].walkable then neighbors push map[x + 1][y];
-		};
-		y > 0 then {
-			map[x][y - 1].walkable then neighbors push map[x][y - 1];
-		};
-		y < size_y - 1 then {
-			map[x][y + 1].walkable then neighbors push map[x][y + 1];
-		};
+
+		x > 0 then { map[x-1][y].walkable then neighbors push map[x - 1][y] };
+		x < size_x - 1 then { map[x+1][y].walkable then neighbors push map[x + 1][y] };
+		y > 0 then { map[x][y - 1].walkable then neighbors push map[x][y - 1] };
+		y < size_y - 1 then { map[x][y + 1].walkable then neighbors push map[x][y + 1] };
 		x > 0 && y > 0 then {
-			map[x-1][y].walkable && map[x][y-1].walkable then { 
-				map[x-1][y-1].walkable then neighbors push map[x - 1][y - 1];
-			};
+			map[x-1][y].walkable && map[x][y-1].walkable then { map[x-1][y-1].walkable then neighbors push map[x - 1][y - 1] };
 		};
 		x < size_x - 1 && y > 0 then {
-			map[x+1][y].walkable && map[x][y-1].walkable then {
-				map[x+1][y-1].walkable then neighbors push map[x + 1][y - 1];
-			};
+			map[x+1][y].walkable && map[x][y-1].walkable then { map[x+1][y-1].walkable then neighbors push map[x + 1][y - 1] };
 		};
 		x > 0 && y < size_y - 1 then {
-			map[x-1][y].walkable && map[x][y+1].walkable then {
-				map[x-1][y+1].walkable then neighbors push map[x - 1][y + 1];
-			};
+			map[x-1][y].walkable && map[x][y+1].walkable then { map[x-1][y+1].walkable then neighbors push map[x - 1][y + 1] };
 		};
 		x < size_x - 1 && y < size_y - 1 then {
-			map[x+1][y].walkable && map[x][y+1].walkable then {
-				map[x+1][y+1].walkable then neighbors push map[x + 1][y + 1];
-			};
+			map[x+1][y].walkable && map[x][y+1].walkable then { map[x+1][y+1].walkable then neighbors push map[x + 1][y + 1] };
 		};
 	};
 
@@ -99,7 +84,6 @@ aStar(start, goal, map) => path from {
 
 	current != null do {
 		path post struct{x:=current.x, y:=current.y};
-		current.path = true;
 		current = parentage[current.x][current.y];
 	};
 };
@@ -130,6 +114,9 @@ end_time := os.milli();
 
 # if you're not on windows this will just look like a white box
 # sorry
+p in path ->> {
+	map[p.x][p.y].path = true;
+};
 i in map ->> {
 	j in i ->> {
 		j.path then {
@@ -145,4 +132,8 @@ i in map ->> {
 };
 
 Color.set();
-printl("Time: " .. (end_time - start_time .. " ms") .. "; Path Steps: " .. len path .. "; Computations: " .. comp_n .. ", " .. (comp_n / (end_time - start_time)) .. " comp/ms");
+len path == 0 then {
+	printl("Path Not Found! Time: " .. (end_time - start_time .. " ms") .. "; Computations: " .. comp_n .. ", " .. (comp_n / (end_time - start_time)) .. " comp/ms");
+} else {
+	printl("Time: " .. (end_time - start_time .. " ms") .. "; Path Steps: " .. len path .. "; Computations: " .. comp_n .. ", " .. (comp_n / (end_time - start_time)) .. " comp/ms");
+};
